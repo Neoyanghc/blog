@@ -248,6 +248,154 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/blog/2018/02/24/leetcode-algorithms-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Davidham">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Davidham's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/blog/2018/02/24/leetcode-algorithms-1/" itemprop="url">leetcode algorithms #1</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-24T00:20:18+08:00">2018-02-24</time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/leetcode/" itemprop="url" rel="index">
+                    <span itemprop="name">LeetCode</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Two-sum"><a href="#Two-sum" class="headerlink" title="Two sum"></a>Two sum</h1><h2 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h2><p>Given an array of integers, return indices of the two numbers such that they add up to a specific target.</p>
+<p>You may assume that each input would have exactly one solution, and you may not use the same element twice.</p>
+<p><strong>Example</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Given nums = [2, 7, 11, 15], target = 9,</span><br><span class="line"></span><br><span class="line">Because nums[0] + nums[1] = 2 + 7 = 9,</span><br><span class="line">return [0, 1].</span><br></pre></td></tr></table></figure></p>
+<h2 id="discussion"><a href="#discussion" class="headerlink" title="discussion"></a>discussion</h2><ol>
+<li>枚举(brute force)：<br>可以用枚举，时间复杂度为$O(n^2)$, $n$为问题规模。<br>假设第一个元素为array中的第一个，从第二个开始遍历，找到和第一个数相加得到target的那个元素的下标，然后假设第一个元素是array中的第二个，如此反复遍历，直到求解成功或无解。</li>
+<li>动态规划(dynamic programming)：<br>先说我的第一个想法<br>2.1. 首先弄个hash table，然后将这些数以及他们的下标以键值对的形式存入hash table中，然后用target分别减去array中的数字，减去后得到的差若在hash table中，那么当前的减数的下标，以及差在hash table中对应的值，即为答案。存入hash table时的时间复杂度为$O(n)$，用target减去array中元素进行搜索的时间复杂度为$O(n)$。<br>故时间复杂度为$O(n)$，空间复杂度为$O(n)$</li>
+</ol>
+<h2 id="Solutions"><a href="#Solutions" class="headerlink" title="Solutions"></a>Solutions</h2><h3 id="Solution1"><a href="#Solution1" class="headerlink" title="Solution1"></a>Solution1</h3><p>python3 runtime: 40ms<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">twoSum</span><span class="params">(self, nums, target)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        :type nums: List[int]</span></span><br><span class="line"><span class="string">        :type target: int</span></span><br><span class="line"><span class="string">        :rtype: List[int]</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="comment"># 建hash table</span></span><br><span class="line">        table = &#123;num: index <span class="keyword">for</span> index, num <span class="keyword">in</span> enumerate(nums)&#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> index, num <span class="keyword">in</span> enumerate(nums):</span><br><span class="line">            diff = target - num</span><br><span class="line">            <span class="keyword">if</span> diff <span class="keyword">in</span> table:</span><br><span class="line">                <span class="comment"># 需要判断会不会有target = num + num的情况，有的话就跳过</span></span><br><span class="line">                <span class="keyword">if</span> index == table[diff]:</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                <span class="keyword">return</span> [index, table[diff]]</span><br></pre></td></tr></table></figure></p>
+<p>c++ runtime: 10ms<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; twoSum(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target) &#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; results;</span><br><span class="line">        <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; table;</span><br><span class="line">        <span class="keyword">int</span> diff;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;nums.size(); i++)</span><br><span class="line">            table[nums[i]] = i;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;nums.size(); i++)</span><br><span class="line">        &#123;</span><br><span class="line">            diff = target - nums[i];</span><br><span class="line">            <span class="keyword">if</span>(table.find(diff) != table.end())</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(table[diff] == i)</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                results.push_back(i);</span><br><span class="line">                results.push_back(table[diff]);</span><br><span class="line">                <span class="keyword">return</span> results;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/blog/2018/02/20/训练神经网络时归一化的目的/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -341,7 +489,7 @@
           <p>在训练神经网络的时候，normalization是必不可少的，原因是如果不进行normalization，在更新参数的时候会出现zig zag的现象。<br></p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/blog/2018/02/20/训练神经网络时归一化的目的/#more" rel="contents">
+            <a class="btn" href="/blog/2018/02/20/训练神经网络时归一化的目的/#espandi" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -485,7 +633,7 @@
           <p>在GitHub Pages部署hexo博客<br></p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/blog/2018/02/19/在github上部署hexo/#more" rel="contents">
+            <a class="btn" href="/blog/2018/02/19/在github上部署hexo/#espandi" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -569,7 +717,7 @@
               
                 <a href="/blog/archives/">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -580,7 +728,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/blog/categories/index.html">
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -591,7 +739,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/blog/tags/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

@@ -120,7 +120,7 @@
 
 
 
-  <title>训练神经网络时归一化的目的 | Davidham's blog</title>
+  <title>leetcode algorithms #1 | Davidham's blog</title>
   
 
 
@@ -247,7 +247,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/blog/2018/02/20/训练神经网络时归一化的目的/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/blog/2018/02/24/leetcode-algorithms-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Davidham">
@@ -264,7 +264,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">训练神经网络时归一化的目的</h1>
+          <h1 class="post-title" itemprop="name headline">leetcode algorithms #1</h1>
         
 
         <div class="post-meta">
@@ -276,7 +276,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-20T13:39:35+08:00">2018-02-20</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-24T00:20:18+08:00">2018-02-24</time>
             
 
             
@@ -297,8 +297,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
+                  <a href="/blog/categories/leetcode/" itemprop="url" rel="index">
+                    <span itemprop="name">LeetCode</span>
                   </a>
                 </span>
 
@@ -334,14 +334,15 @@
       
 
       
-        <p>在训练神经网络的时候，normalization是必不可少的，原因是如果不进行normalization，在更新参数的时候会出现zig zag的现象。<br><a id="more"></a><br>在训练神经网络的时候，归一化是必不可少的。之前一直不理解为什么非要归一化，直到看了cs231n这门课才知道归一化的目的。<br>事实上这个问题主要是针对激活函数来说，如果不归一化的话，那么激活函数在反向传播的时候就会出问题。<br><img src="/blog/2018/02/20/训练神经网络时归一化的目的/1.png" alt="图1 图片来源于cs231n"></p>
-<p><center>图1 左侧是原始数据，中间是中心化后的，右侧是归一化后的 图片来源于cs231n</center><br>事实上归一化分为两个步骤，第一步是将数据变为以0为中心，第二部是缩小数据的范围。所以归一化的公式为：</p>
-<script type="math/tex; mode=display">\frac{X-\bar{X}}{std(X)}</script><p>其中，X为原始样本，$\bar{X}$为样本均值，$std(X)$为样本标准差。<br>在这里，真正影响反向传播的是第一步，zero-centered。如果没有将数据以0为中心中心化的话，就会影响反向传播的效果。<br>以逻辑回归(Logistic Regression)为例，逻辑回归的模型可写为</p>
-<script type="math/tex; mode=display">\hat{y} = sigmoid(W \cdot X+b)</script><p>其中$W$和$b$是参数，X是样本，$sigmoid$表示sigmoid激活函数，设损失函数为</p>
-<script type="math/tex; mode=display">L = Loss(y, \hat{y})</script><p>其中，$y$为样本的标签或标注值。在反向传播的时候，需要对$W$和$b$求偏导数，即求损失函数在当前样本点的梯度，这里我们设$Z = W \cdot X + b$，则</p>
-<script type="math/tex; mode=display">\frac{\partial{L}}{\partial{W}} = \frac{\partial{L}}{\partial{\hat{y}}}\frac{\partial{\hat{y}}}{\partial{Z}}\frac{\partial{Z}}{\partial{W}} = \frac{\partial{L}}{\partial{\hat{y}}}\frac{\partial{\hat{y}}}{\partial{Z}}X^T</script><p>同理可以求出$b$的偏导数。<br>在这里就可以看出问题，假设我们的输入是图像那样的样本，像素值都是大于0的，那这里$\frac{\partial{L}}{\partial{W}}$就会大于0。<br>使用梯度下降的更新规则来更新参数时</p>
-<script type="math/tex; mode=display">W := W - \alpha \frac{\partial{L}}{\partial{W}}</script><p>W就会一直减小，这显然是有问题的。<br><img src="/blog/2018/02/20/训练神经网络时归一化的目的/2.png" alt="图2 图片来源于cs231n"></p>
-<p><center>图2 右图展示了只有两个方向允许更新梯度后实际的参数更新路线(红线) 图片来源于cs231n</center><br>如图2所示，可以发现如果我们的输入变成了要么都是大于0，要么都是小于0的数，那么允许梯度更新的两个方向在二维空间中就只能落在第一和第三象限中，扩展到高维空间中也是相对的两个卦限。这样在更新的过程中就会产生这种红线所示的路径zig zag path。以上是不进行中心化的后果。<br>而不进行特征缩放的后果则是，如果每个特征的量级不同，假设一个特征是数值范围在$[-10, 10]$，另一个特征在$[-10^9, 10^9]$，那么在计算梯度后，使用梯度下降更新时，也会造成上面所述的zig zag现象。</p>
+        <h1 id="Two-sum"><a href="#Two-sum" class="headerlink" title="Two sum"></a>Two sum</h1><h2 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h2><p>Given an array of integers, return indices of the two numbers such that they add up to a specific target.</p>
+<p>You may assume that each input would have exactly one solution, and you may not use the same element twice.</p>
+<p><strong>Example</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Given nums = [2, 7, 11, 15], target = 9,</span><br><span class="line"></span><br><span class="line">Because nums[0] + nums[1] = 2 + 7 = 9,</span><br><span class="line">return [0, 1].</span><br></pre></td></tr></table></figure></p>
+<h2 id="discussion"><a href="#discussion" class="headerlink" title="discussion"></a>discussion</h2><ol>
+<li>枚举(brute force)：<br>可以用枚举，时间复杂度为$O(n^2)$, $n$为问题规模。<br>假设第一个元素为array中的第一个，从第二个开始遍历，找到和第一个数相加得到target的那个元素的下标，然后假设第一个元素是array中的第二个，如此反复遍历，直到求解成功或无解。</li>
+<li>动态规划(dynamic programming)：<br>先说我的第一个想法<br>2.1. 首先弄个hash table，然后将这些数以及他们的下标以键值对的形式存入hash table中，然后用target分别减去array中的数字，减去后得到的差若在hash table中，那么当前的减数的下标，以及差在hash table中对应的值，即为答案。存入hash table时的时间复杂度为$O(n)$，用target减去array中元素进行搜索的时间复杂度为$O(n)$。<br>故时间复杂度为$O(n)$，空间复杂度为$O(n)$</li>
+</ol>
+<h2 id="Solutions"><a href="#Solutions" class="headerlink" title="Solutions"></a>Solutions</h2><h3 id="Solution1"><a href="#Solution1" class="headerlink" title="Solution1"></a>Solution1</h3><p>python3 runtime: 40ms<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">twoSum</span><span class="params">(self, nums, target)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        :type nums: List[int]</span></span><br><span class="line"><span class="string">        :type target: int</span></span><br><span class="line"><span class="string">        :rtype: List[int]</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="comment"># 建hash table</span></span><br><span class="line">        table = &#123;num: index <span class="keyword">for</span> index, num <span class="keyword">in</span> enumerate(nums)&#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> index, num <span class="keyword">in</span> enumerate(nums):</span><br><span class="line">            diff = target - num</span><br><span class="line">            <span class="keyword">if</span> diff <span class="keyword">in</span> table:</span><br><span class="line">                <span class="comment"># 需要判断会不会有target = num + num的情况，有的话就跳过</span></span><br><span class="line">                <span class="keyword">if</span> index == table[diff]:</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                <span class="keyword">return</span> [index, table[diff]]</span><br></pre></td></tr></table></figure></p>
+<p>c++ runtime: 10ms<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; twoSum(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target) &#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; results;</span><br><span class="line">        <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; table;</span><br><span class="line">        <span class="keyword">int</span> diff;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;nums.size(); i++)</span><br><span class="line">            table[nums[i]] = i;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;nums.size(); i++)</span><br><span class="line">        &#123;</span><br><span class="line">            diff = target - nums[i];</span><br><span class="line">            <span class="keyword">if</span>(table.find(diff) != table.end())</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(table[diff] == i)</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                results.push_back(i);</span><br><span class="line">                results.push_back(table[diff]);</span><br><span class="line">                <span class="keyword">return</span> results;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -359,11 +360,9 @@
       
         <div class="post-tags">
           
-            <a href="/blog/tags/神经网络/" rel="tag"># 神经网络</a>
+            <a href="/blog/tags/leetcode/" rel="tag"># LeetCode</a>
           
-            <a href="/blog/tags/机器学习/" rel="tag"># 机器学习</a>
-          
-            <a href="/blog/tags/归一化/" rel="tag"># 归一化</a>
+            <a href="/blog/tags/algorithm/" rel="tag"># algorithm</a>
           
         </div>
       
@@ -376,8 +375,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/blog/2018/02/19/在github上部署hexo/" rel="next" title="在GitHub上部署hexo博客">
-                <i class="fa fa-chevron-left"></i> 在GitHub上部署hexo博客
+              <a href="/blog/2018/02/20/训练神经网络时归一化的目的/" rel="next" title="训练神经网络时归一化的目的">
+                <i class="fa fa-chevron-left"></i> 训练神经网络时归一化的目的
               </a>
             
           </div>
@@ -385,10 +384,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/blog/2018/02/24/leetcode-algorithms-1/" rel="prev" title="leetcode algorithms #1">
-                leetcode algorithms #1 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -440,8 +435,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -501,6 +505,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Two-sum"><span class="nav-number">1.</span> <span class="nav-text">Two sum</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Description"><span class="nav-number">1.1.</span> <span class="nav-text">Description</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#discussion"><span class="nav-number">1.2.</span> <span class="nav-text">discussion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Solutions"><span class="nav-number">1.3.</span> <span class="nav-text">Solutions</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Solution1"><span class="nav-number">1.3.1.</span> <span class="nav-text">Solution1</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
