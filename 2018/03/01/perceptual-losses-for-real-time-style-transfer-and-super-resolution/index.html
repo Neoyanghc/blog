@@ -120,7 +120,7 @@
 
 
 
-  <title>训练神经网络时归一化的目的 | Davidham's blog</title>
+  <title>Perceptual Losses for Real-Time Style Transfer and Super-Resolution | Davidham's blog</title>
   
 
 
@@ -247,7 +247,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/blog/2018/02/20/训练神经网络时归一化的目的/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/blog/2018/03/01/perceptual-losses-for-real-time-style-transfer-and-super-resolution/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Davidham">
@@ -264,7 +264,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">训练神经网络时归一化的目的</h1>
+          <h1 class="post-title" itemprop="name headline">Perceptual Losses for Real-Time Style Transfer and Super-Resolution</h1>
         
 
         <div class="post-meta">
@@ -276,7 +276,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-20T13:39:35+08:00">2018-02-20</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-01T19:01:46+08:00">2018-03-01</time>
             
 
             
@@ -299,6 +299,17 @@
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/blog/categories/机器学习/" itemprop="url" rel="index">
                     <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/机器学习/论文阅读笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">论文阅读笔记</span>
                   </a>
                 </span>
 
@@ -334,15 +345,15 @@
       
 
       
-        <p>在训练神经网络的时候，normalization是必不可少的，原因是如果不进行normalization，在更新参数的时候会出现zig zag的现象。<br><a id="more"></a><br>在训练神经网络的时候，归一化是必不可少的。之前一直不理解为什么非要归一化，直到看了cs231n这门课才知道归一化的目的。<br>事实上这个问题主要是针对激活函数来说，如果不归一化的话，那么激活函数在反向传播的时候就会出问题。<br><img src="/blog/2018/02/20/训练神经网络时归一化的目的/1.png" alt="图1 图片来源于cs231n"></p>
-<p><center>图1 左侧是原始数据，中间是中心化后的，右侧是归一化后的 图片来源于cs231n</center><br>事实上归一化分为两个步骤，第一步是将数据变为以0为中心，第二部是缩小数据的范围。所以归一化的公式为：</p>
-<script type="math/tex; mode=display">\frac{X-\bar{X}}{std(X)}</script><p>其中，X为原始样本，$\bar{X}$为样本均值，$std(X)$为样本标准差。<br>在这里，真正影响反向传播的是第一步，zero-centered。如果没有将数据以0为中心中心化的话，就会影响反向传播的效果。<br>以逻辑回归(Logistic Regression)为例，逻辑回归的模型可写为</p>
-<script type="math/tex; mode=display">\hat{y} = sigmoid(W \cdot X+b)</script><p>其中$W$和$b$是参数，X是样本，$sigmoid$表示sigmoid激活函数，设损失函数为</p>
-<script type="math/tex; mode=display">L = Loss(y, \hat{y})</script><p>其中，$y$为样本的标签或标注值。在反向传播的时候，需要对$W$和$b$求偏导数，即求损失函数在当前样本点的梯度，这里我们设$Z = W \cdot X + b$，则</p>
-<script type="math/tex; mode=display">\frac{\partial{L}}{\partial{W}} = \frac{\partial{L}}{\partial{\hat{y}}}\frac{\partial{\hat{y}}}{\partial{Z}}\frac{\partial{Z}}{\partial{W}} = \frac{\partial{L}}{\partial{\hat{y}}}\frac{\partial{\hat{y}}}{\partial{Z}}X^T</script><p>同理可以求出$b$的偏导数。<br>在这里就可以看出问题，假设我们的输入是图像那样的样本，像素值都是大于0的，那这里$\frac{\partial{L}}{\partial{W}}$就会大于0。<br>使用梯度下降的更新规则来更新参数时</p>
-<script type="math/tex; mode=display">W := W - \alpha \frac{\partial{L}}{\partial{W}}</script><p>W就会一直减小，这显然是有问题的。<br><img src="/blog/2018/02/20/训练神经网络时归一化的目的/2.png" alt="图2 图片来源于cs231n"></p>
-<p><center>图2 右图展示了只有两个方向允许更新梯度后实际的参数更新路线(红线) 图片来源于cs231n</center><br>如图2所示，可以发现如果我们的输入变成了要么都是大于0，要么都是小于0的数，那么允许梯度更新的两个方向在二维空间中就只能落在第一和第三象限中，扩展到高维空间中也是相对的两个卦限。这样在更新的过程中就会产生这种红线所示的路径zig zag path。以上是不进行中心化的后果。<br>而不进行特征缩放的后果则是，如果每个特征的量级不同，假设一个特征是数值范围在$[-10, 10]$，另一个特征在$[-10^9, 10^9]$，那么在计算梯度后，使用梯度下降更新时，也会造成上面所述的zig zag现象。</p>
-
+        <p>实时风格迁移与超分辨率化的感知损失，这篇论文是在cs231n里面看到的，正好最近在研究风格迁移。一作是Justin Johnson，2017春的cs231n的主讲之一。这篇论文的主要内容是对Gatys等人的风格迁移在优化过程中进行了优化，大幅提升了性能。<br>主要原理就是，之前Gatys等人的论文是利用已经训练好的VGG19，求loss并利用VGG的结构反向求导更新图片。由于VGG结构复杂，这样反向更新速度很慢，改进方法是再另外设计一个神经网络，将内容图片作为输入，输出扔到VGG中做两个loss，然后反向传播更新当前这个神经网络的参数，这样训练出来的神经网络就可能将任意的内容图片扔进去，输出为风格迁移后的图片，这也就解决了速度的问题。这也就是将Feed-forward image transformation与style transfer结合在一起。<br><a id="more"></a></p>
+<h1 id="Image-Transformation-Network"><a href="#Image-Transformation-Network" class="headerlink" title="Image Transformation Network"></a>Image Transformation Network</h1><h2 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h2><p>We do not use any pooling layers, instead using strided and fractionally strided convolutions for in-network downsampling and upsampling. Our network body consists of five residual blocks using the architecture of <a href="http://torch" target="_blank" rel="noopener">http://torch</a>. ch/blog/2016/02/04/resnets.html. All non-residual convolutional layers are followed by spatial batch normalization and ReLU nonlinearities with the exception of the output layer, which instead uses a scaled tanh to ensure that the output image has pixels in the range [0, 255]. Other than the first and last layers with use $9 \times 9$ kernels, all convolutional layers use $3 \times 3$ kernels. The exact architectures of all our networks can be found in the supplementary material.</p>
+<h2 id="Inputs-and-Outputs"><a href="#Inputs-and-Outputs" class="headerlink" title="Inputs and Outputs"></a>Inputs and Outputs</h2><p>For style transfer the input and output are both color images of shape #3 \times 256 \times 256#.<br>For super-resolution with an upsampling factor of $f$, the output is a high-resolution patch of shape $3 \times 288/f \times 288/f$. Since the image transformation networks are fully-convolutional, at test-time they can be applied to images of any resolution.</p>
+<h2 id="Downsampling-and-Upsampling"><a href="#Downsampling-and-Upsampling" class="headerlink" title="Downsampling and Upsampling"></a>Downsampling and Upsampling</h2><p>For super-resolution with an upsampling factor of $f$, we use several residual blocks followed by $log_2f$ convolutional layers with stride $1/2$. This is different from [1] who use bicubic interpolation to upsample the low-resolution input before passing it to the network.</p>
+<h1 id="Perceptual-Loss-Functions"><a href="#Perceptual-Loss-Functions" class="headerlink" title="Perceptual Loss Functions"></a>Perceptual Loss Functions</h1><p>We define two <em>perceptual loss functions</em> that measure high-level perceptual and semantic differences between images. They make use of a loss <em>network</em> $\phi$ pretrained for image classification, meaning that these perceptual loss functions are themselves deep convolutional neural networks. In all our experiments $\phi$ is the 16-layer VGG network pretrained on the ImageNet dataset.</p>
+<h2 id="Featue-Reconstruction-Loss"><a href="#Featue-Reconstruction-Loss" class="headerlink" title="Featue Reconstruction Loss"></a>Featue Reconstruction Loss</h2><p>Rather than encouraging the pixels of the output image $\hat{y} = f_W(x)$ to exactly match the pixels of the target image $y$, we instead encourage them to have similar feature representations as computed by the loss network $\phi$. Let $\phi_j(x)$ be the activations of the <em>j</em>th layer of the network $\phi$ when processing the image $x$; if $j$ is a convolutional layer then $\phi_j(x)$ will be a feature map of shape $C_j \times H_j \times W_j$. The <em>feature reconstruction loss</em> is the (squared, normalized) Euclidean distance between feature representations:</p>
+<script type="math/tex; mode=display">\ell^{\phi,j}_{feat}(\hat{y}, y)=\frac{1}{C_jH_jW_j}\Vert \phi_j(\hat{y})-\phi_j(y)\Vert ^2_2</script><p>As demonstrated in [6] and reproduced in Figure 3, finding an image $\hat{y}$ that minimizes the feature reconstruction loss for early layers tends to produce images that are visually indistinguishable from $y$.</p>
+<h2 id="Style-Reconstruction-Loss"><a href="#Style-Reconstruction-Loss" class="headerlink" title="Style Reconstruction Loss"></a>Style Reconstruction Loss</h2><p>The feature reconstruction loss penalizes the output image $\hat{y}$ when it deviates in content from the target $y$. We also wish to penalize differences in style: colors, textures, common patterns, etc. To achieve this effect, Gatys <em>et al</em> propose the following <em>style reconstruction loss</em>.<br>As above, let $\phi_j(x)$ be the activations at the $j$th layer of the network $\phi$ for the input $x$, which is a feature map of shape $C_j \times H_j \times W_j$. Define the <em>Gram matrix</em> $G^\phi_j(x)$ to be the $C_j \times C_j$ matrix whose elements are given by</p>
+<script type="math/tex; mode=display">G^\phi_j(x)_{c,c'}=\frac{1}{C_jH_jW_j}\sum^{H_j}_{h=1}\sum^{W_j}_{w=1}\phi_j(x)_{h,w,c}\phi_j(x)_{h,w,c'}</script>
       
     </div>
     
@@ -359,11 +370,15 @@
       
         <div class="post-tags">
           
-            <a href="/blog/tags/神经网络/" rel="tag"># 神经网络</a>
+            <a href="/blog/tags/deep-learning/" rel="tag"># deep learning</a>
           
-            <a href="/blog/tags/机器学习/" rel="tag"># 机器学习</a>
+            <a href="/blog/tags/machine-learning/" rel="tag"># machine learning</a>
           
-            <a href="/blog/tags/归一化/" rel="tag"># 归一化</a>
+            <a href="/blog/tags/computer-vision/" rel="tag"># computer vision</a>
+          
+            <a href="/blog/tags/super-resolution/" rel="tag"># super-resolution</a>
+          
+            <a href="/blog/tags/style-transfer/" rel="tag"># style transfer</a>
           
         </div>
       
@@ -376,14 +391,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/blog/2018/02/24/image-style-transfer-using-convolutional-neural-networks/" rel="next" title="Image Style Transfer Using Convolutional Neural Networks 阅读笔记">
+                <i class="fa fa-chevron-left"></i> Image Style Transfer Using Convolutional Neural Networks 阅读笔记
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/blog/2018/02/20/在github上部署hexo/" rel="prev" title="在GitHub上部署hexo博客">
-                在GitHub上部署hexo博客 <i class="fa fa-chevron-right"></i>
+              <a href="/blog/2018/03/02/image-super-resolution-using-deep-convolutional-networks/" rel="prev" title="Image Super-Resolution Using Deep Convolutional Networks">
+                Image Super-Resolution Using Deep Convolutional Networks <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -436,8 +455,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -497,6 +525,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Image-Transformation-Network"><span class="nav-number">1.</span> <span class="nav-text">Image Transformation Network</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Architecture"><span class="nav-number">1.1.</span> <span class="nav-text">Architecture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Inputs-and-Outputs"><span class="nav-number">1.2.</span> <span class="nav-text">Inputs and Outputs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Downsampling-and-Upsampling"><span class="nav-number">1.3.</span> <span class="nav-text">Downsampling and Upsampling</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Perceptual-Loss-Functions"><span class="nav-number">2.</span> <span class="nav-text">Perceptual Loss Functions</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Featue-Reconstruction-Loss"><span class="nav-number">2.1.</span> <span class="nav-text">Featue Reconstruction Loss</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Style-Reconstruction-Loss"><span class="nav-number">2.2.</span> <span class="nav-text">Style Reconstruction Loss</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
