@@ -76,13 +76,13 @@
 
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="tags">
-<meta property="og:url" content="http://yoursite.com/tags/index.html">
+<meta property="og:title" content="categories">
+<meta property="og:url" content="http://yoursite.com/categories/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-02-19T13:29:57.449Z">
+<meta property="og:updated_time" content="2018-02-19T13:29:39.253Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="tags">
+<meta name="twitter:title" content="categories">
 
 
 
@@ -114,7 +114,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/tags/"/>
+  <link rel="canonical" href="http://yoursite.com/categories/"/>
 
 
 
@@ -373,6 +373,7 @@
 <li>In testing, for comparison studies we adopt the standard 10-crop testing.[<em>Imagenet classification<br>with deep convolutional neural networks</em>]</li>
 <li>For best results, we adopt the fully-convolutional form as in <em>Very deep convolutional networks for large-scale image recognition</em> and <em>Delving deep into rectifiers: Surpassing human-level performance on imagenet classification</em>, and average the scores at multiple scales (images are resized such that the shorter side is in $\{224, 256, 384, 480, 640\}$.</li>
 </ol>
+<h2 id="ImageNet-classification"><a href="#ImageNet-classification" class="headerlink" title="ImageNet classification"></a>ImageNet classification</h2><h3 id="Deeper-Bottleneck-Architecture"><a href="#Deeper-Bottleneck-Architecture" class="headerlink" title="Deeper Bottleneck Architecture"></a>Deeper Bottleneck Architecture</h3><p>Next we describe our deeper nets for ImageNet. Because of concerns on the training time that we can afford, we modify the building block as a <em>bottleneck</em> design. For each residual function $\mathcal{F}$, we use a stack of 3 layers instead of 2 (Fig. 5). The three layers are $1 \times 1$, $3 \times 3$, and $1 \times 1$ convolutions, where the $1 \times 1$ layers are responsible for reducing and then increasing (restoring) dimensions, leaving the $3 \times 3$ layer a bottleneck with smaller input/output dimensions. Fig. 5 shows an example, where both designs have similar time complexity.<br>The parameter-free indentity shortcuts are particularly important for the bottleneck architectures. If the identity</p>
 <h2 id="CIFAR-10-and-Analysis"><a href="#CIFAR-10-and-Analysis" class="headerlink" title="CIFAR-10 and Analysis"></a>CIFAR-10 and Analysis</h2><p>The plain/residual architectures follow the form in Fig.3(middle/right). The network inputs are $32 \times 32$ images, with the per-pixel mean subtracted. The first layer is $3 \times 3$ convolutions. Then we use a stack of $6n$ layers with $3 \times 3$ convolutions on the feature maps of sizes $\{32, 16, 8\}$ respectively, with $2n$ layers for each feature map size. The numbers of filters are $\{16, 32, 64\}$ respectively, with $2n$ layers for each feature map size. The subsampling is performed by convolutions with a stride of 2. The network ends with a global average pooling, a 10-way fully-connected layer, and softmax.<br>When shortcut connections are used, they are connected to the pairs of $3 \times 3$ layers(totally $3n$ shortcuts). On this dataset we use identity shortcuts in all cases (<em>i.e.</em>, option A), so our residual models have exactly the same depth, width and number of parameters as the plain counterparts.<br>We use a weight decay of 0.0001 and momentum of 0.9, and adopt the weight initialization in <em>Delving deep into rectifiers: Surpassing human-level performance on imagenet classification</em> and BN in <em>Accelerating deep network training by reducing internal covariate shift</em> but with no dropout. These models are trained with a mini-batch size of 128 on two GPUs. We start with a learning rate of 0.1, divide it by 10 at 32k and 48k iterations, and terminate training at 64k iterations, which is determined on a 45k/5k train/val split. We follow the simple data augmentation in <em>Deeply-supervised nets</em> for training: 4 pixels are padded on each side, and a $32 \times 32$ crop is randomly sampled from the padded image or its horizontal flip. For testing, we only evaluate the single view of the original $32 \times 32$ image.<br>We compare $n=\{3, 5, 7, 9\}$, leading to 20, 32, 44, and 56-layer networks.</p>
 
       
@@ -552,7 +553,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Deep-Residual-Learning-for-Image-Recongnition"><span class="nav-number">1.</span> <span class="nav-text">Deep Residual Learning for Image Recongnition</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#problems"><span class="nav-number">1.1.</span> <span class="nav-text">problems</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Deep-Residual-Learning"><span class="nav-number">1.2.</span> <span class="nav-text">Deep Residual Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Residual-Learning"><span class="nav-number">1.2.1.</span> <span class="nav-text">Residual Learning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Identity-Mapping-by-Shortcuts"><span class="nav-number">1.2.2.</span> <span class="nav-text">Identity Mapping by Shortcuts</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Residual-Network"><span class="nav-number">1.3.</span> <span class="nav-text">Residual Network</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Implementation"><span class="nav-number">1.4.</span> <span class="nav-text">Implementation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CIFAR-10-and-Analysis"><span class="nav-number">1.5.</span> <span class="nav-text">CIFAR-10 and Analysis</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Deep-Residual-Learning-for-Image-Recongnition"><span class="nav-number">1.</span> <span class="nav-text">Deep Residual Learning for Image Recongnition</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#problems"><span class="nav-number">1.1.</span> <span class="nav-text">problems</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Deep-Residual-Learning"><span class="nav-number">1.2.</span> <span class="nav-text">Deep Residual Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Residual-Learning"><span class="nav-number">1.2.1.</span> <span class="nav-text">Residual Learning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Identity-Mapping-by-Shortcuts"><span class="nav-number">1.2.2.</span> <span class="nav-text">Identity Mapping by Shortcuts</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Residual-Network"><span class="nav-number">1.3.</span> <span class="nav-text">Residual Network</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Implementation"><span class="nav-number">1.4.</span> <span class="nav-text">Implementation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ImageNet-classification"><span class="nav-number">1.5.</span> <span class="nav-text">ImageNet classification</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Deeper-Bottleneck-Architecture"><span class="nav-number">1.5.1.</span> <span class="nav-text">Deeper Bottleneck Architecture</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CIFAR-10-and-Analysis"><span class="nav-number">1.6.</span> <span class="nav-text">CIFAR-10 and Analysis</span></a></li></ol></li></ol></div>
             
 
           </div>
