@@ -64,7 +64,7 @@
 
 
 
-  <meta name="keywords" content="deep learning,machine learning,ResNet," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -75,21 +75,14 @@
 
 
 
-<meta name="description" content="ResNet v2">
-<meta name="keywords" content="deep learning,machine learning,ResNet">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Identity Mappings in Deep Residual Networks">
-<meta property="og:url" content="http://yoursite.com/2018/03/08/identity-mappings-in-deep-residual-networks/index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="tags">
+<meta property="og:url" content="http://yoursite.com/tags/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="ResNet v2">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/blog/2018/03/08/identity-mappings-in-deep-residual-networks/Fig1.PNG">
-<meta property="og:image" content="http://yoursite.com/blog/2018/03/08/identity-mappings-in-deep-residual-networks/Table1.PNG">
-<meta property="og:updated_time" content="2018-03-15T06:40:13.975Z">
+<meta property="og:updated_time" content="2018-02-19T13:29:57.449Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Identity Mappings in Deep Residual Networks">
-<meta name="twitter:description" content="ResNet v2">
-<meta name="twitter:image" content="http://yoursite.com/blog/2018/03/08/identity-mappings-in-deep-residual-networks/Fig1.PNG">
+<meta name="twitter:title" content="tags">
 
 
 
@@ -121,7 +114,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/03/08/identity-mappings-in-deep-residual-networks/"/>
+  <link rel="canonical" href="http://yoursite.com/tags/"/>
 
 
 
@@ -370,7 +363,8 @@
 <script type="math/tex; mode=display">\Theta \ast \mathcal{G} x = \Theta(L)x \approx \sum_{k=0}^{K-1}\theta_k T_k(\widetilde{L})x</script><p>其中$T_k(\widetilde{L}) \in \mathbb{R}^{n \times n}$是k阶切比雪夫多项式对缩放后（scaled）的拉普拉斯矩阵$\widetilde{L}=2L/\lambda_{max}-I_n$。通过递归地使用趋近后的切比雪夫多项式计算K阶卷积操作，式2的复杂度可以被降低至$O(K\vert \varepsilon \vert)$，如式3所示[Defferrard <em>et al.</em>, 2016]。</p>
 <p><strong>1阶近似</strong><br>一个针对层的线性公式可以由堆叠多个使用拉普拉斯矩阵的一阶近似的局部图卷积层[Kipf and Welling, 2016]。结果就是，这样可以构建出一个深的网络，这个网络可以深入地恢复空间信息并且不需要指定多项式中的参数。由于在神经网络中要缩放和归一化，我们可以进一步假设$\lambda_{max} \approx 2$。因此，式3可以简写为<br>\begin{aligned}<br>\Theta \ast \mathcal{G}x \approx &amp; \theta_0x+\theta_1(\frac{2}{\lambda_{max}}L-I_n)x\\<br>\approx &amp; \theta_0 x- \theta_1(D^{-\frac{1}{2}} W D^{-\frac{1}{2}}) x<br>\end{aligned}<br>其中，$\theta_0$，$\theta_1$是核的两个共享参数。为了约束参数并为稳定数值计算，$\theta_0$和$\theta_1$用一个参数$\theta$来替换，$\theta=\theta_0=-\theta_1$；$W$和$D$是通过$\widetilde{W}=W+I_n$和$\widetilde{D}_{ii}=\sum_j\widetilde{W}_{ij}$重新归一化得到的。之后，图卷积就可以表达为<br>\begin{aligned}<br>\Theta \ast \mathcal{G} x = &amp; \theta(I_n + D^{-\frac{1}{2}} W D^{\frac{1}{2}})x\\<br>= &amp; \theta (\widetilde{D}^{-\frac{1}{2}} \widetilde{W} \widetilde{D}^{-\frac{1}{2}})x<br>\end{aligned}<br>竖直地堆叠一阶近似的图卷积可以获得和平行的K阶卷积相同的效果，所有的卷积可以从一个顶点的$K-1$阶邻居中获取到信息。在这里，$K$是连续卷积操作的次数或是模型中的卷积层数。进一步说，针对层的线性结构是节省参数的，并且对大型的图来说是效率很高的，因为多项式趋近的阶数为1。</p>
 <p><strong>图卷积的泛化</strong><br>图卷积操作$\ast \mathcal{G}$也可以被扩展到多维张量上。对于一个有着$C_i$个通道的信号$X \in \mathbb{R}^{n \times C_i}$，图卷积操作可以扩展为</p>
-<script type="math/tex; mode=display">y_j = \sum_{i=1}^{C_i} \Theta_{i,j}(L) x_i \in \mathbb{R}^n, 1 \leq j \leq C_o</script>
+<script type="math/tex; mode=display">y_j = \sum_{i=1}^{C_i} \Theta_{i,j}(L) x_i \in \mathbb{R}^n, 1 \leq j \leq C_o</script><p>其中，$C_i \times C_o$个向量是切比雪夫系数$\Theta_{i,j} \in \mathbb{R}^K$（$C_i$，$C_o$分别是feature map的输入和输出大小）。针对二维变量的图卷积表示为$\Theta \ast \mathcal{G} X$，其中$\Theta \in \mathbb{R}^{K \times C_i \times C_o}$。需要注意的是，输入的交通预测是由$M$帧路网组成的，如图1所示。每帧$v_t$可以被视为一个矩阵，它的第$i$列是图$\mathcal{G_t}$中第$i$个顶点的一个为$C_i$维的值，也就是$X \in \mathbb{R}^{n \times C_i}$（在这个例子中，$C_i=1$）。对于$M$中的每个时间步$t$，相同的核与相同的图卷积操作是在$X_t \in \mathbb{R}^{n \times C_i}$中并行进行的。因此，图卷积操作也可以泛化至三维，记为$\Theta \ast \mathcal{G} \mathbf{X}$，其中$\mathbf{X} \in \mathbb{R}^{M \times n \times C_i}$</p>
+
       
     </div>
     
