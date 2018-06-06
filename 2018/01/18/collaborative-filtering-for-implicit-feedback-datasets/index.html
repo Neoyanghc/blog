@@ -123,7 +123,7 @@
 
 
 
-  <title>leetcode algorithms #2 | Davidham's blog</title>
+  <title>Collaborative Filtering for Implicit Feedback Datasets | Davidham's blog</title>
   
 
 
@@ -250,7 +250,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/blog/2018/02/24/leetcode-algorithms-2/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/blog/2018/01/18/collaborative-filtering-for-implicit-feedback-datasets/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Davidham">
@@ -267,7 +267,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">leetcode algorithms #2</h1>
+          <h1 class="post-title" itemprop="name headline">Collaborative Filtering for Implicit Feedback Datasets</h1>
         
 
         <div class="post-meta">
@@ -279,7 +279,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-24T13:29:05+08:00">2018-02-24</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-18T18:58:25+08:00">2018-01-18</time>
             
 
             
@@ -300,8 +300,19 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/leetcode/" itemprop="url" rel="index">
-                    <span itemprop="name">LeetCode</span>
+                  <a href="/blog/categories/推荐系统/" itemprop="url" rel="index">
+                    <span itemprop="name">推荐系统</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/推荐系统/论文阅读笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">论文阅读笔记</span>
                   </a>
                 </span>
 
@@ -337,12 +348,26 @@
       
 
       
-        <p>leetcode algorithms #2. Title: Add Two Numbers<br><a id="more"></a></p>
-<h1 id="Add-Two-Numbers"><a href="#Add-Two-Numbers" class="headerlink" title="Add Two Numbers"></a>Add Two Numbers</h1><h2 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h2><p>You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.</p>
-<p>You may assume the two numbers do not contain any leading zero, except the number 0 itself.</p>
-<p><strong>Example</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: (2 -&gt; 4 -&gt; 3) + (5 -&gt; 6 -&gt; 4)</span><br><span class="line">Output: 7 -&gt; 0 -&gt; 8</span><br><span class="line">Explanation: 342 + 465 = 807.</span><br></pre></td></tr></table></figure></p>
-<h2 id="Discussion"><a href="#Discussion" class="headerlink" title="Discussion"></a>Discussion</h2><p>用两个指针，分别指向两个list的首元素，加一个进位t，只能是0或者1，用来表示进位。<br>指针指向的两个元素还有进位元素t相加，对10求模得到当前这位存到新的节点中，用这个和除以10，更新进位元素，两指针同时向后移动。<br>最后剩余的一截的头节点与进位元素t相加后，直接接到当前的节点后面。</p>
-<h2 id="Solutions"><a href="#Solutions" class="headerlink" title="Solutions"></a>Solutions</h2><p>python3 runtime:112ms<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"># class ListNode:</span></span><br><span class="line"><span class="comment">#     def __init__(self, x):</span></span><br><span class="line"><span class="comment">#         self.val = x</span></span><br><span class="line"><span class="comment">#         self.next = None</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">addTwoNumbers</span><span class="params">(self, l1, l2)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        :type l1: ListNode</span></span><br><span class="line"><span class="string">        :type l2: ListNode</span></span><br><span class="line"><span class="string">        :rtype: ListNode</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        t = <span class="number">0</span></span><br><span class="line">        s = l1.val + l2.val + t</span><br><span class="line">        result = ListNode(s%<span class="number">10</span>)</span><br><span class="line">        current = result</span><br><span class="line">        t = s // <span class="number">10</span></span><br><span class="line">        l1 = l1.next</span><br><span class="line">        l2 = l2.next</span><br><span class="line">        <span class="keyword">while</span> l1 <span class="keyword">and</span> l2:</span><br><span class="line">            s = l1.val + l2.val + t</span><br><span class="line">            current.next = ListNode(s%<span class="number">10</span>)</span><br><span class="line">            t = s // <span class="number">10</span></span><br><span class="line">            current = current.next</span><br><span class="line">            l1 = l1.next</span><br><span class="line">            l2 = l2.next</span><br><span class="line">        <span class="keyword">while</span> l1:</span><br><span class="line">            s = l1.val + t</span><br><span class="line">            current.next = ListNode(s%<span class="number">10</span>)</span><br><span class="line">            t = s // <span class="number">10</span></span><br><span class="line">            current = current.next</span><br><span class="line">            l1 = l1.next</span><br><span class="line">        <span class="keyword">while</span> l2:</span><br><span class="line">            s = l2.val + t</span><br><span class="line">            current.next = ListNode(s%<span class="number">10</span>)</span><br><span class="line">            t = s // <span class="number">10</span></span><br><span class="line">            current = current.next</span><br><span class="line">            l2 = l2.next</span><br><span class="line">        <span class="keyword">if</span> t == <span class="number">1</span>:</span><br><span class="line">            current.next = ListNode(t)</span><br><span class="line">        <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure></p>
+        <p>ICDM 2008. 推荐系统：协同过滤在隐反馈数据上的应用，这个算法在GitHub上有人实现了，性能很强。这是我的阅读笔记，把论文当中的主要部分抽出来了。<br><a id="more"></a><br>原文：<a href="https://ieeexplore.ieee.org/abstract/document/4781121/" target="_blank" rel="noopener">Collaborative Filtering for Implicit Feedback Datasets</a></p>
+<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>In this part, this paper introduce 4 important characteristics for implicit feedback:</p>
+<h2 id="No-negative-feedback"><a href="#No-negative-feedback" class="headerlink" title="No negative feedback"></a>No negative feedback</h2><p>For example, a user that did not watch a certain show might have done so because she dislikes the show or was not availale to watch it. So by observing the users behavior, we can infer which items they probably like and thus chose to consume. However, it’s hard to reliably infer which item a user did not like.</p>
+<h2 id="Implicit-feedback-is-inherently-noise"><a href="#Implicit-feedback-is-inherently-noise" class="headerlink" title="Implicit feedback is inherently noise"></a>Implicit feedback is inherently noise</h2><p>For example, we may view purchases behavior for an individual, but this does not necessarily indicate a positive view of thhe product. The item may have been purchased as a gift. Or a television is on a particular channel and a particular time, but the viewer might be asleep.</p>
+<h2 id="The-numerical-value-of-explicit-feedback-indicate-preference-whereas-the-numerical-value-of-implicit-feedback-indicates-confidence"><a href="#The-numerical-value-of-explicit-feedback-indicate-preference-whereas-the-numerical-value-of-implicit-feedback-indicates-confidence" class="headerlink" title="The numerical value of explicit feedback indicate preference, whereas the numerical value of implicit feedback indicates confidence"></a>The numerical value of explicit feedback indicate preference, whereas the numerical value of implicit feedback indicates confidence</h2><p>Numerical values of implicit feedback describe the frequency of actions, e.g., how much time the user watched a certain show, how frequently a user is buying a certain item, etc. A larger value is not indicating a higher preference.</p>
+<h2 id="Evaluation-of-implicit-feedback-recommender-requires-appropriate-measures"><a href="#Evaluation-of-implicit-feedback-recommender-requires-appropriate-measures" class="headerlink" title="Evaluation of implicit-feedback recommender requires appropriate measures"></a>Evaluation of implicit-feedback recommender requires appropriate measures</h2><p>For example, if we gather data on television viewing, it’s unclear how to evaluate a show that has been watched more than once, or how to compare two shows that are on at the same time, and hence cannot both be watched by the user.</p>
+<h1 id="preliminaries"><a href="#preliminaries" class="headerlink" title="preliminaries"></a>preliminaries</h1><p>notions:<br>users $u, v$<br>items $i, j$<br>observations $r_{ui}$, associate users and items. For explicit feedback datasets, those values would be ratings that indicate the preference by user $u$ and item $i$. For implicit datasets, $r_{ui}$ can indicate observations for user actions. For example, $r_{ui}$ can indicate the number of times $u$ purchased item $i$ or the time $u$ spent on webpage $i$.</p>
+<h1 id="previous-work"><a href="#previous-work" class="headerlink" title="previous work"></a>previous work</h1><h2 id="Neighborhood-models"><a href="#Neighborhood-models" class="headerlink" title="Neighborhood models"></a>Neighborhood models</h2><p>Its original form is user-oriented, see [1] for a good analysis.<br>Later, an analogous item-oriented approach [2,3] became popular. In those methods, a rating is estimated using known ratings made by the same user on similar items. In addition, item-oriented methods are more amenable to explaining the reasoning behind predictions. This is because users are familiar with items previously preferred by them, but usually do not know those allegedly like minded users.<br>Central to most item-oriented approaches is a similarity measure between items, where $s_{ij}$ denotes the similarity of $i$ and $j$. Frequently, it is based on the Pearson correlation coeffcient. Our goal is to predict $r_{ui}$--the unobserved value by user $u$ for item $i$. Using the similarity maesure, we identify the $k$ items rated by $u$, which are most similar to $i$. This set of $k$ neighbors is denoted by $S^k(i;u)$. The predicted value of $r_{ui}$ is taken as a weighted average of the ratings for neighboring items:</p>
+<script type="math/tex; mode=display">\hat{r}_{ui} = \frac{\sum_{j\in S^k(i;u)}s_{ij}r_{uj}}{\sum_{j\in S^k(i;u)}s_{ij}}</script><p>Some enhancements of this scheme are well practiced for explicit feedback, such as correcting for biases caused by varying mean ratings of different users and items.<br>All item-oriented models share a disadvantage in regards to implicit feedback - they do not provide the flexibility to make a distinction between user preferences and thhe confidence we might have in those preferences.</p>
+<h2 id="Latent-factor-models"><a href="#Latent-factor-models" class="headerlink" title="Latent factor models"></a>Latent factor models</h2><p>Latent factor models comprise an alternative approach to CF with the more holistic goal to uncover latent features that explain observed ratings; example include pLSA\cite{ref4}, neural networks\cite{ref5}, and Latent Dirichlet Allocation\cite{ref6}. We will focus on models that are induced by Singular Value Decomposition(SVD) of the user-item observations matrix. Many of the recent works, applied to explicit feedback datasets, suggested modeling directly only the observed ratings, while avoiding overfitting through an adequate regularized model, such as:</p>
+<script type="math/tex; mode=display">\min \limits_{x_*,y_*} \sum \limits_{r_{w,i}is known} (r_{ui}-x^T_uy_i)^2+\lambda (\lVert x_u\rVert^2+\lVert y_i \rVert^2)</script><p>Here, $\lambda$ is used for regularizing the model. Parameters are often learnt by stochastic gradient descent;</p>
+<h1 id="Our-model"><a href="#Our-model" class="headerlink" title="Our model"></a>Our model</h1><p>First, we need to formalize the notion of confidence which the $r_{ui}$ variables measure. To this end, let us introduce a set of binary variables $p_{ui}$, which indicates the preference of user $u$ to item $i$. The $p_{ui}$ values are derived by binarizing the $r_{ui}$ values:</p>
+<script type="math/tex; mode=display">p_{ui}=
+\begin{cases}
+1 & r_{ui}>0\\
+0 & r_{ui}=0
+\end{cases}</script><p>In other words, if a user $u$ consumed item $i$($r_{ui}&gt;0$), then we have an indication that $u$ likes $i$($p_{ui}=1$). On the other hand, if $u$ never comsumed $i$, we believe no preference($p_{ui}=0$).<br>We will have different confidence levels also among items that are indicated to be preferred by the user. In general, as $r_{ui}$ grows, we have a stronger indication that the user indeed like thhe item. Consequently, we introduce a set of variables, $c_{ui}$, which measure our confidence in observing $p_{ui}$. A plausible choice for $c_{ui}$ would be:</p>
+<script type="math/tex; mode=display">c_{ui} = 1 + \alpha r_{ui}</script><p>This way, we have some minimal confidence in $p_{ui}$ for every user-item pair, but as we observe more evidence for positive preference, our confidence in $p_{ui}=1$ increases accordingly. The rate of increase is controlled by the constant $\alpha$. In our experiments, setting $\alpha = 40$ was found to produce good results.<br>Our goal is to find a vector $x_u\in \mathbb{R}^f$ for each user $u$, and a vector $y_i\in \mathbb{R}^f$ for each item $i$ that will factor user preferences. These vectors will be known as the user-factors and the item-factors, respectively. Preferences are assumed to be the inner products: $p_{ui}=x^T_uy_i$. Essentially, the vectors strive to map users and items into a common latent vector space where they can be directly compared. This is similar to matrix factorization techniques which are popular for explicit feedback data, with two important distinction: (1) We need to account for the varying confidence levels, (2) Optimization should account for all possible $u, i$ pairs, rather than only these corresponding to observed data. Accordingly, factors are computed by minimizing the following cost function:</p>
+<script type="math/tex; mode=display">\min \limits_{x_*, y_*}\sum \limits_{u,i}c_{ui}(p_{ui}-x^T_uy_i)^2+\lambda(\sum\limits_{u}\lVert x_u\rVert^2+\sum\limits_{i}\lVert y_i\rVert^2)</script><p>The $\lambda(\sum\limits_{u}\lVert x_u\rVert^2+\sum\limits_{i}\lVert y_i\rVert^2)$ term is necessary for regularizing the model such that it will not overfit the training data.</p>
+<p>[1]. Herlocker J L, Konstan J A, Borchers A, et al. An algorithmic framework for performing collaborative filtering[C]. international acm sigir conference on research and development in information retrieval, 1999: 230-237.<br>[2]. Linden G, Smith B, York J C, et al. Amazon.com recommendations: item-to-item collaborative filtering[J]. IEEE Internet Computing, 2003, 7(1): 76-80.<br>[3]. Sarwar B M, Karypis G, Konstan J A, et al. Item-based collaborative filtering recommendation algorithms[J]. international world wide web conferences, 2001: 285-295.<br>[4]. Hofmann T. Latent semantic models for collaborative filtering[J]. ACM Transactions on Information Systems, 2004, 22(1): 89-115.<br>[5]. Salakhutdinov R, Mnih A, Hinton G E, et al. Restricted Boltzmann machines for collaborative filtering[C]. international conference on machine learning, 2007: 791-798.<br>[6]. Blei D M, Ng A Y, Jordan M I, et al. Latent Dirichlet Allocation[C]. neural information processing systems, 2002, 3(0): 601-608.</p>
 
       
     </div>
@@ -360,9 +385,9 @@
       
         <div class="post-tags">
           
-            <a href="/blog/tags/leetcode/" rel="tag"># LeetCode</a>
+            <a href="/blog/tags/machine-learning/" rel="tag"># machine learning</a>
           
-            <a href="/blog/tags/algorithm/" rel="tag"># algorithm</a>
+            <a href="/blog/tags/recommender-system/" rel="tag"># recommender system</a>
           
         </div>
       
@@ -375,8 +400,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/blog/2018/02/24/leetcode-algorithms-1/" rel="next" title="leetcode algorithms #1">
-                <i class="fa fa-chevron-left"></i> leetcode algorithms #1
+              <a href="/blog/2017/08/21/mysql双机热备/" rel="next" title="Hadoop HA安装二：MySQL双机热备">
+                <i class="fa fa-chevron-left"></i> Hadoop HA安装二：MySQL双机热备
               </a>
             
           </div>
@@ -385,8 +410,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/blog/2018/02/24/leetcode-algorithms-3/" rel="prev" title="leetcode algorithms #3">
-                leetcode algorithms #3 <i class="fa fa-chevron-right"></i>
+              <a href="/blog/2018/02/20/在github上部署hexo/" rel="prev" title="在GitHub上部署hexo博客">
+                在GitHub上部署hexo博客 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -539,7 +564,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Add-Two-Numbers"><span class="nav-number">1.</span> <span class="nav-text">Add Two Numbers</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Description"><span class="nav-number">1.1.</span> <span class="nav-text">Description</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Discussion"><span class="nav-number">1.2.</span> <span class="nav-text">Discussion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Solutions"><span class="nav-number">1.3.</span> <span class="nav-text">Solutions</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#No-negative-feedback"><span class="nav-number">1.1.</span> <span class="nav-text">No negative feedback</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Implicit-feedback-is-inherently-noise"><span class="nav-number">1.2.</span> <span class="nav-text">Implicit feedback is inherently noise</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-numerical-value-of-explicit-feedback-indicate-preference-whereas-the-numerical-value-of-implicit-feedback-indicates-confidence"><span class="nav-number">1.3.</span> <span class="nav-text">The numerical value of explicit feedback indicate preference, whereas the numerical value of implicit feedback indicates confidence</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Evaluation-of-implicit-feedback-recommender-requires-appropriate-measures"><span class="nav-number">1.4.</span> <span class="nav-text">Evaluation of implicit-feedback recommender requires appropriate measures</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#preliminaries"><span class="nav-number">2.</span> <span class="nav-text">preliminaries</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#previous-work"><span class="nav-number">3.</span> <span class="nav-text">previous work</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Neighborhood-models"><span class="nav-number">3.1.</span> <span class="nav-text">Neighborhood models</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Latent-factor-models"><span class="nav-number">3.2.</span> <span class="nav-text">Latent factor models</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Our-model"><span class="nav-number">4.</span> <span class="nav-text">Our model</span></a></li></ol></div>
             
 
           </div>

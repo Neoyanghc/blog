@@ -348,7 +348,7 @@
       
 
       
-        <p>Facebook 2017年的卷积版seq2seq。卷积加注意力机制，外加GLU，训练速度很快，因为RNN训练时依靠上一个元素的隐藏状态，CNN可以并行训练。<br><a id="more"></a></p>
+        <p>ICML 2017. Facebook 2017年的卷积版seq2seq。卷积加注意力机制，外加GLU，训练速度很快，因为RNN训练时依靠上一个元素的隐藏状态，CNN可以并行训练。<br><a id="more"></a></p>
 <p>原文：<a href="https://arxiv.org/abs/1705.03122" target="_blank" rel="noopener">Convolutional Sequence to Sequence Learning</a></p>
 <h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>流行的序列到序列的学习方法将输入的序列通过一个循环神经网络映射到一个可变长度的输出序列。我们引入了一个完全基于卷积的神经网络。对比循环神经网络模型，在训练过程中对所有元素的运算都可以完全并行化，而且可以充分利用GPU资源，优化过程也会变得更加容易，因为非线性单元的个数是保持不变的，而且与输入长度无关。我们使用的门控线性单元（GLU）可以帮助梯度传播，我们在每个解码层上部署了一个分离的注意力模块。我们算法表现在WMT’14英语-德语和WMT’14英语-法语两个数据集上，都要比Wu等人的深度LSTM拥有更高的精度，且在GPU和CPU上训练速度都快了一个量级。</p>
 <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>序列到序列模型在很多任务中都大获成功，如机器翻译、语音识别（Sutskever et al., 201v4; Chorowski et al., 2015），文本摘要（Rush et al., 2015; Nallapati et al., 2016; Shen et al., 2016）。当今主流的方法将输入序列使用一个双向循环神经网络进行编码，并且用一个循环神经网络生成一个可变长的输出序列，这两个接口都使用了软注意力机制（Bahdanau et al., 2014; Luong et al., 2015）。在机器翻译中，这个架构比传统的大边界阶段型模型（Sennrich et al., 2016b; Zhou et al., 2016; Wu et al., 2016）表现的更好。<br>卷积神经网络尽管有很多优点，但其在序列模型中并不是很常见（Waibel et al., 1989; LeCun &amp; Bengio, 1995）。对比循环神经网络，卷积可以对定长的内容生成表示，然而，有效的内容长度可以很简单的通过堆叠卷积层变得逐渐增加。这就使得我们可以通过建模的方法来精确地控制依赖之间的最大长度。卷积神经网络不需要依赖于之前时间步的计算，因此可以在序列中的任意一个地方进行并行运算。对比RNN，RNN需要维持一个含有整个过去信息的隐藏状态，导致对序列进行计算时不能并行。<br>多层卷积神经网络在整个输入序列上创建了层次表示，在这个层次表示中，先输入的元素在底层进行交互，而后输入的元素在高层进行交互。层级结构相比于链式结构的循环神经网络，提供了一条更短的路径来捕获长范围的依赖关系。比如，我们可以用一个n个单词的滑动窗，使用复杂度为$O(\frac{n}{k})$的卷积操作，卷积核宽度为k，来获取单词间的关系，提取到一个特征表示，如果用循环神经网络，复杂度为$O(n)$。卷积神经网络的输入会被放入一个有着固定数目的卷积核和非线性单元的网络中，然而循环神经网络对第一个单词进行了n次操作和非线性变换后，对最后一个单词只进行了一组操作。加在输入上的固定数目的非线性操作也可以简化学习过程。<br>最近在卷积神经网络应用于序列建模的工作，像Bradbury et al.(2016)，他们在一连串的卷积层间引入了循环池。Kalchbrenner et al.(2016)解决了没有注意力机制的神经机器翻译。然而，这些方法的表现没有一个在大型的基准数据集上超越当前最先进的技术。门控卷积在之前已经被Meng et al.(2015)用于了机器翻译，但是他们的评估方法受限于小数据集，而且模型与传统的基于计数的模型相串联。部分是卷积层的架构在大数据集上展现了更好的效果但是他们的解码器仍然是循环的。<br>在这篇文章中，我们提出了一个针对序列到序列的模型，这个模型完全是卷积的。我们的模型使用了门控线性单元（Dauphin et al., 2016）和残差连接（He et al., 2015a）。我们在每个解码层也使用了注意力机制，而且显示出每个注意力层只加了可以忽略不计的overhead。这些方法的融合可以让我们处理大规模的数据集。<br>我们在多个大型的机器翻译数据集上评估了我们的方法，并且和文章中现有的最好的架构们进行了对比与总结。在WMT’16英语-罗马尼亚语数据集上，我们的算法是最先进的，比之前最好的结果要好1.9 BLEU。在WMT’14英语-德语上，我们比Wu et al.(2016)的强LSTM好0.5 BLEU。在WMT’14英语-法语上，我们比Wu et al.(2016)的可能性训练系统好1.6 BLEU。除此以外，我们的模型可以翻译从未见过的句子，速度比Wu et al.(2016)的算法在GPU和CPU上都快出一个数量级。</p>
@@ -381,9 +381,9 @@
       
         <div class="post-tags">
           
-            <a href="/blog/tags/deep-learning/" rel="tag"># deep learning</a>
-          
             <a href="/blog/tags/machine-learning/" rel="tag"># machine learning</a>
+          
+            <a href="/blog/tags/deep-learning/" rel="tag"># deep learning</a>
           
             <a href="/blog/tags/machine-translation/" rel="tag"># machine translation</a>
           
@@ -493,7 +493,7 @@
               
                 <a href="/blog/archives/">
               
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">17</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -504,7 +504,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/blog/categories/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -515,7 +515,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/blog/tags/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
