@@ -75,14 +75,17 @@
 
 
 
+<meta name="description" content="Davidham的博客，写点学习笔记啥的">
 <meta property="og:type" content="website">
-<meta property="og:title" content="tags">
-<meta property="og:url" content="http://yoursite.com/tags/index.html">
+<meta property="og:title" content="categories">
+<meta property="og:url" content="http://yoursite.com/categories/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
+<meta property="og:description" content="Davidham的博客，写点学习笔记啥的">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-02-19T13:29:57.449Z">
+<meta property="og:updated_time" content="2018-02-19T13:29:39.253Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="tags">
+<meta name="twitter:title" content="categories">
+<meta name="twitter:description" content="Davidham的博客，写点学习笔记啥的">
 
 
 
@@ -114,7 +117,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/tags/"/>
+  <link rel="canonical" href="http://yoursite.com/categories/"/>
 
 
 
@@ -155,7 +158,7 @@
       </a>
     </div>
       
-        <p class="site-subtitle"></p>
+        <p class="site-subtitle">修电脑的</p>
       
   </div>
 
@@ -252,7 +255,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Davidham">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="image" content="/blog/uploads/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -363,7 +366,8 @@
 <script type="math/tex; mode=display">\Theta \ast \mathcal{G} x = \Theta(L)x \approx \sum_{k=0}^{K-1}\theta_k T_k(\widetilde{L})x</script><p>其中$T_k(\widetilde{L}) \in \mathbb{R}^{n \times n}$是k阶切比雪夫多项式对缩放后（scaled）的拉普拉斯矩阵$\widetilde{L}=2L/\lambda_{max}-I_n$。通过递归地使用趋近后的切比雪夫多项式计算K阶卷积操作，式2的复杂度可以被降低至$O(K\vert \varepsilon \vert)$，如式3所示[Defferrard <em>et al.</em>, 2016]。</p>
 <p><strong>1阶近似</strong><br>一个针对层的线性公式可以由堆叠多个使用拉普拉斯矩阵的一阶近似的局部图卷积层[Kipf and Welling, 2016]。结果就是，这样可以构建出一个深的网络，这个网络可以深入地恢复空间信息并且不需要指定多项式中的参数。由于在神经网络中要缩放和归一化，我们可以进一步假设$\lambda_{max} \approx 2$。因此，式3可以简写为<br>\begin{aligned}<br>\Theta \ast \mathcal{G}x \approx &amp; \theta_0x+\theta_1(\frac{2}{\lambda_{max}}L-I_n)x\\<br>\approx &amp; \theta_0 x- \theta_1(D^{-\frac{1}{2}} W D^{-\frac{1}{2}}) x<br>\end{aligned}<br>其中，$\theta_0$，$\theta_1$是核的两个共享参数。为了约束参数并为稳定数值计算，$\theta_0$和$\theta_1$用一个参数$\theta$来替换，$\theta=\theta_0=-\theta_1$；$W$和$D$是通过$\widetilde{W}=W+I_n$和$\widetilde{D}_{ii}=\sum_j\widetilde{W}_{ij}$重新归一化得到的。之后，图卷积就可以表达为<br>\begin{aligned}<br>\Theta \ast \mathcal{G} x = &amp; \theta(I_n + D^{-\frac{1}{2}} W D^{\frac{1}{2}})x\\<br>= &amp; \theta (\widetilde{D}^{-\frac{1}{2}} \widetilde{W} \widetilde{D}^{-\frac{1}{2}})x<br>\end{aligned}<br>竖直地堆叠一阶近似的图卷积可以获得和平行的K阶卷积相同的效果，所有的卷积可以从一个顶点的$K-1$阶邻居中获取到信息。在这里，$K$是连续卷积操作的次数或是模型中的卷积层数。进一步说，针对层的线性结构是节省参数的，并且对大型的图来说是效率很高的，因为多项式趋近的阶数为1。</p>
 <p><strong>图卷积的泛化</strong><br>图卷积操作$\ast \mathcal{G}$也可以被扩展到多维张量上。对于一个有着$C_i$个通道的信号$X \in \mathbb{R}^{n \times C_i}$，图卷积操作可以扩展为</p>
-<script type="math/tex; mode=display">y_j = \sum_{i=1}^{C_i} \Theta_{i,j}(L) x_i \in \mathbb{R}^n, 1 \leq j \leq C_o</script><p>其中，$C_i \times C_o$个向量是切比雪夫系数$\Theta_{i,j} \in \mathbb{R}^K$（$C_i$，$C_o$分别是feature map的输入和输出大小）。针对二维变量的图卷积表示为$\Theta \ast \mathcal{G} X$，其中$\Theta \in \mathbb{R}^{K \times C_i \times C_o}$。需要注意的是，输入的交通预测是由$M$帧路网组成的，如图1所示。每帧$v_t$可以被视为一个矩阵，它的第$i$列是图$\mathcal{G_t}$中第$i$个顶点的一个为$C_i$维的值，也就是$X \in \mathbb{R}^{n \times C_i}$（在这个例子中，$C_i=1$）。对于$M$中的每个时间步$t$，相同的核与相同的图卷积操作是在$X_t \in \mathbb{R}^{n \times C_i}$中并行进行的。因此，图卷积操作也可以泛化至三维，记为$\Theta \ast \mathcal{G} \mathbf{X}$，其中$\mathbf{X} \in \mathbb{R}^{M \times n \times C_i}$</p>
+<script type="math/tex; mode=display">y_j = \sum_{i=1}^{C_i} \Theta_{i,j}(L) x_i \in \mathbb{R}^n, 1 \leq j \leq C_o</script><p>其中，$C_i \times C_o$个向量是切比雪夫系数$\Theta_{i,j} \in \mathbb{R}^K$（$C_i$，$C_o$分别是feature map的输入和输出大小）。针对二维变量的图卷积表示为$\Theta \ast \mathcal{G} X$，其中$\Theta \in \mathbb{R}^{K \times C_i \times C_o}$。需要注意的是，输入的交通预测是由$M$帧路网组成的，如图1所示。每帧$v_t$可以被视为一个矩阵，它的第$i$列是图$\mathcal{G_t}$中第$i$个顶点的一个为$C_i$维的值，也就是$X \in \mathbb{R}^{n \times C_i}$（在这个例子中，$C_i=1$）。对于$M$中的每个时间步$t$，相同的核与相同的图卷积操作是在$X_t \in \mathbb{R}^{n \times C_i}$中并行进行的。因此，图卷积操作也可以泛化至三维，记为$\Theta \ast \mathcal{G} \mathcal{X}$，其中$\mathcal{X} \in \mathbb{R}^{M \times n \times C_i}$</p>
+<h2 id="抽取时间特征的门控卷积神经网络"><a href="#抽取时间特征的门控卷积神经网络" class="headerlink" title="抽取时间特征的门控卷积神经网络"></a>抽取时间特征的门控卷积神经网络</h2><p>尽管基于RNN的模型可以广泛的应用于时间序列分析，用于交通预测的循环神经网络仍然会遇到费时的迭代，复杂的门控机制，对动态变化的响应慢。相反的，CNN训练快，结构简单，而且不依赖于前一步。受到[Gehring <em>et al.</em>, 2017]的启发，我们在时间轴上部署了整块的卷积结构，用来捕获交通流的动态时间特征。这个特殊的设计可以让并行而且可控的训练过程通过多层卷积结构形成层次表示。<br>如图2右侧所示，时间卷积层包含了一个一维卷积，核的宽度为$K_t$，之后接了一个门控线性单元(GLU)作为激活。</p>
 
       
     </div>
@@ -472,8 +476,12 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
+              <img class="site-author-image" itemprop="image"
+                src="/blog/uploads/avatar.jpg"
+                alt="Davidham" />
+            
               <p class="site-author-name" itemprop="name">Davidham</p>
-              <p class="site-description motion-element" itemprop="description"></p>
+              <p class="site-description motion-element" itemprop="description">Davidham的博客，写点学习笔记啥的</p>
           </div>
 
           <nav class="site-state motion-element">
@@ -483,7 +491,7 @@
               
                 <a href="/blog/archives/">
               
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -494,7 +502,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/blog/categories/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -505,7 +513,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/blog/tags/index.html">
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -515,6 +523,22 @@
 
           
 
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Davidham3" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://weibo.com/Davidham3" target="_blank" title="微博">
+                      
+                        <i class="fa fa-fw fa-globe"></i>微博</a>
+                  </span>
+                
+            </div>
           
 
           
@@ -538,7 +562,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">2.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#准备工作"><span class="nav-number">3.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#路网上的交通预测"><span class="nav-number">3.1.</span> <span class="nav-text">路网上的交通预测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图上的卷积"><span class="nav-number">3.2.</span> <span class="nav-text">图上的卷积</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提出的模型"><span class="nav-number">4.</span> <span class="nav-text">提出的模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络架构"><span class="nav-number">4.1.</span> <span class="nav-text">网络架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#提取空间特征的图卷积神经网络"><span class="nav-number">4.2.</span> <span class="nav-text">提取空间特征的图卷积神经网络</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">2.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#准备工作"><span class="nav-number">3.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#路网上的交通预测"><span class="nav-number">3.1.</span> <span class="nav-text">路网上的交通预测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图上的卷积"><span class="nav-number">3.2.</span> <span class="nav-text">图上的卷积</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提出的模型"><span class="nav-number">4.</span> <span class="nav-text">提出的模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络架构"><span class="nav-number">4.1.</span> <span class="nav-text">网络架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#提取空间特征的图卷积神经网络"><span class="nav-number">4.2.</span> <span class="nav-text">提取空间特征的图卷积神经网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抽取时间特征的门控卷积神经网络"><span class="nav-number">4.3.</span> <span class="nav-text">抽取时间特征的门控卷积神经网络</span></a></li></ol></li></ol></div>
             
 
           </div>
