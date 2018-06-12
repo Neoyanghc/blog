@@ -64,7 +64,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="虚拟化," />
 
 
 
@@ -75,17 +75,18 @@
 
 
 
-<meta name="description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
-<meta property="og:type" content="website">
-<meta property="og:title" content="categories">
-<meta property="og:url" content="http://yoursite.com/categories/index.html">
+<meta name="description" content="vcenter迁移虚拟机的时候，迁移之后虚拟机网络不通。">
+<meta name="keywords" content="虚拟化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="迁移CentOS7虚拟机mac和网卡名变换导致网络不同的问题">
+<meta property="og:url" content="http://yoursite.com/2018/06/12/迁移centos7虚拟机mac和网卡名变换导致网络不同的问题/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
+<meta property="og:description" content="vcenter迁移虚拟机的时候，迁移之后虚拟机网络不通。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-02-19T13:29:39.253Z">
+<meta property="og:updated_time" content="2018-06-12T03:26:05.291Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="categories">
-<meta name="twitter:description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
+<meta name="twitter:title" content="迁移CentOS7虚拟机mac和网卡名变换导致网络不同的问题">
+<meta name="twitter:description" content="vcenter迁移虚拟机的时候，迁移之后虚拟机网络不通。">
 
 
 
@@ -117,7 +118,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/categories/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/06/12/迁移centos7虚拟机mac和网卡名变换导致网络不同的问题/"/>
 
 
 
@@ -267,10 +268,10 @@
         
           <div class="tag-cloud">
             <div class="tag-cloud-title">
-                目前共计 19 个标签
+                目前共计 20 个标签
             </div>
             <div class="tag-cloud-tags">
-              <a href="/blog/tags/hadoop/" style="font-size: 16.5px; color: #9d9d9d">Hadoop</a> <a href="/blog/tags/leetcode/" style="font-size: 21px; color: #6f6f6f">LeetCode</a> <a href="/blog/tags/ner/" style="font-size: 12px; color: #ccc">NER</a> <a href="/blog/tags/resnet/" style="font-size: 21px; color: #6f6f6f">ResNet</a> <a href="/blog/tags/algorithm/" style="font-size: 21px; color: #6f6f6f">algorithm</a> <a href="/blog/tags/computer-vision/" style="font-size: 21px; color: #6f6f6f">computer vision</a> <a href="/blog/tags/deep-learning/" style="font-size: 25.5px; color: #404040">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 12px; color: #ccc">graph convolutional network</a> <a href="/blog/tags/hexo/" style="font-size: 12px; color: #ccc">hexo</a> <a href="/blog/tags/machine-learning/" style="font-size: 30px; color: #111">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 16.5px; color: #9d9d9d">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 12px; color: #ccc">natural language processing</a> <a href="/blog/tags/recommender-system/" style="font-size: 12px; color: #ccc">recommender system</a> <a href="/blog/tags/seq2seq/" style="font-size: 12px; color: #ccc">seq2seq</a> <a href="/blog/tags/style-transfer/" style="font-size: 12px; color: #ccc">style transfer</a> <a href="/blog/tags/super-resolution/" style="font-size: 16.5px; color: #9d9d9d">super-resolution</a> <a href="/blog/tags/归一化/" style="font-size: 12px; color: #ccc">归一化</a> <a href="/blog/tags/机器学习/" style="font-size: 12px; color: #ccc">机器学习</a> <a href="/blog/tags/神经网络/" style="font-size: 12px; color: #ccc">神经网络</a>
+              <a href="/blog/tags/hadoop/" style="font-size: 16.5px; color: #9d9d9d">Hadoop</a> <a href="/blog/tags/leetcode/" style="font-size: 21px; color: #6f6f6f">LeetCode</a> <a href="/blog/tags/ner/" style="font-size: 12px; color: #ccc">NER</a> <a href="/blog/tags/resnet/" style="font-size: 21px; color: #6f6f6f">ResNet</a> <a href="/blog/tags/algorithm/" style="font-size: 21px; color: #6f6f6f">algorithm</a> <a href="/blog/tags/computer-vision/" style="font-size: 21px; color: #6f6f6f">computer vision</a> <a href="/blog/tags/deep-learning/" style="font-size: 25.5px; color: #404040">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 12px; color: #ccc">graph convolutional network</a> <a href="/blog/tags/hexo/" style="font-size: 12px; color: #ccc">hexo</a> <a href="/blog/tags/machine-learning/" style="font-size: 30px; color: #111">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 16.5px; color: #9d9d9d">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 12px; color: #ccc">natural language processing</a> <a href="/blog/tags/recommender-system/" style="font-size: 12px; color: #ccc">recommender system</a> <a href="/blog/tags/seq2seq/" style="font-size: 12px; color: #ccc">seq2seq</a> <a href="/blog/tags/style-transfer/" style="font-size: 12px; color: #ccc">style transfer</a> <a href="/blog/tags/super-resolution/" style="font-size: 16.5px; color: #9d9d9d">super-resolution</a> <a href="/blog/tags/归一化/" style="font-size: 12px; color: #ccc">归一化</a> <a href="/blog/tags/机器学习/" style="font-size: 12px; color: #ccc">机器学习</a> <a href="/blog/tags/神经网络/" style="font-size: 12px; color: #ccc">神经网络</a> <a href="/blog/tags/虚拟化/" style="font-size: 12px; color: #ccc">虚拟化</a>
             </div>
           </div>
         
@@ -330,7 +331,7 @@
               
                 <a href="/blog/archives/">
               
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -352,7 +353,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/blog/tags/index.html">
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
