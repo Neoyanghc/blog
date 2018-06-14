@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/blog/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/blog/css/main.css?v=6.0.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png?v=6.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png?v=6.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png?v=6.0.0">
+
+
+  <link rel="mask-icon" href="/blog/images/logo.svg?v=6.0.0" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
+<meta property="og:type" content="website">
+<meta property="og:title" content="categories">
+<meta property="og:url" content="http://yoursite.com/categories/index.html">
+<meta property="og:site_name" content="Davidham&#39;s blog">
+<meta property="og:description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-02-19T13:29:39.253Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="categories">
+<meta name="twitter:description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/blog/',
+    scheme: 'Gemini',
+    version: '6.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/categories/"/>
+
+
+
+
+
+  <title>Gaussian Naive Bayes | Davidham's blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c30fad310ff0f715b4bafabc30583f7d";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/blog/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Davidham's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">修电脑的</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/blog/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/blog/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/blog/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/blog/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/blog/2018/06/14/gaussian-naive-bayes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Davidham">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/blog/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Davidham's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Gaussian Naive Bayes</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-14T19:33:30+08:00">2018-06-14</time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>假设连续型随机变量服从高斯分布的朴素贝叶斯<br><a id="more"></a></p>
+<h1 id="朴素贝叶斯"><a href="#朴素贝叶斯" class="headerlink" title="朴素贝叶斯"></a>朴素贝叶斯</h1><p>朴素贝叶斯是基于贝叶斯定理与特征条件独立假设的分类器。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>朴素贝叶斯通过给定训练集</p>
+<script type="math/tex; mode=display">T = \{(x_1, y_1), (x_2, y_2), ···, (x_N, y_N)\}</script><p>训练学习到联合概率分布$P(X, Y)$，通过先验概率分布</p>
+<script type="math/tex; mode=display">P(Y = c_k), k = 1,2,...,K</script><p>和条件概率分布</p>
+<script type="math/tex; mode=display">P(X = x \mid Y = c_k) = P(X^{(1)} = x^{(1)}, ···, X^{(n)} = x^{(n)} \mid Y = c_k), k=1,2,...,K</script><p>学习到联合概率分布$P(X, Y)$<br>由特征相互独立假设，可得</p>
+<script type="math/tex; mode=display">P(X = x \mid Y = c_k) = \prod^n_{j=1}P(X^{(j)}=x^{(j)} \mid Y = c_k)</script><p>分类时，对给定的输入$x$，模型计算$P(Y = c_k \mid X = x)$，将后验概率最大的类作为$x$的类输出，后验概率计算如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+    P(Y = c_k \mid X = x) &= \frac{P(X = x \mid Y = c_k)P(Y = c_k)}{\sum_kP(X = x \mid Y = c_k)P(Y = c_k)} \\
+    & = \frac{P(Y = c_k) \prod_j P(X^{(j)} = x^{(j)} \mid Y = c_k)}{\sum_k P(Y = c_k) \prod_j P(X^{(j)} = x^{(j)} \mid Y = c_k)}
+\end{aligned}</script><p>由于分母对任意的$c_k$都相同，故朴素贝叶斯分类器可以表示为：</p>
+<script type="math/tex; mode=display">
+y = \arg\max\limits_{c_k}P(Y = c_k) \prod_j P(X^{(j)} = x^{(j)} \mid Y = c_k)</script><h2 id="参数估计"><a href="#参数估计" class="headerlink" title="参数估计"></a>参数估计</h2><ol>
+<li><p>如果特征是离散型随机变量，可以使用频率用来估计概率。</p>
+<script type="math/tex; mode=display">P(Y = c_k) = \frac{\sum^N_{i=1}I(y_i = c_k)}{N}, k=1,2,...,K</script><p>设第$j$个特征的取值的集合为${a_{j1}, a_{j2}, …, a_{js_j}}$，则</p>
+<script type="math/tex; mode=display">
+\begin{gathered}P(X^{(j)} = a_{jl} \mid Y = c_k) = \frac{\sum^N_{i=1}I(x^{(j)}_i = a_{jl}, y_i = c_k)}{\sum^N_{i=1}I(y_i = c_k)}\\
+j=1,2,...,n; \ l=1,2,...,S_j; \ k=1,2,...,K
+\end{gathered}</script></li>
+<li><p>如果特征是连续型随机变量，可以假设正态分布来估计条件概率。</p>
+<script type="math/tex; mode=display">P(X^{(j)} = a_{jl} \mid Y = c_k) = \frac{1}{\sqrt{2 \pi \sigma^2_{c_k,j}}}\exp{(- \frac{(a_{jl} - \mu_{c_k,j})^2}{2 \sigma^2_{c_k,j}})}</script><p>这里$\mu_{c_k,j}$和$\sigma^2_{c_k,j}$分别为$Y = c_k$时，第$j$个特征的均值和方差。</p>
+</li>
+</ol>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>因为二值分类和$n$值分类是一样的，故以下代码只实现了$n$值分类的朴素贝叶斯分类器。<br>仓库:<a href="https://github.com/Davidham3/naive_bayes" target="_blank" rel="noopener">https://github.com/Davidham3/naive_bayes</a><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">readDataSet</span><span class="params">(filename, frequency = <span class="number">0</span>, training_set_ratio = <span class="number">0.7</span>, shuffle = True)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    read the dataset file, and shuffle, remove all punctuations</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Parameters</span></span><br><span class="line"><span class="string">    ----------</span></span><br><span class="line"><span class="string">    frequency: int, which means you will select the words that appeared more than the frequency you specified</span></span><br><span class="line"><span class="string">                for example, if you set frequency equals 1, the program will return all words that they have </span></span><br><span class="line"><span class="string">                appeared more than once.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns</span></span><br><span class="line"><span class="string">    ----------</span></span><br><span class="line"><span class="string">    trainX: ndarray, the training data, the shape of it is (number of samples, number of features)</span></span><br><span class="line"><span class="string">    trainY: ndarray, the labels of training data, the shape of it is (number of samples, )</span></span><br><span class="line"><span class="string">    words: tuple, all words you select, each word maps the column of trainX</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="keyword">with</span> open(filename, <span class="string">'r'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        text = f.read().strip().split(<span class="string">'\n'</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> shuffle:</span><br><span class="line">        np.random.shuffle(text)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">import</span> re</span><br><span class="line">    <span class="comment"># split all words by space and add them with their labels to the list "dataset"</span></span><br><span class="line">    dataset = []</span><br><span class="line">    <span class="keyword">for</span> index, i <span class="keyword">in</span> enumerate(text):</span><br><span class="line">        t = i.split(<span class="string">'\t'</span>)</span><br><span class="line">        label = t[<span class="number">0</span>]</span><br><span class="line">        t1 = re.sub(<span class="string">"[\.\!\/_,$%^*(+\"\']+|[+——！，。？?、~@#￥%……&amp;*（）]+"</span>, <span class="string">""</span>, t[<span class="number">1</span>])</span><br><span class="line">        dataset.append((label, re.split(re.compile(<span class="string">'\s+'</span>), t1)))</span><br><span class="line">    </span><br><span class="line">    print(<span class="string">"dataset's size is"</span>, len(dataset))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># split labels and words</span></span><br><span class="line">    labels, text = zip(*dataset)</span><br><span class="line">    </span><br><span class="line">    split_line = int(len(text) * training_set_ratio)</span><br><span class="line">    train_text = text[:split_line]</span><br><span class="line">    train_labels = labels[:split_line]</span><br><span class="line">    test_text = text[split_line:]</span><br><span class="line">    test_labels = labels[split_line:]</span><br><span class="line">    <span class="keyword">return</span> train_text, train_labels, test_text, test_labels</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">preprocessing_training_data</span><span class="params">(text, labels)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    use bag of words to build features for training data</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Parameters</span></span><br><span class="line"><span class="string">    ----------</span></span><br><span class="line"><span class="string">    text: lists, each element contains a list of words in a sentence</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    labels: lists, each element is the label of the sample corresponding to the element in text</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns</span></span><br><span class="line"><span class="string">    ----------</span></span><br><span class="line"><span class="string">    trainX: ndarray, training data, the shape of it is (number of samples, number of features)</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    trainY: ndarray, labels of training data, the shape of it is (number of samples, )</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    words_table: dict, key is words, value is the index in bag of words</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    labels_table: dict, key is the label, value is the index that represents the corresponding label</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    bag_of_words = tuple(set(word <span class="keyword">for</span> words <span class="keyword">in</span> text <span class="keyword">for</span> word <span class="keyword">in</span> words))</span><br><span class="line">    words_table = &#123;i: index <span class="keyword">for</span> index, i <span class="keyword">in</span> enumerate(bag_of_words)&#125;</span><br><span class="line">    trainX = np.empty((len(text), len(bag_of_words)))</span><br><span class="line">    <span class="keyword">for</span> index, words <span class="keyword">in</span> enumerate(text):</span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> words:</span><br><span class="line">            trainX[index, words_table[word]] += <span class="number">1</span></span><br><span class="line">    labels_table = &#123;i: index <span class="keyword">for</span> index, i <span class="keyword">in</span> enumerate(set(labels))&#125;</span><br><span class="line">    trainY = np.array([labels_table[i] <span class="keyword">for</span> i <span class="keyword">in</span> labels])</span><br><span class="line">    <span class="keyword">return</span> trainX, trainY, words_table, labels_table</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">preprocessing_testing_data</span><span class="params">(text, labels, words_table, labels_table)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    use bag of words to build features for testing data</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Parameters</span></span><br><span class="line"><span class="string">    ----------</span></span><br><span class="line"><span class="string">    text: lists, each element contains a list of words in a sentence</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    labels: lists, each element is the label of the sample corresponding to the element in text</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    words_table: dict, key is words, value is the index in bag of words</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    labels_table: dict, key is the label, value is the index that represents the corresponding label</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns</span></span><br><span class="line"><span class="string">    ----------</span></span><br><span class="line"><span class="string">    testX: ndarray, testing data, the shape of it is (number of samples, number of features)</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    testY: ndarray, labels of testing data, the shape of it is (number of samples, )</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    testX = np.empty((len(text), len(words_table)))</span><br><span class="line">    <span class="keyword">for</span> index, words <span class="keyword">in</span> enumerate(text):</span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> words:</span><br><span class="line">            col = words_table.get(word)</span><br><span class="line">            <span class="keyword">if</span> col <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">                testX[index, words_table[word]] += <span class="number">1</span></span><br><span class="line">    testY = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> labels:</span><br><span class="line">        l = labels_table.get(i)</span><br><span class="line">        <span class="keyword">if</span> l <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">            testY.append(l)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            labels_table[i] = len(labels_table)</span><br><span class="line">            testY.append(labels_table[i])</span><br><span class="line">    testY = np.array(testY)</span><br><span class="line">    <span class="keyword">return</span> testX, testY</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GaussianNB</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    Gaussian naive bayes for continous features</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.proability_of_y = &#123;&#125;</span><br><span class="line">        self.mean = &#123;&#125;</span><br><span class="line">        self.var = &#123;&#125;</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fit</span><span class="params">(self, trainX, trainY)</span>:</span></span><br><span class="line">        <span class="string">'''</span></span><br><span class="line"><span class="string">        use trainX and trainY to compute the prior probability for each class</span></span><br><span class="line"><span class="string">        and then compute the mean and variance for each features for each class</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Parameters</span></span><br><span class="line"><span class="string">        ----------</span></span><br><span class="line"><span class="string">        trainX: ndarray, training data, the shape of it is (number of samples, number of features)</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">        trainY: ndarray, labels of training data, the shape of it is (number of samples, )</span></span><br><span class="line"><span class="string">        '''</span></span><br><span class="line">        labels = set(trainY.tolist())</span><br><span class="line">        <span class="keyword">for</span> y <span class="keyword">in</span> labels:</span><br><span class="line">            x = trainX[trainY == y, :]</span><br><span class="line">            self.proability_of_y[y] = x.shape[<span class="number">0</span>] / trainX.shape[<span class="number">0</span>]</span><br><span class="line">            self.mean[y] = x.mean(axis = <span class="number">0</span>)</span><br><span class="line">            var = x.var(axis = <span class="number">0</span>)</span><br><span class="line">            var[var == <span class="number">0</span>] += <span class="number">1e-9</span> * var.max()</span><br><span class="line">            self.var[y] = var</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">predict</span><span class="params">(self, testX)</span>:</span></span><br><span class="line">        <span class="string">'''</span></span><br><span class="line"><span class="string">        predict the labels of testX</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Parameters</span></span><br><span class="line"><span class="string">        ----------</span></span><br><span class="line"><span class="string">        testX: ndarray, testing data, the shape of it is (number of samples, number of features)</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">        Returns</span></span><br><span class="line"><span class="string">        ----------</span></span><br><span class="line"><span class="string">        ndarray: each element is a str variable, which represent the label of corresponding testing data</span></span><br><span class="line"><span class="string">        '''</span></span><br><span class="line">        results = np.empty((testX.shape[<span class="number">0</span>], len(self.proability_of_y)))</span><br><span class="line">        labels = []</span><br><span class="line">        <span class="keyword">for</span> index, (label, py) <span class="keyword">in</span> enumerate(self.proability_of_y.items()):</span><br><span class="line">            a = np.exp(- ((testX - self.mean[label]) ** <span class="number">2</span>) / (<span class="number">2</span> * self.var[label]) ) / np.sqrt(<span class="number">2</span> * np.pi * self.var[label])</span><br><span class="line">            a[a == <span class="number">0</span>] += <span class="number">1e-9</span> * a.max()</span><br><span class="line">            results[:, index] = np.sum(np.log(a), axis = <span class="number">1</span>) * py</span><br><span class="line">            labels.append(label)</span><br><span class="line">        <span class="keyword">return</span> np.array(labels)[np.argmax(results, axis = <span class="number">1</span>)]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">accuracy</span><span class="params">(prediction, testY)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    compute accuracy for prediction</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Parameters</span></span><br><span class="line"><span class="string">    ----------</span></span><br><span class="line"><span class="string">    prediction: ndarray, the prediction generated by the classifier</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    testY: ndarray, true labels</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns</span></span><br><span class="line"><span class="string">    ----------</span></span><br><span class="line"><span class="string">    float, accuracy</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="keyword">return</span> np.sum((prediction - testY) == <span class="number">0</span>) / testY.shape[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">datadir = <span class="string">'SMSSpamCollection'</span></span><br><span class="line">train_text, train_labels, test_text, test_labels = readDataSet(datadir)</span><br><span class="line">trainX, trainY, words_table, labels_table = preprocessing_training_data(train_text, train_labels)</span><br><span class="line">print(<span class="string">'training data shape:'</span>, trainX.shape, trainY.shape)</span><br><span class="line">testX, testY = preprocessing_testing_data(test_text, test_labels, words_table, labels_table)</span><br><span class="line">print(<span class="string">'testing data shape:'</span>, testX.shape, testY.shape)</span><br><span class="line">a = GaussianNB()</span><br><span class="line">a.fit(trainX, trainY)</span><br><span class="line">r = a.predict(testX)</span><br><span class="line">print(<span class="string">'accuracy:'</span>, accuracy(r, testY))</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/blog/tags/machine-learning/" rel="tag"># machine learning</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/2018/06/12/迁移centos7虚拟机mac和网卡名变换导致网络不同的问题/" rel="next" title="迁移CentOS7虚拟机mac和网卡名变换导致网络不同的问题">
+                <i class="fa fa-chevron-left"></i> 迁移CentOS7虚拟机mac和网卡名变换导致网络不同的问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzEwMS8xMzYzNw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/blog/uploads/avatar.jpg"
+                alt="Davidham" />
+            
+              <p class="site-author-name" itemprop="name">Davidham</p>
+              <p class="site-description motion-element" itemprop="description">Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/blog/archives/">
+              
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/blog/categories/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/blog/tags/index.html">
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Davidham3" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://weibo.com/Davidham3" target="_blank" title="微博">
+                      
+                        <i class="fa fa-fw fa-globe"></i>微博</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#朴素贝叶斯"><span class="nav-number">1.</span> <span class="nav-text">朴素贝叶斯</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#原理"><span class="nav-number">1.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数估计"><span class="nav-number">1.2.</span> <span class="nav-text">参数估计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">1.3.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Davidham</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.0.0</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/utils.js?v=6.0.0"></script>
+
+  <script type="text/javascript" src="/blog/js/src/motion.js?v=6.0.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/affix.js?v=6.0.0"></script>
+
+  <script type="text/javascript" src="/blog/js/src/schemes/pisces.js?v=6.0.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/blog/js/src/scrollspy.js?v=6.0.0"></script>
+<script type="text/javascript" src="/blog/js/src/post-details.js?v=6.0.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/bootstrap.js?v=6.0.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
