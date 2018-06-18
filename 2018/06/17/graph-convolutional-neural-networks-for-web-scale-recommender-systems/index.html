@@ -77,14 +77,14 @@
 
 <meta name="description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
 <meta property="og:type" content="website">
-<meta property="og:title" content="categories">
-<meta property="og:url" content="http://yoursite.com/categories/index.html">
+<meta property="og:title" content="tags">
+<meta property="og:url" content="http://yoursite.com/tags/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-02-19T13:29:39.253Z">
+<meta property="og:updated_time" content="2018-02-19T13:29:57.449Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="categories">
+<meta name="twitter:title" content="tags">
 <meta name="twitter:description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
 
 
@@ -117,7 +117,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/categories/"/>
+  <link rel="canonical" href="http://yoursite.com/tags/"/>
 
 
 
@@ -369,7 +369,7 @@
 <h3 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h3><p>我们使用局部卷积模块对顶点生成embeddings。首先输入顶点的特征，然后学习神经网络，神经网络会变换并聚合整个图上的特征来计算顶点的embeddings（图1）。<br><strong>前向传播算法</strong>。考虑对顶点$u$生成embedding $z_u$的任务，需要依赖顶点的输入特征和这个顶点周围的图结构。<br><img src="/blog/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/algo1.PNG" alt=""><br>我们的PinSage算法是一个局部卷积操作，我们可以通过这个局部卷积操作学到如何从$u$的邻居聚合信息（图1）。这个步骤在算法1 CONVOLVE中有所描述。本质上来说就是我们通过一个全连接神经网络对$\forall{v} \in \mathcal{N}(u)$,$u$的邻居的表示$z_v$进行了变换，之后在结果向量集合上用一个聚合/池化函数（例如：一个element-wise mean或是加权求和，表示为$\gamma$）（Line 1）。这个聚合步骤生成了一个$u$的邻居$\mathcal{N}(u)$的向量表示$n_u$。之后我们将这个聚集邻居向量$n_u$和$u$的当前表示向量进行拼接后，输入到一个全连接神经网络做变换（Line 2）。通过实验我们发现使用拼接操作会获得比平均操作[21]好很多的结果。除此以外，第三行的normalization使训练更稳定，而且对近似最近邻搜索来说归一化的embeddings更高效（Section 3.5）。算法的输出是集成了$u$自身和他的局部邻域信息的表示。<br><strong>基于重要性的邻域</strong>我们方法中的一个重要创新是如何定义的顶点邻居$\mathcal{N}(u)$，也就是我们在算法1中是如何选择卷积的邻居集合。尽管之前的GCN方法简单地检验了k-hop图邻居，在PinSage中我们定义了在基于重要性的邻域，其中顶点$u$的邻居定义为$T$个顶点，这$T$个顶点对$u$是最有影响力的。具体来说，我们模拟了从顶点$u$开始的随机游走，并且计算了通过随机游走[14]对顶点的访问次数的$L_1$归一化值。$u$的邻居因此定义为针对顶点$u$来说$T$个最高的归一化的访问数量的顶点。<br>这个基于重要性的邻域定义的优点有两点。第一点是选择一个固定数量的邻居顶点来聚集可以在训练过程中控制内存开销[18]。第二，在算法1中聚集邻居的向量表示时可以考虑邻居的重要性。特别地，我们在算法1中实现的$\gamma$是一个加权求均值的操作，权重就是$L_1$归一化访问次数。我们将这个新的方法称为重要度池化(<em>importance pooling</em>)。<br><strong>堆叠卷积</strong>每次使用算法1的CONVOLVE操作都会得到一个顶点的新的表示，我们可以在每个顶点上堆叠卷积来获得更多表示顶点$u$的局部邻域结构的信息。特别地，我们使用多层卷积，其中对第$k$层卷积的输入依赖于$k-1$层的输出（图1），最初的表示（”layer 0”）等价于顶点的输入特征。需要注意的是，算法1中的模型参数（$Q$, $q$, $W$和$w$）在顶点间是共享的，但层与层之间不共享。<br><img src="/blog/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/algo2.PNG" alt=""><br>算法2详细描述了如何堆叠卷积操作，来针对一个minibatch的顶点$\mathcal{M}$生成embeddings。首先计算每个顶点的邻居，然后使用$K$个卷积迭代来生成目标顶点的K层表示。最后一层卷积层的输出之后会输入到一个全连接神经网络来生成最后的embedding $z_u$，$\forall{u} \in \mathcal{M}$。<br>模型需要学习的参数有：每个卷积层的权重和偏置（$Q^{(k)}$，$q^{(k)}$，$W^{(k)}$，$w^{(k)}$，$\forall{k} \in \{1,…,K\}$），还有最后的全连接网络中的参数$G_1$，$G_2$，$g$。算法1的第一行的每层输出的维度（也就是$Q$的列空间的维度）设为$m$。为了简单起见，我们将所有卷积层（算法1的第三行的输出）的输出都设为同一个数，表示为$d$。模型最后的输出（算法2第18行之后）也设为$d$。</p>
 <h3 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h3><p>我们使用max-margin ranking loss来训练PinSage。在这步，假设我们有了一组标记的物品对$\mathcal{L}$，$(q,i) \in \mathcal{L}$认为是相关的，也就是当查询$q$时，物品$i$是一个好的推荐候选项。训练阶段的目标是优化PinSage的参数，使得物品对$(q,i) \in \mathcal{L}$的embedding在标记集合中尽可能的接近。<br>我们先来看看margin-based loss function。首先我们来看看我们使用的可以高效地计算并且使PinSage快速收敛的一些技术，这些技术可以让我们训练包含数十亿级别的顶点的图，以及数十亿训练样本。最后，我们描述我们的curriculum-training scheme，这个方法可以全方位的提升我们的推荐质量。<br><strong>损失函数</strong>为了训练模型的参数，我们使用了一个max-margin-based loss function。基本的思想是我们希望最大化正例之间的内积，也就是说，查询物品的embedding和对应的相关物品的embedding之间的内积。与此同时我们还想确保负例之间的内积，也就是查询物品的embedding和那些不相关物品embedding之间的内积要小于通过提前定义好的边界划分出的正例的内积。对于单个顶点对embeddings $(z_q, z_i):(q, i) \in \mathcal{L}$的损失函数是：</p>
 <script type="math/tex; mode=display">
-J_{\mathcal{G}}(z_qz_i) = \mathbb{E}_{n_k \thicksim p_n(q)}\max\{0, z_q \cdot z_{n_k}-z_q \cdot z_i + \Delta\}</script><p>其中，$P_n(q)$表示物品$q$的负样本分布，$\Delta$表示margin超参数。一会儿会将负样本采样。</p>
+J_{\mathcal{G}}(z_qz_i) = \mathbb{E}_{n_k \thicksim p_n(q)}\max\{0, z_q \cdot z_{n_k}-z_q \cdot z_i + \Delta\}</script><p>其中，$P_n(q)$表示物品$q$的负样本分布，$\Delta$表示margin超参数。一会儿会讲负样本采样。<br><strong>大minibatch的多GPU训练</strong>为了在训练中充分利用单台机器的多个GPU，我们以一种multi-tower的方法运行前向和反向传播。我们首先将每个minibatch（图1底部）分成相等大小的部分。每个GPU获得minibatch的一部分，使用同一组参数来运算。在反向传播之后，所有GPU上的针对每个参数的梯度进行汇集，然后使用一个同步的SGD。由于训练需要极大数量的样本，我们在运行时使用了很大的batch size，范围从512到4096。<br>我们使用与Goyal et al.[16]提出的相似的技术来确保快速收敛，而且在处理大batch size时训练的稳定和泛化精度。我们在第一轮训练的时候根据线性缩放原则使用一个gradual warmup procedure，使学习率从小增大到一个峰值。之后学习率以指数级减小。</p>
 
       
     </div>
