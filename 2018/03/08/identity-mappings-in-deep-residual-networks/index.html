@@ -352,7 +352,7 @@
       
 
       
-        <p>ResNet v2<br><a id="more"></a></p>
+        <p>ECCV 2016, ResNet v2, 原文链接：<a href="https://arxiv.org/abs/1603.05027" target="_blank" rel="noopener">Identity Mappings in Deep Residual Networks</a><br><a id="more"></a></p>
 <h1 id="Identity-Mappings-in-Deep-Residual-Networks"><a href="#Identity-Mappings-in-Deep-Residual-Networks" class="headerlink" title="Identity Mappings in Deep Residual Networks"></a>Identity Mappings in Deep Residual Networks</h1><h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Deep residual network (ResNets) consist of many stacked “Residual Units”. Each unit (Fig. 1(a)) can be expressed in a general form:</p>
 <script type="math/tex; mode=display">y_l = h(x_l) + \mathcal{F}(x_l, \mathcal{W_l})</script><script type="math/tex; mode=display">x_{l+1}=f(y_l)</script><p>where $x_l$ and $x_{l+1}$ are input and output of the $l$-th unit, and $\mathcal{F}$ is a residual function.$h(x_l)=x_l$ is an identity mapping and $f$ is a ReLU function.<br>The central idea of ResNets is to learn the additive residual function $\mathcal{F}$ with respect to $h(x_l)$, with a key choice of using an identity mapping $h(x_l)=x_l$. This is realized by attaching an identity skip connection (“shortcut”).<br>In this paper, we analyze deep residual networks by focusing on creating a “direct” path for propagating information — not only within a residual unit, but through the entire network. Our derivations reveal that <em>if both h(x_l) and f(y_l) are identity mappings, the signal could be directly</em> propagated from one unit to any other units, in both forward and backward passes.<br>To understand the role of skip connections, we analyse and compare various types of $h(x_l)$. We find that the identity mapping $h(x_l) = x_l$ chosen in achieves the fastest error reduction and lowest training loss among all variants we investigated, whereas skip connections of scaling, gating, and $1 \times 1$ convolutions all lead to higher training loss and error. These experiments suggest that keeping a “clean” information path (indicated by the grey arrows in Fig. 1,2, and 4) is helpful for easing optimization.<br><img src="/blog/2018/03/08/identity-mappings-in-deep-residual-networks/Fig1.PNG" alt="Fig1"><br>Figure 1. Left: (a) original Residual Unit in [1]; (b) proposed Residual Unit. The grey arrows indicate the easiest paths for the information to propagate, corresponding to the additive term “x_l” in Eqn.(4) (forward propagation) and the additive term “1” in Eqn.(5) (backward propagation). Right: training curves on CIFAR-10 of 1001-layer ResNets. Solid lines denote test error (y-axis on the right), and dashed lines denote training loss (y-axis on the left). The proposed unit makes ResNet-1001 easier to train.</p>
 <p>To construct an identity mapping $f(y_l)=y_l$, we view the activation functions (ReLU and BN) as “pre-activation” of the weight layers, in constrast to conventional wisdom of “post-activation”. This point of view leads to a new residual unit design, shown in (Fig. 1(b)). Based on this unit, we present competitive results on CIFAR-10/100 with a 1001-layer ResNet, which is much easier to train and generalizes better than the original ResNet in [1]. We further report improved results on ImageNet using a 200-layer ResNet, for which the counterpart of [1] starts to overfit. These results suggest that there is much room to exploit the dimension of <em>network depth</em>, a key to the success of modern deep learning.</p>
@@ -404,6 +404,8 @@
             <a href="/blog/tags/deep-learning/" rel="tag"># deep learning</a>
           
             <a href="/blog/tags/resnet/" rel="tag"># ResNet</a>
+          
+            <a href="/blog/tags/eccv/" rel="tag"># ECCV</a>
           
         </div>
       
@@ -536,7 +538,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/blog/tags/index.html">
-                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-count">39</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

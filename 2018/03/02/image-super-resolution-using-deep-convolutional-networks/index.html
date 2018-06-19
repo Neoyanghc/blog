@@ -352,7 +352,7 @@
       
 
       
-        <p>大体思路：把训练集中的所有样本模糊化，扔到三层的卷积神经网络中，把输出和原始图片做一个loss，训练模型即可。<br><a id="more"></a></p>
+        <p>PAMI 2016，大体思路：把训练集中的所有样本模糊化，扔到三层的卷积神经网络中，把输出和原始图片做一个loss，训练模型即可。<br><a id="more"></a></p>
 <p>首先是ill-posed problem，图像的不适定问题<br>法国数学家阿达马早在19世纪就提出了不适定问题的概念:称一个数学物理定解问题的解存在、唯一并且稳定的则称该问题是适定的（Well Posed）.如果不满足适定性概念中的上述判据中的一条或几条，称该问题是不适定的。</p>
 <h1 id="Convolutional-Neural-Networks-For-Super-Resolution"><a href="#Convolutional-Neural-Networks-For-Super-Resolution" class="headerlink" title="Convolutional Neural Networks For Super-Resolution"></a>Convolutional Neural Networks For Super-Resolution</h1><h2 id="Formulation"><a href="#Formulation" class="headerlink" title="Formulation"></a>Formulation</h2><p>We first upscale a single low-resolution image to the desired size using bicubic interpolation. Let us denote the interpolated image as $Y$. Our goal is to recover from $Y$ an image $F(Y)$ that is as similar as possible to the ground truth high-resolution image $X$. For the ease of presentation, we still call $Y$ a “low-resolution” image, although it has the same size as $X$. We wish to learning a mapping $F, which conceptually consists of three operations:</p>
 <ol>
@@ -392,6 +392,8 @@
             <a href="/blog/tags/deep-learning/" rel="tag"># deep learning</a>
           
             <a href="/blog/tags/super-resolution/" rel="tag"># super resolution</a>
+          
+            <a href="/blog/tags/pami/" rel="tag"># PAMI</a>
           
         </div>
       
@@ -524,7 +526,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/blog/tags/index.html">
-                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-count">39</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

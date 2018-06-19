@@ -352,7 +352,7 @@
       
 
       
-        <p>实时风格迁移与超分辨率化的感知损失，这篇论文是在cs231n里面看到的，正好最近在研究风格迁移。一作是Justin Johnson，2017春的cs231n的主讲之一。这篇论文的主要内容是对Gatys等人的风格迁移在优化过程中进行了优化，大幅提升了性能。<br>主要原理就是，之前Gatys等人的论文是利用已经训练好的VGG19，求loss并利用VGG的结构反向求导更新图片。由于VGG结构复杂，这样反向更新速度很慢，改进方法是再另外设计一个神经网络，将内容图片作为输入，输出扔到VGG中做两个loss，然后反向传播更新当前这个神经网络的参数，这样训练出来的神经网络就可能将任意的内容图片扔进去，输出为风格迁移后的图片，这也就解决了速度的问题。这也就是将Feed-forward image transformation与style transfer结合在一起。<br><a id="more"></a></p>
+        <p>ECCV 2016，实时风格迁移与超分辨率化的感知损失，这篇论文是在cs231n里面看到的，正好最近在研究风格迁移。一作是Justin Johnson，2017春的cs231n的主讲之一。这篇论文的主要内容是对Gatys等人的风格迁移在优化过程中进行了优化，大幅提升了性能。<br>主要原理就是，之前Gatys等人的论文是利用已经训练好的VGG19，求loss并利用VGG的结构反向求导更新图片。由于VGG结构复杂，这样反向更新速度很慢，改进方法是再另外设计一个神经网络，将内容图片作为输入，输出扔到VGG中做两个loss，然后反向传播更新当前这个神经网络的参数，这样训练出来的神经网络就可能将任意的内容图片扔进去，输出为风格迁移后的图片，这也就解决了速度的问题。这也就是将Feed-forward image transformation与style transfer结合在一起。<br><a id="more"></a></p>
 <h1 id="Image-Transformation-Network"><a href="#Image-Transformation-Network" class="headerlink" title="Image Transformation Network"></a>Image Transformation Network</h1><h2 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h2><p>We do not use any pooling layers, instead using strided and fractionally strided convolutions for in-network downsampling and upsampling. Our network body consists of five residual blocks using the architecture of <a href="http://torch" target="_blank" rel="noopener">http://torch</a>. ch/blog/2016/02/04/resnets.html. All non-residual convolutional layers are followed by spatial batch normalization and ReLU nonlinearities with the exception of the output layer, which instead uses a scaled tanh to ensure that the output image has pixels in the range [0, 255]. Other than the first and last layers with use $9 \times 9$ kernels, all convolutional layers use $3 \times 3$ kernels. The exact architectures of all our networks can be found in the supplementary material.</p>
 <h2 id="Inputs-and-Outputs"><a href="#Inputs-and-Outputs" class="headerlink" title="Inputs and Outputs"></a>Inputs and Outputs</h2><p>For style transfer the input and output are both color images of shape #3 \times 256 \times 256#.<br>For super-resolution with an upsampling factor of $f$, the output is a high-resolution patch of shape $3 \times 288/f \times 288/f$. Since the image transformation networks are fully-convolutional, at test-time they can be applied to images of any resolution.</p>
 <h2 id="Downsampling-and-Upsampling"><a href="#Downsampling-and-Upsampling" class="headerlink" title="Downsampling and Upsampling"></a>Downsampling and Upsampling</h2><p>For super-resolution with an upsampling factor of $f$, we use several residual blocks followed by $log_2f$ convolutional layers with stride $1/2$. This is different from [1] who use bicubic interpolation to upsample the low-resolution input before passing it to the network.</p>
@@ -390,6 +390,8 @@
             <a href="/blog/tags/super-resolution/" rel="tag"># super resolution</a>
           
             <a href="/blog/tags/image-style-transfer/" rel="tag"># image style transfer</a>
+          
+            <a href="/blog/tags/eccv/" rel="tag"># ECCV</a>
           
         </div>
       
@@ -522,7 +524,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/blog/tags/index.html">
-                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-count">39</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
