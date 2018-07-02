@@ -77,14 +77,14 @@
 
 <meta name="description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
 <meta property="og:type" content="website">
-<meta property="og:title" content="categories">
-<meta property="og:url" content="http://yoursite.com/categories/index.html">
+<meta property="og:title" content="tags">
+<meta property="og:url" content="http://yoursite.com/tags/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-02-19T13:29:39.253Z">
+<meta property="og:updated_time" content="2018-02-19T13:29:57.449Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="categories">
+<meta name="twitter:title" content="tags">
 <meta name="twitter:description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
 
 
@@ -117,7 +117,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/categories/"/>
+  <link rel="canonical" href="http://yoursite.com/tags/"/>
 
 
 
@@ -385,6 +385,13 @@
 <li>时空块融合了图卷积和门控时间卷积，可以同时抽取有用的空间信息，捕获本质上的时间特征。</li>
 <li>模型完全由卷积层组成，因此可以在输入序列上并行运算，空间域中参数少易于训练。更重要的是，这个经济的架构可以使模型更高效的处理大规模的网络。</li>
 </ol>
+<h1 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h1><h2 id="数据集描述"><a href="#数据集描述" class="headerlink" title="数据集描述"></a>数据集描述</h2><p>我们在两个真实的数据集上验证了模型，分别是<strong>BJER4</strong>和<strong>PeMSD7</strong>，由北京市交委和加利福尼亚运输部提供。每个数据集包含了交通观测数据的关键属性和对应时间的地图信息。<br><strong>BJER4</strong>是通过double-loop detector获取的东四环周边的数据。我们的实验中有12条道路。交通数据每五分钟聚合一次。时间是从2014年的7月1日到8月31日，不含周末。我们选取了第一个月的车速速度记录作为训练集，剩下的分别做验证和测试。<br><strong>PeMSD7</strong>是Caltrans Performance Measurement System(PeMS)通过超过39000个监测站实时获取的数据，这些监测站分布在加州高速公路系统主要的都市部分[Chen <em>et al</em>., 2001]。数据是30秒的数据样本聚合成5分钟一次的数据。我们在加州的District 7随机选取了一个小的和一个大的范围作为数据源，分别有228和1026个监测站，分别命名为PeMSD7(S)和PeMSD7(L)（如图3左侧所示）。PeMSD7数据集的时间范围是2012年五月和六月的周末。我们使用同样的原则对数据进行了训练集和测试集的划分。<br><img src="/blog/2018/05/10/时空图卷积在交通流预测上的应用/Fig3.PNG" alt="Fig1"></p>
+<h2 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h2><p>两个数据集的间隔设定为5分钟。因此，路网中的每个顶点每天就有288个数据点。数据清理后使用了线性插值的方法来填补缺失值。通过核对相关性，每条路的方向和OD(origin-destination)点，环路系统可以被数值化成一个有向图。<br>在PeMSD7，路网的邻接矩阵通过交通网络中的监测站的距离来计算。带权邻接矩阵$W$通过以下公式计算：</p>
+<script type="math/tex; mode=display">
+w_{ij} = \begin{cases}
+\exp{(-\frac{d^2_{ij}}{\sigma^2})}&,i \neq j \ \rm and \exp{(-\frac{d^2_{ij}}{\sigma^2}) \geq \epsilon} \\
+0&, \rm otherwise
+\end{cases}</script><p>其中$w_{ij}$是边的权重，通过$d_{ij}$得到，也就是$i$和$j$之间的距离。$\sigma^2$和$\epsilon$是来控制矩阵$W$的分布和稀疏性的阈值，我们用了10和0.5。$W$的可视化在图3的右侧。</p>
 
       
     </div>
@@ -592,7 +599,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">2.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#准备工作"><span class="nav-number">3.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#路网上的交通预测"><span class="nav-number">3.1.</span> <span class="nav-text">路网上的交通预测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图上的卷积"><span class="nav-number">3.2.</span> <span class="nav-text">图上的卷积</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提出的模型"><span class="nav-number">4.</span> <span class="nav-text">提出的模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络架构"><span class="nav-number">4.1.</span> <span class="nav-text">网络架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#提取空间特征的图卷积神经网络"><span class="nav-number">4.2.</span> <span class="nav-text">提取空间特征的图卷积神经网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抽取时间特征的门控卷积神经网络"><span class="nav-number">4.3.</span> <span class="nav-text">抽取时间特征的门控卷积神经网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时空卷积块"><span class="nav-number">4.4.</span> <span class="nav-text">时空卷积块</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">2.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#准备工作"><span class="nav-number">3.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#路网上的交通预测"><span class="nav-number">3.1.</span> <span class="nav-text">路网上的交通预测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图上的卷积"><span class="nav-number">3.2.</span> <span class="nav-text">图上的卷积</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提出的模型"><span class="nav-number">4.</span> <span class="nav-text">提出的模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络架构"><span class="nav-number">4.1.</span> <span class="nav-text">网络架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#提取空间特征的图卷积神经网络"><span class="nav-number">4.2.</span> <span class="nav-text">提取空间特征的图卷积神经网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抽取时间特征的门控卷积神经网络"><span class="nav-number">4.3.</span> <span class="nav-text">抽取时间特征的门控卷积神经网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时空卷积块"><span class="nav-number">4.4.</span> <span class="nav-text">时空卷积块</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实验"><span class="nav-number">5.</span> <span class="nav-text">实验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据集描述"><span class="nav-number">5.1.</span> <span class="nav-text">数据集描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据预处理"><span class="nav-number">5.2.</span> <span class="nav-text">数据预处理</span></a></li></ol></li></ol></div>
             
 
           </div>
