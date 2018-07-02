@@ -77,14 +77,14 @@
 
 <meta name="description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
 <meta property="og:type" content="website">
-<meta property="og:title" content="tags">
-<meta property="og:url" content="http://yoursite.com/tags/index.html">
+<meta property="og:title" content="categories">
+<meta property="og:url" content="http://yoursite.com/categories/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-02-19T13:29:57.449Z">
+<meta property="og:updated_time" content="2018-02-19T13:29:39.253Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="tags">
+<meta name="twitter:title" content="categories">
 <meta name="twitter:description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
 
 
@@ -117,7 +117,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/tags/"/>
+  <link rel="canonical" href="http://yoursite.com/categories/"/>
 
 
 
@@ -368,7 +368,7 @@
 <script type="math/tex; mode=display">\tag{2} \Theta \ast_{\mathcal{G}}x=\Theta(L)x=\Theta(U \Lambda U^T)x=U\Theta(\Lambda)U^Tx</script><p>这里图的傅里叶基$U \in \mathbb{R}^{n \times n}$是归一化的拉普拉斯矩阵$L=I_n-D^{-1/2}WD^{-1/2}= U \Lambda U^T \in \mathbb{R}^{n \times n}$的特征向量组成的矩阵，其中$I_n$是单位阵，$D \in \mathbb{R}^{n \times n}$是对角的度矩阵$D_{ii}=\sum_j{W_{ij}}$；$\Lambda \in \mathbb{R}^{n \times n}$是$L$的特征值组成的矩阵，卷积核$\Theta(\Lambda)$是一个对角矩阵。通过这个定义，一个图信号$x$是被一个核$\Theta$通过$\Theta$和图傅里叶变换$U^Tx$[Shuman <em>et al.</em>, 2013]过滤的。</p>
 <h1 id="提出的模型"><a href="#提出的模型" class="headerlink" title="提出的模型"></a>提出的模型</h1><h2 id="网络架构"><a href="#网络架构" class="headerlink" title="网络架构"></a>网络架构</h2><p>在这部分，我们详细说明了时空图卷积网络的框架。如图二所示，STGCN有多个时空卷积块组成，每一个都是像一个“三明治”结构的组成，有两个门序列卷积层和一个空间图卷积层在中间。每个模块的细节如下。<br><img src="/blog/2018/05/10/时空图卷积在交通流预测上的应用/Fig2.PNG" alt="Fig2"><br>图二：时空图卷积网络的架构图。STGCN的架构有两个时空卷积块和一个全连接的在末尾的输出层组成。每个ST-Conv块包含了两个时间门卷积层，中间有一个空间图卷积层。每个块中都使用了残差连接和bottleneck策略。输入$v_{t-M+1},…v_t$被ST-Conv块均匀的（uniformly）处理，来获取时空依赖关系。全部特征由一个输出层来整合，生成最后的预测$\hat{t}$。</p>
 <h2 id="提取空间特征的图卷积神经网络"><a href="#提取空间特征的图卷积神经网络" class="headerlink" title="提取空间特征的图卷积神经网络"></a>提取空间特征的图卷积神经网络</h2><p>交通网络大体上是一个图结构。由数学上的图来构成路网是很自然也很合理的。然而，之前的研究忽视了交通网络的空间属性：因为交通网络被分成了块或网格状，所以网络的全局性和连通性被过分的关注了。即使是在网格上的二维卷积，由于数据建模的折中，也只能捕捉到大体的空间局部性。根据以上情况，在我们的模型中，图卷积被直接的应用在了图结构数据上为了在空间中抽取很有意义的模式和特征。集是在图卷积中由式2可以看出核$\Theta$的计算的时间复杂度由于傅里叶基的乘法可以达到$O(n^2)$，两个近似的策略可以解决这个问题。</p>
-<p><strong>切比雪夫多项式趋近</strong><br>为了局部化过滤器并且减少参数，核$\Theta$可以被一个关于$\Lambda$的多项式限制起来，也就是$\Theta(\Lambda)=\sum_{k=0}^{K-1} \theta_k \Lambda^k$，其中$\theta \in \mathbb{R}^K$是一个多项式系数的向量。$K$是图卷积核的大小，它决定了卷积从中心节点开始的最大半径。一般来说，切比雪夫多项式$T_k(x)$被用于近似核，作为$K-1$阶展开的一部分，也就是$\Theta(\Lambda) \approx \sum_{k=0}^{K-1} \theta_k T_k(\widetilde{\Lambda})$，其中$\widetilde{\Lambda}=2\Lambda/\lambda_{max}-I_n）$（$\lambda_{max}$表示$L$的最大特征值）[Hammond <em>et al.</em>, 2011]。图卷积因此可以被写成</p>
+<p><strong>切比雪夫多项式趋近</strong><br>为了局部化过滤器并且减少参数，核$\Theta$可以被一个关于$\Lambda$的多项式限制起来，也就是$\Theta(\Lambda)=\sum_{k=0}^{K-1} \theta_k \Lambda^k$，其中$\theta \in \mathbb{R}^K$是一个多项式系数的向量。$K$是图卷积核的大小，它决定了卷积从中心节点开始的最大半径。一般来说，切比雪夫多项式$T_k(x)$被用于近似核，作为$K-1$阶展开的一部分，也就是$\Theta(\Lambda) \approx \sum_{k=0}^{K-1} \theta_k T_k(\widetilde{\Lambda})$，其中$\widetilde{\Lambda}=2\Lambda/\lambda_{max}-I_n$（$\lambda_{max}$表示$L$的最大特征值）[Hammond <em>et al.</em>, 2011]。图卷积因此可以被写成</p>
 <script type="math/tex; mode=display">\tag{3} \Theta \ast_{\mathcal{G}} x = \Theta(L)x \approx \sum_{k=0}^{K-1}\theta_k T_k(\widetilde{L})x</script><p>其中$T_k(\widetilde{L}) \in \mathbb{R}^{n \times n}$是k阶切比雪夫多项式对缩放后（scaled）的拉普拉斯矩阵$\widetilde{L}=2L/\lambda_{max}-I_n$。通过递归地使用趋近后的切比雪夫多项式计算K阶卷积操作，式2的复杂度可以被降低至$O(K\vert \varepsilon \vert)$，如式3所示[Defferrard <em>et al.</em>, 2016]。</p>
 <p><strong>1阶近似</strong><br>一个针对层的线性公式可以由堆叠多个使用拉普拉斯矩阵的一阶近似的局部图卷积层[Kipf and Welling, 2016]。结果就是，这样可以构建出一个深的网络，这个网络可以深入地恢复空间信息并且不需要指定多项式中的参数。由于在神经网络中要缩放和归一化，我们可以进一步假设$\lambda_{max} \approx 2$。因此，式3可以简写为</p>
 <p>\begin{aligned}<br>\Theta \ast_{\mathcal{G}}x \approx &amp; \theta_0x+\theta_1(\frac{2}{\lambda_{max}}L-I_n)x\\<br>                         \approx &amp; \theta_0 x- \theta_1(D^{-\frac{1}{2}} W D^{-\frac{1}{2}}) x<br>\end{aligned}</p>
