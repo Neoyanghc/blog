@@ -355,7 +355,8 @@
         <p>ICLR 2017。图卷积中很重要的一篇论文，提升了图卷积的性能<br><a id="more"></a></p>
 <p>原文：<a href="https://arxiv.org/abs/1609.02907v4" target="_blank" rel="noopener">Semi-Supervised Classification with Graph Convolutional Networks</a></p>
 <h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>我们提出了一种在图结构数据上的半监督可扩展学习方法，基于高效的图卷积变体。契机是通过一个谱图卷积的局部一阶近似得到的我们的图卷积结构。我们的模型与图的边数呈线性关系，学习到的隐藏层可以对图的顶点和局部图结构同时进行编码。在citation networks和一个知识图谱数据集上的大量实验结果表明我们的方法比相关方法好很多。</p>
-<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1>
+<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>我们考虑一个对图顶点进行分类的问题，只有一小部分的顶点有标签。这个问题可以通过基于图的半监督学习任务建模，通过某些明确的图正则化方法(Zhu et al., 2003; Zhou et al., 2004; Belkin et al., 2006; Weston et al., 2012)可以平滑标签信息，举个例子，通过在loss function使用一个图拉普拉斯正则项：</p>
+<script type="math/tex; mode=display">\tag{1} \mathcal{L} = \mathcal{L_0} + \lambda \mathcal{L_{reg}}, \rm with \mathcal{L_{reg}} = \sum_{i.j}A_{ij} \Vertf(X_i) - f(X_j) \Vert^2 = f(X)^T \Delta f(X)</script>
       
     </div>
     
