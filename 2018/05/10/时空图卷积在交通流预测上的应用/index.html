@@ -77,14 +77,14 @@
 
 <meta name="description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
 <meta property="og:type" content="website">
-<meta property="og:title" content="categories">
-<meta property="og:url" content="http://yoursite.com/categories/index.html">
+<meta property="og:title" content="tags">
+<meta property="og:url" content="http://yoursite.com/tags/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-02-19T13:29:39.253Z">
+<meta property="og:updated_time" content="2018-02-19T13:29:57.449Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="categories">
+<meta name="twitter:title" content="tags">
 <meta name="twitter:description" content="Davidham的博客，写点学习笔记啥的，邮箱17120410@bjtu.edu.cn">
 
 
@@ -117,7 +117,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/categories/"/>
+  <link rel="canonical" href="http://yoursite.com/tags/"/>
 
 
 
@@ -375,10 +375,10 @@
 <p>其中，$\theta_0$，$\theta_1$是核的两个共享参数。为了约束参数并为稳定数值计算，$\theta_0$和$\theta_1$用一个参数$\theta$来替换，$\theta=\theta_0=-\theta_1$；$W$和$D$是通过$\widetilde{W}=W+I_n$和$\widetilde{D}_{ii}=\sum_j\widetilde{W}_{ij}$重新归一化得到的。之后，图卷积就可以表达为<br>\begin{aligned}<br>\Theta \ast_{\mathcal{G}} x = &amp; \theta(I_n + D^{-\frac{1}{2}} W D^{\frac{1}{2}})x\\<br>= &amp; \theta (\widetilde{D}^{-\frac{1}{2}} \widetilde{W} \widetilde{D}^{-\frac{1}{2}})x<br>\end{aligned}<br>竖直地堆叠一阶近似的图卷积可以获得和平行的K阶卷积相同的效果，所有的卷积可以从一个顶点的$K-1$阶邻居中获取到信息。在这里，$K$是连续卷积操作的次数或是模型中的卷积层数。进一步说，针对层的线性结构是节省参数的，并且对大型的图来说是效率很高的，因为多项式趋近的阶数为1。</p>
 <p><strong>图卷积的泛化</strong><br>图卷积操作$\ast_{\mathcal{G}}$也可以被扩展到多维张量上。对于一个有着$C_i$个通道的信号$X \in \mathbb{R}^{n \times C_i}$，图卷积操作可以扩展为</p>
 <script type="math/tex; mode=display">y_j = \sum_{i=1}^{C_i} \Theta_{i,j}(L) x_i \in \mathbb{R}^n, 1 \leq j \leq C_o</script><p>其中，$C_i \times C_o$个向量是切比雪夫系数$\Theta_{i,j} \in \mathbb{R}^K$（$C_i$，$C_o$分别是feature map的输入和输出大小）。针对二维变量的图卷积表示为$\Theta \ast_{\mathcal{G}} X$，其中$\Theta \in \mathbb{R}^{K \times C_i \times C_o}$。需要注意的是，输入的交通预测是由$M$帧路网组成的，如图1所示。每帧$v_t$可以被视为一个矩阵，它的第$i$列是图$\mathcal{G_t}$中第$i$个顶点的一个为$C_i$维的值，也就是$X \in \mathbb{R}^{n \times C_i}$（在这个例子中，$C_i=1$）。对于$M$中的每个时间步$t$，相同的核与相同的图卷积操作是在$X_t \in \mathbb{R}^{n \times C_i}$中并行进行的。因此，图卷积操作也可以泛化至三维，记为$\Theta \ast_{\mathcal{G}} \mathcal{X}$，其中$\mathcal{X} \in \mathbb{R}^{M \times n \times C_i}$</p>
-<h2 id="抽取时间特征的门控卷积神经网络"><a href="#抽取时间特征的门控卷积神经网络" class="headerlink" title="抽取时间特征的门控卷积神经网络"></a>抽取时间特征的门控卷积神经网络</h2><p>尽管基于RNN的模型可以广泛的应用于时间序列分析，用于交通预测的循环神经网络仍然会遇到费时的迭代，复杂的门控机制，对动态变化的响应慢。相反的，CNN训练快，结构简单，而且不依赖于前一步。受到[Gehring <em>et al.</em>, 2017]的启发，我们在时间轴上部署了整块的卷积结构，用来捕获交通流的动态时间特征。这个特殊的设计可以让并行而且可控的训练过程通过多层卷积结构形成层次表示。<br>如图2右侧所示，时间卷积层包含了一个一维卷积，核的宽度为$K_t$，之后接了一个门控线性单元(GLU)作为激活。对于图$\mathcal{G}$中的每个顶点，时间卷积对输入元素的$K_t$个邻居进行操作，导致每次将序列长度缩短$K_t-1$。因此，每个顶点的时间卷积的输入可以被看做是一个长度为$M$的序列，有着$C_i$个通道，记作$Y \in \mathbb{R}^{M \times C_i}$。卷积核$\Gamma \in \mathbf{R}^{K_t \times C_i \times 2C_o}$是被设计为映射$Y$到一个单个的输出$[P Q] \in \mathbb{R}^{(M-K_t+1) \times (2C_o)}$($P$, $Q$是通道数的一半)。作为结果，时间门控卷积可以定义为：</p>
+<h2 id="抽取时间特征的门控卷积神经网络"><a href="#抽取时间特征的门控卷积神经网络" class="headerlink" title="抽取时间特征的门控卷积神经网络"></a>抽取时间特征的门控卷积神经网络</h2><p>尽管基于RNN的模型可以广泛的应用于时间序列分析，用于交通预测的循环神经网络仍然会遇到费时的迭代，复杂的门控机制，对动态变化的响应慢。相反，CNN训练快，结构简单，而且不依赖于前一步。受到[Gehring <em>et al.</em>, 2017]的启发，我们在时间轴上部署了整块的卷积结构，用来捕获交通流的动态时间特征。这个特殊的设计可以让并行而且可控的训练过程通过多层卷积结构形成层次表示。<br>如图2右侧所示，时间卷积层包含了一个一维卷积，核的宽度为$K_t$，之后接了一个门控线性单元(GLU)作为激活。对于图$\mathcal{G}$中的每个顶点，时间卷积对输入元素的$K_t$个邻居进行操作，导致每次将序列长度缩短$K_t-1$。因此，每个顶点的时间卷积的输入可以被看做是一个长度为$M$的序列，有着$C_i$个通道，记作$Y \in \mathbb{R}^{M \times C_i}$。卷积核$\Gamma \in \mathbf{R}^{K_t \times C_i \times 2C_o}$是被设计为映射$Y$到一个单个的输出$[P Q] \in \mathbb{R}^{(M-K_t+1) \times (2C_o)}$($P$, $Q$是通道数的一半)。作为结果，时间门控卷积可以定义为：</p>
 <script type="math/tex; mode=display">\Gamma \ast_ \tau Y = P \otimes \sigma (Q) \in \mathbb{R}^{(M-K_t+1) \times C_o}</script><p>其中，$P$, $Q$分别是GLU的输入门，$\otimes$表示哈达玛积，sigmoid门$\sigma(Q)$控制当前状态的哪个输入$P$对于发现时间序列中的组成结构和动态方差是相关的。非线性门通过堆叠时间层对挖掘输入也有贡献。除此以外，在堆叠时间卷积层时，实现了残差连接。相似地，通过在每个节点$\mathcal{Y_i} \in \mathbb{R}^{M \times C_i}$(比如监测站)上都使用同样的卷积核$\Gamma$，时间卷积就可以泛化至3D变量上，记作$\Gamma \ast_\tau \mathcal{Y}$，其中$\mathcal{Y} \in \mathbb{R}^{M \times n \times C_i}$。</p>
 <h2 id="时空卷积块"><a href="#时空卷积块" class="headerlink" title="时空卷积块"></a>时空卷积块</h2><p>为了同时从空间和时间领域融合特征，时空卷积块(ST-Conv block)的构建是为了同时处理图结构的时间序列的。如图2（中）所示，bottleneck策略的应用形成了三明治的结构，其中含有两个时间门控卷积曾，分别在上下两层，一个空间图卷积层填充中间的部分。空间卷积层导致的通道数$C$的减小促使了参数的减少，并且减少了训练的时间开销。除此以外，每个时空块都使用了层归一化来抑制过拟合。<br>ST-Conv块的输入和输出都是3D张量。对于块$l$的输入$v^l \in \mathbb{R}^{M \times n \times C^l}$，输出$v^{l+1} \in \mathbb{R}^{(M-2(K_t-1)) \times n \times C^{l+1}}$通过以下式子计算得到：</p>
-<script type="math/tex; mode=display">v^{l+1} = \Gamma^l_1 \ast_\tau ReLU(\Theta^l \ast_{\mathcal{G}}(\Gamma^l_0 \ast_\tau v^l))</script><p>其中$\Gamma^l_0$，$\Gamma^l_1$是块$l$的上下两个时间层；$\Theta^l$是图卷积谱核；$ReLU(·)$表示ReLU激活函数。我们在堆叠两个ST-Conv块后，加了一个额外的时间卷积和全连接层作为最后的输出层（图2左侧）。时间卷积层将最后一个ST-Conv块的输出映射到一个最终的单步预测上。之后，我们可以从模型获得一个最后的输出$Z \in \mathbb{R}^{n \times c}$，通过一个跨$c$个通道的线性变换$\hat{v} = Zw+b$来预测$n$个节点的速度，其中$w \in \mathbb{R}^c$是权重向量,$b$是偏置。对交通预测的STGCN的损失函数可以写成：</p>
+<script type="math/tex; mode=display">v^{l+1} = \Gamma^l_1 \ast_\tau \rm ReLU(\Theta^l \ast_{\mathcal{G}}(\Gamma^l_0 \ast_\tau v^l))</script><p>其中$\Gamma^l_0$，$\Gamma^l_1$是块$l$的上下两个时间层；$\Theta^l$是图卷积谱核；$ReLU(·)$表示ReLU激活函数。我们在堆叠两个ST-Conv块后，加了一个额外的时间卷积和全连接层作为最后的输出层（图2左侧）。时间卷积层将最后一个ST-Conv块的输出映射到一个最终的单步预测上。之后，我们可以从模型获得一个最后的输出$Z \in \mathbb{R}^{n \times c}$，通过一个跨$c$个通道的线性变换$\hat{v} = Zw+b$来预测$n$个节点的速度，其中$w \in \mathbb{R}^c$是权重向量,$b$是偏置。对交通预测的STGCN的损失函数可以写成：</p>
 <script type="math/tex; mode=display">L(\hat{v}; W_\theta) = \sum_t \Vert \hat{v}(v_{t-M+1, ..., v_t, W_\theta}) - v_{t+1} \Vert^2</script><p>其中，$W_\theta$是模型中所有的训练参数; $v_{t+1}$是ground truth，$\hat{v}(·)$表示模型的预测。<br>我们来总结一下我们的STGCN的主要特征：</p>
 <ol>
 <li>STGCN是处理结构化的时间序列的通用框架，不仅可以解决交通网络建模，还可以应用到其他的时空序列学习的挑战中，比如社交网络和推荐系统。</li>
