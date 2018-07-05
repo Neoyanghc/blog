@@ -123,7 +123,7 @@
 
 
 
-  <title>标签: NER | Davidham's blog</title>
+  <title>Kafka生产者与消费者 | Davidham's blog</title>
   
 
 
@@ -152,7 +152,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -246,54 +246,179 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block tag">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>NER<small>标签</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/blog/2018/07/05/kafka生产者与消费者/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Davidham">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/blog/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Davidham's blog">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/blog/2018/05/23/lattice-lstm-中文ner/" itemprop="url">
-              
-                <span itemprop="name">Lattice LSTM 中文NER</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">Kafka生产者与消费者</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-05-23T16:54:12+08:00"
-              content="2018-05-23" >
-          05-23
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-05T20:54:26+08:00">2018-07-05</time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/分布式平台/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式平台</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近用了Kafka，做个记录。<br><a id="more"></a><br>最近上数据仓库的课，学习了Kafka的使用方式以及Kafka的原理。</p>
+<p>Kafka官网：<a href="http://kafka.apache.org/" target="_blank" rel="noopener">Apache Kafka</a></p>
+<p>Kafka是一个分布式、流式消息平台，是一套发布订阅系统，通俗来说就是Kafka producer发布数据至Kafka brokers，然后由Kafka consumer从brokers拉取数据，进行消费。</p>
+<p><strong>日志</strong><br>有意思的特性是Kafka内的数据都是以日志的形式存储，即便消费完也不会消失，配置文件中配置了过了多长时间日志会销毁掉。这样设计的好处有很多，consumer是有group的，每个组进行消费的时候，都会有个偏移量offset记录在zookeeper中，通过这个offset就知道下次从哪里开始消费了，不同组的offset不一样，这样每个组都可以按照自己的需要进行消费。</p>
+<p><strong>主题</strong><br>Kafka的记录是有主题的，这样producer发送到broker的数据其实就是打上了标签，有了分类，消费的时候可以按主题消费，相当于一开始就用主题对数据进行了区分。</p>
+<p><strong>效率</strong><br>Kafka集群同时也作为缓冲区，平衡producer和consumer两边的工作进度，不会因为一方过慢造成阻塞一类的问题。</p>
+<p><strong>语言</strong><br>写起来的话，肯定是java和scala最好，因为Kafka就是由这两种语言编写的，当然，也有其他语言的接口，比如python。python的话比较有意思的是有两个Kafka框架，一个是<a href="https://kafka-python.readthedocs.io/en/master/index.html" target="_blank" rel="noopener">kafka-python</a>，另一个是<a href="http://pykafka.readthedocs.io/en/latest/#" target="_blank" rel="noopener">pykafka</a>。推荐使用后者，前者在创建consumer group的时候不是很方便，group内的每个consumer消费的内容都一样，没有实现去重与平衡，这些都需要自己实现，后者的balanced_consumer就挺好的。</p>
+<p><a href="https://github.com/Davidham3/pykafka_examples" target="_blank" rel="noopener">自己写的例子</a></p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/blog/tags/kafka/" rel="tag"># Kafka</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/2018/07/02/semi-supervised-classification-with-graph-convolutional-networks/" rel="next" title="Semi-Supervised Classification With Graph Convolutional Networks">
+                <i class="fa fa-chevron-left"></i> Semi-Supervised Classification With Graph Convolutional Networks
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -301,6 +426,15 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzEwMS8xMzYzNw=="></div>
+    </div>
+
+  
+
+
 
         </div>
         
@@ -560,6 +694,10 @@
 
 
   
+  <script type="text/javascript" src="/blog/js/src/scrollspy.js?v=6.0.0"></script>
+<script type="text/javascript" src="/blog/js/src/post-details.js?v=6.0.0"></script>
+
+
 
   
 
@@ -589,54 +727,45 @@
 
 
   
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-  
-
-  
-  
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        tex2jax: {
-          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
-          processEscapes: true,
-          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-        }
-      });
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
     </script>
+  
 
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for (i=0; i < all.length; i += 1) {
-          all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-      });
-    </script>
-    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
   
 
 
