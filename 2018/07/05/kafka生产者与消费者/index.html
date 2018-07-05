@@ -352,7 +352,7 @@
       
 
       
-        <p>最近用了Kafka，做个记录。<br><a id="more"></a><br>最近上数据仓库的课，学习了Kafka的使用方式以及Kafka的原理。</p>
+        <p>Kafka是一个分布式、流式消息平台，是一套发布订阅系统，通俗来说就是Kafka producer发布数据至Kafka brokers，然后由Kafka consumer从brokers拉取数据，进行消费。<br><a id="more"></a><br>最近上数据仓库的课，学习了Kafka的使用方式以及Kafka的原理。</p>
 <p>Kafka官网：<a href="http://kafka.apache.org/" target="_blank" rel="noopener">Apache Kafka</a></p>
 <p>Kafka是一个分布式、流式消息平台，是一套发布订阅系统，通俗来说就是Kafka producer发布数据至Kafka brokers，然后由Kafka consumer从brokers拉取数据，进行消费。</p>
 <p><strong>日志</strong><br>有意思的特性是Kafka内的数据都是以日志的形式存储，即便消费完也不会消失，配置文件中配置了过了多长时间日志会销毁掉。这样设计的好处有很多，consumer是有group的，每个组进行消费的时候，都会有个偏移量offset记录在zookeeper中，通过这个offset就知道下次从哪里开始消费了，不同组的offset不一样，这样每个组都可以按照自己的需要进行消费。</p>
