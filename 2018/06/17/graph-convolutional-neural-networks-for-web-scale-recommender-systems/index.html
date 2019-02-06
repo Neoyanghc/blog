@@ -8,22 +8,22 @@
   <link rel="dns-prefetch" href="https://davidham3.github.io">
   <title>Graph Convolutional Neural Networks for Web-Scale Recommender Systems | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="KDD 2018。使用图卷积对顶点进行表示，学习顶点的embedding，通过卷积将该顶点的邻居信息融入到向量中。原文链接：Graph Convolutional Neural Networks for Web-Scale Recommender Systems。">
+  <meta name="description" content="KDD 2018。使用图卷积对顶点进行表示，学习顶点的 embedding ，通过卷积将该顶点的邻居信息融入到向量中。原文链接：Graph Convolutional Neural Networks for Web-Scale Recommender Systems。">
 <meta name="keywords" content="recommender system,deep learning,graph convolutional network,graph,large-scale learning">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Graph Convolutional Neural Networks for Web-Scale Recommender Systems">
 <meta property="og:url" content="https://davidham3.github.io/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="KDD 2018。使用图卷积对顶点进行表示，学习顶点的embedding，通过卷积将该顶点的邻居信息融入到向量中。原文链接：Graph Convolutional Neural Networks for Web-Scale Recommender Systems。">
+<meta property="og:description" content="KDD 2018。使用图卷积对顶点进行表示，学习顶点的 embedding ，通过卷积将该顶点的邻居信息融入到向量中。原文链接：Graph Convolutional Neural Networks for Web-Scale Recommender Systems。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/Fig1.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/algo1.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/algo2.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/Fig2.PNG">
-<meta property="og:updated_time" content="2018-10-01T06:47:00.279Z">
+<meta property="og:updated_time" content="2019-02-06T09:29:39.780Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Graph Convolutional Neural Networks for Web-Scale Recommender Systems">
-<meta name="twitter:description" content="KDD 2018。使用图卷积对顶点进行表示，学习顶点的embedding，通过卷积将该顶点的邻居信息融入到向量中。原文链接：Graph Convolutional Neural Networks for Web-Scale Recommender Systems。">
+<meta name="twitter:description" content="KDD 2018。使用图卷积对顶点进行表示，学习顶点的 embedding ，通过卷积将该顶点的邻居信息融入到向量中。原文链接：Graph Convolutional Neural Networks for Web-Scale Recommender Systems。">
 <meta name="twitter:image" content="https://davidham3.github.io/blog/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/Fig1.PNG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
@@ -189,7 +189,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>KDD 2018。使用图卷积对顶点进行表示，学习顶点的embedding，通过卷积将该顶点的邻居信息融入到向量中。原文链接：<a href="https://arxiv.org/abs/1806.01973v1" target="_blank" rel="noopener">Graph Convolutional Neural Networks for Web-Scale Recommender Systems</a>。<br><a id="more"></a></p>
+        <p>KDD 2018。使用图卷积对顶点进行表示，学习顶点的 embedding ，通过卷积将该顶点的邻居信息融入到向量中。原文链接：<a href="https://arxiv.org/abs/1806.01973v1" target="_blank" rel="noopener">Graph Convolutional Neural Networks for Web-Scale Recommender Systems</a>。<br><a id="more"></a></p>
 <h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>最近在图数据结构上的深度神经网络在推荐系统上表现的很好。然而，把这些算法应用到数十亿的物品和数百亿的用户上仍然是个挑战。<br>我们提出了一种在Pinterest上的大规模深度推荐引擎，开发了一种高效的图卷积算法PinSage，融合了随机游走和图卷积，来生成顶点（物品）的表示，同时整合了顶点信息和图结构。对比之前的GCN方法，我们研究的模型基于高效的随机游走来结构化卷积操作，而且还设计了一个新型的训练策略，这个策略依赖于harder-and-harder训练样本，来提高模型的鲁棒性和收敛能力。<br>我们的PinSage在Pinterest上面的75亿个样本上进行训练，图上有30亿个顶点表示<em>pins</em>和<em>boards</em>，180亿条边。根据离线指标、用户研究和A/B测试，PinSage生成了相比其他深度学习和基于图的方法更高质量的推荐结果。据我们所知，这是深度图表示目前规模最大的应用，并且为新一代基于图卷积结构的大规模推荐系统奠定了基础。</p>
 <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>深度学习方法在推荐系统中越来越重要，被用来学习图像、文本、甚至是用户的有效的低维表示。使用深度学习学习到的表示可以来补充、或是替换传统的推荐算法，像协同过滤。这些学习到的表示很有用，因为他们可以在各种推荐任务中重复使用。举个例子，使用深度模型学习得到的物品的表示，可以用来做物品-物品推荐，也可以来按主题推荐（比如，歌单、或是Feed内容）。<br>近些年可以看到这个领域的很多重要的发展，尤其是新的可以学习图结构的深度学习方法的发展，是推荐应用的基础（比如在用户-物品网络上或社交网络上推荐）。<br>在这些成功的深度学习框架中比较重要的是图卷积网络（GCN）。核心的原理是学习如何迭代地使用神经网络从局部图邻居中聚合特征信息（图1）。这里，一个简单的卷积操作从一步邻居中变换并聚合特征信息，并且通过堆叠多个这样的卷积，信息可以传播到图中很广的地方。不像纯基于内容的深度模型（如RNN），GCN利用内容信息和图结构。基于GCN的模型的方法已经在无数推荐系统中形成了新的标准（参见[19]的综述）。然而，这些benchmark上面获得的提升，还没有被转换到真实环境的应用中去。<br>主要挑战是要将训练和基于GCN的顶点表示在数十亿的顶点和数百亿的边的图中进行。扩展GCN很困难，因为很多在大数据环境中，很多基于这些GCN设计的假设都不成立了。比如，所有的基于GCN的推荐系统需要在训练时使用图的拉普拉斯矩阵，但是当顶点数很大的时候，这就不现实了，因为算不出来。</p>
 <h2 id="3-方法"><a href="#3-方法" class="headerlink" title="3 方法"></a>3 方法</h2><p>在这部分，我们将描述PinSage的结构和训练的技术细节，也会讲一下使用训练好的PinSage模型来高效地生成embedding的MapReduce pipeline。<br><img src="/blog/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/Fig1.PNG" alt=""><br>我们的方法的计算关键在于局部图卷积的表示(notion)。我们使用多个卷积模块来聚集一个顶点的局部图邻域的特征信息（图1），来生成这个顶点的embedding（比如一个物品）。每个模块学习如何从一个小的图邻域中聚集信息，并且通过堆叠多个这样的模块，我们的方法可以获得局部网络的拓扑结构信息。更重要的是，这些局部卷积模块的参数对所有的顶点来说是共享的，这使得我们的方法的参数的计算复杂度与输入的图的大小无关。</p>
