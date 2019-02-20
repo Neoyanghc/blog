@@ -17,7 +17,7 @@
 <meta property="og:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig1.jpg">
-<meta property="og:updated_time" content="2019-02-20T07:12:15.644Z">
+<meta property="og:updated_time" content="2019-02-20T07:35:23.375Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
 <meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
@@ -70,7 +70,7 @@
 		</nav>
 		<nav>
 			总文章数 57<br>
-			总字数 <span class="post-count">158.4k</span>
+			总字数 <span class="post-count">158.9k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -181,7 +181,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.9k字 | 预计阅读时长：7分钟
+        字数：2.3k字 | 预计阅读时长：9分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -211,6 +211,13 @@
 <p>车速预测是用之前观测到的速度预测一个确定时段每个路段上的车速。多步速度预测问题定义为：</p>
 <p>$$\tag{1}<br>\hat{V}_{t+n} = \mathop{\arg\max}\limits_{V_{t+n}} \text{Pr}(V_{t+n} \mid V_t, V_{t-1}, \dots, V_{t-m};\mathcal{G})<br>$$</p>
 <p>其中 $\hat{V}_{t+n}(n=1,2,3,\dots)$ 表示第 $n$ 步的预测速度，$\{V_t, V_{t-1}, \dots, V_{t-m} \mid m=1,2,\dots \}$ 是之前观测到的值。$\text{Pr}(·\mid·)$ 是条件概率。</p>
+<h2 id="3-2-Graph-Convolution-on-Traffic-Networks"><a href="#3-2-Graph-Convolution-on-Traffic-Networks" class="headerlink" title="3.2 Graph Convolution on Traffic Networks"></a>3.2 Graph Convolution on Traffic Networks</h2><p>图卷积通过谱域，将传统的卷积从网格上扩展到了图上。为了引入一般的 $K$ 阶图卷积，我们首先给每个路段 $l_i \in \mathcal{L}$ 定义了 $K$ 阶邻居 $\mathcal{H}_i(K) = \{l_j \in \mathcal{L} \mid d(l_i, l_j) \leq K \}$，其中 $d(l_i, l_j)$ 表示所有从 $l_i$ 到 $l_j$ 的路径中最短路径的长度。</p>
+<p>邻接矩阵就是一阶邻居，$K$ 次幂就是 $K$ 阶邻居。为了模仿拉普拉斯矩阵，我们在对角线上加了1，定义为：</p>
+<p>$$\tag{2}<br>\boldsymbol{A}^K_{GC} = \text{Ci}(\boldsymbol{A}^K + \boldsymbol{I})<br>$$</p>
+<p>其中 $\text{Ci}(·)$ 是clip function，将非0元素变成1；因此 $\boldsymbol{A}^K_{GC}(i, j) = 1 \quad for \quad l_j \in \mathcal{H}_i(K) \quad or \quad i = j$；否则 $\boldsymbol{A}^K_{GC}(i, j) = 0$。单位阵 $\boldsymbol{I}$ 增加了自连接，卷积的时候可以考虑到自身。</p>
+<p>基于上述的邻居矩阵，一个简单版本的图卷积(e.g., Cui et al., 2018)可以定义为：</p>
+<p>$$\tag{3}<br>\boldsymbol{V}_t(K) = (\boldsymbol{W}_{GC} \odot \boldsymbol{A}^K_{GC})\cdot \boldsymbol{V}_t<br>$$</p>
+<p>其中 $\boldsymbol{W}_{GC}$ 是一个和 $\boldsymbol{A}$ 一样大小的可训练的矩阵。$\odot$ 表示哈达玛积。通过哈达玛乘积，$(\boldsymbol{W}_{GC} \odot \boldsymbol{A}^K_{GC})$ 可以得到一个在 $K$ 阶邻居上有参数，其他地方为0的新矩阵。因此，$(\boldsymbol{W}_{GC} \odot \boldsymbol{A}^K_{GC})\cdot \boldsymbol{V}_t$ 可以理解成是一个对 $\boldsymbol{V}_t$ 的空间离散的卷积。结果就是，$\boldsymbol{V}_t(K)$ 是时间 $t$ 的融合空间的速度向量。它的第 $i$ 个元素 $v^i_t(K)$ 表示路段 $l_i \in \mathcal{L}$ 在时间 $t$ 的空间融合速度，这个速度集成了其邻居路段 $\mathcal{H}_i(K)$ 的信息。</p>
 
       
 
