@@ -8,18 +8,20 @@
   <link rel="dns-prefetch" href="https://davidham3.github.io">
   <title>Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="AGC-Seq2Seq，投的是TRC。">
+  <meta name="description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
 <meta name="keywords" content="deep learning,graph convolutional network,STDM,Time Series">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
 <meta property="og:url" content="https://davidham3.github.io/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="AGC-Seq2Seq，投的是TRC。">
+<meta property="og:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-02-20T02:41:22.909Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig1.jpg">
+<meta property="og:updated_time" content="2019-02-20T02:59:49.502Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
-<meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。">
+<meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
+<meta name="twitter:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig1.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
   
@@ -68,7 +70,7 @@
 		</nav>
 		<nav>
 			总文章数 57<br>
-			总字数 <span class="post-count">157.8k</span>
+			总字数 <span class="post-count">157.9k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -179,12 +181,12 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.2k字 | 预计阅读时长：4分钟
+        字数：1.4k字 | 预计阅读时长：4分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>AGC-Seq2Seq，投的是TRC。</p>
+        <p>AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。</p>
 <a id="more"></a>
 <h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>为了在多步交通预测的任务中，捕获复杂的非平稳的时间动态性和空间依赖关系，我们提出了一个叫注意力图卷积序列到序列模型（AGC-Seq2Seq）。空间和时间用图卷积和序列到序列模型分开建模。注意力机制用来解决序列到序列模型在多步预测上的困难，同时来捕获交通流的异质性。</p>
 <h1 id="2-LITERATURE-REVIEW"><a href="#2-LITERATURE-REVIEW" class="headerlink" title="2. LITERATURE REVIEW"></a>2. LITERATURE REVIEW</h1><p>如 Li et al. 2017 所述，统计模型、shallow machine learning models 和 深度学习模型是三个主要的方法。</p>
@@ -193,7 +195,10 @@
 <p>最近，深度学习算法成功的应用在计算机科学中，同时，它在运输学科也吸引了很多人的注意。Huang et al. 2014 使用深度置信网络用于无监督学习，证明了在交通流预测上的有效性。Lv et al. 2015 使用一个堆叠的自编码器模型学习交通流特征。Ma et al 2015 使用 LSTM 有效地捕获了交通流的动态性。Polson and Sokolov 2017 融合了 $L_1$ 正则和 $\text{tanh}$ 激活的多层网络来检测交通流的极端的非线性。然而，这些方法主要聚焦于对单个序列建模，不能反映交通网络的空间关系。</p>
 <p>卷积神经网络提供了一个有效的架构来提取大尺度、高维的数据集中有效的统计模式。在学习局部平稳结构中，CNN 的能力在图像和视频识别任务中获得了很大的突破。在运输领域，也有学者使用 CNN 捕获交通网络上的空间关系。Ma et al. (2017) 提出了一个预测车速的深度卷积神经网络，将交通的时空动态性转换成图像。Wang et al. (2017) 将高速公路处理成一个 band image，提出了误差回传的循环卷积神经网络结构用于连续的交通速度预测。Ke et al. (2017) 将城市区域划分成均匀的网格，通过将卷积和 LSTM 层合并来预测每个网格内的乘客需求。上述的研究将交通网络转换为网格是因为 CNN 受限于处理欧氏空间的数据。然而，在交通预测上，路网上的时间序列是分布在一个拓扑图上连续的序列，是一种非欧式结构数据的典型 (Narang et al., 2013)；原本的 CNN 结构是不能使用的。为了解决这个问题，基于谱图理论的图卷积网络 (GCN) 可以用于在非欧式空间上使用卷积 (Kipf and Welling, 2016)。几个刚刚发表的研究在交通预测上使用了图卷积模型。基于谱的图卷积和时间上的卷积相结合 (Yu et al., 2017)，还有图卷积与循环神经网络 (RNN) 的结合 (Li et al., 2017) 来用于预测交通状态。之后，Cui et al. (2018) 使用高阶图卷积来学习路网上不同路段间的交互关系。上述研究没有在路网上直接定义图卷积，而是通过高斯核根据任意两个监测器间的距离构建了监测器之间的网络。此外，交通状况的时间关联也没有考虑。</p>
 <p>总结一下，城市路网上交通状况的变化展示出了时空的依赖性。我们提出了一个定制版的深度学习框架，在 Seq2Seq 框架中继承了注意力机制和图卷积模型，同时捕获复杂的非平稳的空间动态性和多步交通预测的空间依赖性。</p>
-
+<h1 id="3-AGC-SEQ2SEQ-DEEP-LEARNING-FRAMEWORK"><a href="#3-AGC-SEQ2SEQ-DEEP-LEARNING-FRAMEWORK" class="headerlink" title="3. AGC-SEQ2SEQ DEEP LEARNING FRAMEWORK"></a>3. AGC-SEQ2SEQ DEEP LEARNING FRAMEWORK</h1><h2 id="3-1-Preliminaries"><a href="#3-1-Preliminaries" class="headerlink" title="3.1 Preliminaries"></a>3.1 Preliminaries</h2><p><em>(1) Road network topology</em></p>
+<p>路网根据驾驶方向构建成有向图 $\mathcal{G}(\mathcal{N}, \mathcal{L})$ ，顶点集 $\mathcal{N}$ 表示路口 (监测器或选择的高速公路的划分点)，边集 $\mathcal{L}$ 表示路段，如图1所示。$\boldsymbol{A}$ 是边集的邻接矩阵，$\boldsymbol{A}(i, j)$ 表示边 $i$ 和 $j$ 是否相连，即</p>
+<p>$$<br>\boldsymbol{A}(i, j) = \begin{cases}<br>1, &amp;\text{if } l_i  \text{and}  l_j  \text{are}  \text{connected}  \text{along}  \text{driving}  \text{direction}\\<br>0, &amp;\text{if } \text{otherwise}<br>\end{cases}<br>$$</p>
+<center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig1.jpg" alt="Figure1"></center>
       
 
       
