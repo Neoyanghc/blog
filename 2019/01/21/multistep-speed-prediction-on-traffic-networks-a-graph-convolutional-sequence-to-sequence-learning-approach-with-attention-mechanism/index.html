@@ -17,7 +17,8 @@
 <meta property="og:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig1.jpg">
-<meta property="og:updated_time" content="2019-02-20T09:10:57.706Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig2.jpg">
+<meta property="og:updated_time" content="2019-02-20T12:13:22.457Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
 <meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
@@ -220,8 +221,8 @@
 <p>其中 $\boldsymbol{W}_{GC}$ 是一个和 $\boldsymbol{A}$ 一样大小的可训练的矩阵。$\odot$ 表示哈达玛积。通过哈达玛乘积，$(\boldsymbol{W}_{GC} \odot \boldsymbol{A}^K_{GC})$ 可以得到一个在 $K$ 阶邻居上有参数，其他地方为0的新矩阵。因此，$(\boldsymbol{W}_{GC} \odot \boldsymbol{A}^K_{GC})\cdot \boldsymbol{V}_t$ 可以理解成是一个对 $\boldsymbol{V}_t$ 的空间离散的卷积。结果就是，$\boldsymbol{V}_t(K)$ 是时间 $t$ 的融合空间的速度向量。它的第 $i$ 个元素 $v^i_t(K)$ 表示路段 $l_i \in \mathcal{L}$ 在时间 $t$ 的空间融合速度，这个速度集成了其邻居路段 $\mathcal{H}_i(K)$ 的信息。</p>
 <p>此外，式3可以分解成一个一维卷积。</p>
 <p>$$\tag{4}<br>v^i_t(K) = (\boldsymbol{W}_{GC}[i] \odot \boldsymbol{A}^K_{GC}[i])^T \cdot \boldsymbol{V}_t<br>$$</p>
-<p>$\boldsymbol{W}_{GC}[i]$ 和 $\boldsymbol{A}^K_{GC}[i]$ 分别是 $\boldsymbol{W}_{GC}$ 和 $\boldsymbol{A}^K_{GC}$ 的第 $i$ 行。</p>
-
+<p>$\boldsymbol{W}_{GC}[i]$ 和 $\boldsymbol{A}^K_{GC}[i]$ 分别是 $\boldsymbol{W}_{GC}$ 和 $\boldsymbol{A}^K_{GC}$ 的第 $i$ 行。图2是路网上 $\boldsymbol{A}^K_{GC}[i]$ 的一个例子，路段 $i$ 在红线，邻居是蓝线。</p>
+<center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig2.jpg" alt="Figure2"></center>
       
 
       
