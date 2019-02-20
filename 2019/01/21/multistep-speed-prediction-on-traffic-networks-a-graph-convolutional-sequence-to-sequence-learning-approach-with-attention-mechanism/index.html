@@ -17,7 +17,7 @@
 <meta property="og:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig1.jpg">
-<meta property="og:updated_time" content="2019-02-20T02:59:49.502Z">
+<meta property="og:updated_time" content="2019-02-20T07:12:15.644Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
 <meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
@@ -70,7 +70,7 @@
 		</nav>
 		<nav>
 			总文章数 57<br>
-			总字数 <span class="post-count">157.9k</span>
+			总字数 <span class="post-count">158.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -181,7 +181,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.4k字 | 预计阅读时长：4分钟
+        字数：1.9k字 | 预计阅读时长：7分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -197,8 +197,21 @@
 <p>总结一下，城市路网上交通状况的变化展示出了时空的依赖性。我们提出了一个定制版的深度学习框架，在 Seq2Seq 框架中继承了注意力机制和图卷积模型，同时捕获复杂的非平稳的空间动态性和多步交通预测的空间依赖性。</p>
 <h1 id="3-AGC-SEQ2SEQ-DEEP-LEARNING-FRAMEWORK"><a href="#3-AGC-SEQ2SEQ-DEEP-LEARNING-FRAMEWORK" class="headerlink" title="3. AGC-SEQ2SEQ DEEP LEARNING FRAMEWORK"></a>3. AGC-SEQ2SEQ DEEP LEARNING FRAMEWORK</h1><h2 id="3-1-Preliminaries"><a href="#3-1-Preliminaries" class="headerlink" title="3.1 Preliminaries"></a>3.1 Preliminaries</h2><p><em>(1) Road network topology</em></p>
 <p>路网根据驾驶方向构建成有向图 $\mathcal{G}(\mathcal{N}, \mathcal{L})$ ，顶点集 $\mathcal{N}$ 表示路口 (监测器或选择的高速公路的划分点)，边集 $\mathcal{L}$ 表示路段，如图1所示。$\boldsymbol{A}$ 是边集的邻接矩阵，$\boldsymbol{A}(i, j)$ 表示边 $i$ 和 $j$ 是否相连，即</p>
-<p>$$<br>\boldsymbol{A}(i, j) = \begin{cases}<br>1, &amp;\text{if } l_i  \text{and}  l_j  \text{are}  \text{connected}  \text{along}  \text{driving}  \text{direction}\\<br>0, &amp;\text{if } \text{otherwise}<br>\end{cases}<br>$$</p>
+<p>$$<br>\boldsymbol{A}(i, j) = \begin{cases}<br>1, &amp;\text{if } \quad l_i \quad \text{and} \quad l_j \quad \text{are} \quad \text{connected} \quad \text{along} \quad \text{driving} \quad \text{direction}\\<br>0, &amp;\text{if } \quad \text{otherwise}<br>\end{cases}<br>$$</p>
 <center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig1.jpg" alt="Figure1"></center>
+
+<p><em>(2) Traffic speed</em></p>
+<p>路段 $l_i (\forall l_i \in \mathcal{L})$ 的第 $t$ 个时段（比如 5 分钟）定义为路段上这个时间段浮动车的平均速度，表示为 $v^i_t$。路网在第 $t$ 个时段的速度定义为向量 $\boldsymbol{V}_t \in \mathbb{R}^{\vert \mathcal{L} \vert}$（$\vert \mathcal{L} \vert$ 是边集 $\mathcal{L}$ 的基数），第 $i$ 个元素是 $(\boldsymbol{V}_t)_i = v^i_t$。</p>
+<p>作为典型的时间序列预测问题，最近邻的 $m$ 步观测值可以对多步预测提供有价值的信息。除了实时的车速信息，一些外部变量，如时间、工作日还是周末，历史的统计信息也对预测有帮助。</p>
+<p><em>(3) Time-of-day and weekday-or-weekend</em></p>
+<p>因为路段的车速是聚合 5 分钟得到的平均值，时间会被转化为一个有序的实数，比如 00:00-00:05 转化为 $N_t = 1$，7:00-7:05 转化为 $N_t = 85(7 * 12 + 1)$，工作日或周末表示为 $p_t$，区分工作日和周末的不同特性。</p>
+<p><em>(4) Historical statistic information</em></p>
+<p>交通状态的每日趋势可以通过引入历史的统计数据捕获。历史的平均车速，中值车速，最大车速，最小车速，路段 $l_i$ 的 $t$ 时段的标准差，分别定义为训练集中的平均值、中位数、最大、最小、标准差，表示为 $v^i_{t,average}, v^i_{t,median}, v^i_{t,max}, v^i_{t,min}, d^i_t$。</p>
+<p><em>(5) Problem formulation</em></p>
+<p>车速预测是用之前观测到的速度预测一个确定时段每个路段上的车速。多步速度预测问题定义为：</p>
+<p>$$\tag{1}<br>\hat{V}_{t+n} = \mathop{\arg\max}\limits_{V_{t+n}} \text{Pr}(V_{t+n} \mid V_t, V_{t-1}, \dots, V_{t-m};\mathcal{G})<br>$$</p>
+<p>其中 $\hat{V}_{t+n}(n=1,2,3,\dots)$ 表示第 $n$ 步的预测速度，$\{V_t, V_{t-1}, \dots, V_{t-m} \mid m=1,2,\dots \}$ 是之前观测到的值。$\text{Pr}(·\mid·)$ 是条件概率。</p>
+
       
 
       
