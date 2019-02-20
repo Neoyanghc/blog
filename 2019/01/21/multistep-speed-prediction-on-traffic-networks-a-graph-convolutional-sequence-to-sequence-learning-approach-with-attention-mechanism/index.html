@@ -18,7 +18,8 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig1.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig2.jpg">
-<meta property="og:updated_time" content="2019-02-20T12:13:22.457Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig3.jpg">
+<meta property="og:updated_time" content="2019-02-20T12:24:51.994Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
 <meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
@@ -71,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 57<br>
-			总字数 <span class="post-count">159k</span>
+			总字数 <span class="post-count">159.3k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -182,7 +183,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2.4k字 | 预计阅读时长：9分钟
+        字数：2.7k字 | 预计阅读时长：10分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -223,6 +224,14 @@
 <p>$$\tag{4}<br>v^i_t(K) = (\boldsymbol{W}_{GC}[i] \odot \boldsymbol{A}^K_{GC}[i])^T \cdot \boldsymbol{V}_t<br>$$</p>
 <p>$\boldsymbol{W}_{GC}[i]$ 和 $\boldsymbol{A}^K_{GC}[i]$ 分别是 $\boldsymbol{W}_{GC}$ 和 $\boldsymbol{A}^K_{GC}$ 的第 $i$ 行。图2是路网上 $\boldsymbol{A}^K_{GC}[i]$ 的一个例子，路段 $i$ 在红线，邻居是蓝线。</p>
 <center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig2.jpg" alt="Figure2"></center>
+
+<h2 id="3-3-Attention-Graph-Convolutional-Sequence-to-Sequence-Model-AGC-Seq2Seq"><a href="#3-3-Attention-Graph-Convolutional-Sequence-to-Sequence-Model-AGC-Seq2Seq" class="headerlink" title="3.3 Attention Graph Convolutional Sequence-to-Sequence Model (AGC-Seq2Seq)"></a>3.3 Attention Graph Convolutional Sequence-to-Sequence Model (AGC-Seq2Seq)</h2><p>我们提出了 AGC-Seq2Seq 模型将时空变量和外部信息集成至深度学习架构中，用来做多步车辆速度预测。</p>
+<p>为了捕获时间序列特征和获得多步输出，我们使用 Seq2Seq 作为整个方法的基础结构，由两个参数独立的 RNN 模块组成(Sutskever et al., 2014; Cho et al., 2014)。为了克服 RNN 输出的长度不可变，Seq2Seq 模型将输入进编码器的时间序列编码，解码器从 <em>context vector</em> 中解码出预测值。我们提出的 AGC-Seq2Seq 模型如图3所示。首先用图卷积来捕获空间特征，然后将时空变量 $v^i_{t-j}(K)$ 和外部信息 $\boldsymbol{E}_{t-j}$（包括时间和工作日或周末信息）融合构成输入向量，然后放入 Seq2Seq的编码模型中。上述过程如下：</p>
+<p>$$\tag{5}<br>v^i_{t-j}(K) = (\boldsymbol{W}_{GC}[i] \odot \boldsymbol{A}^K_{GC}[i])^T \cdot \boldsymbol{V}_{t-j}, \quad 0 \leq j \leq m<br>$$</p>
+<p>$$\tag{6}<br>\boldsymbol{E}_{t-j} = [N_{t-j};p_{t-j}]<br>$$</p>
+<p>$$\tag{7}<br>\boldsymbol{X}^i_{t-j} = [v^i_{t-j}(K);\boldsymbol{E}_{t-j}]<br>$$</p>
+<p>其中 $N_{t-j}$ 和 $p_{t-j}$ 如3.1节定义，$[·;·]$ 操作是将两个张量拼接。</p>
+<center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig3.jpg" alt="Figure3"></center>
       
 
       
