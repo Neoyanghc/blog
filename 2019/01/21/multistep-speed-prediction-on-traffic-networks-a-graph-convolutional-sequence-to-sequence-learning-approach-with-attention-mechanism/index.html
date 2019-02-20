@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig1.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig2.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig3.jpg">
-<meta property="og:updated_time" content="2019-02-20T12:24:51.994Z">
+<meta property="og:updated_time" content="2019-02-20T13:21:12.968Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
 <meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
@@ -72,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 57<br>
-			总字数 <span class="post-count">159.3k</span>
+			总字数 <span class="post-count">160k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -183,7 +183,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2.7k字 | 预计阅读时长：10分钟
+        字数：3.4k字 | 预计阅读时长：14分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -232,6 +232,18 @@
 <p>$$\tag{7}<br>\boldsymbol{X}^i_{t-j} = [v^i_{t-j}(K);\boldsymbol{E}_{t-j}]<br>$$</p>
 <p>其中 $N_{t-j}$ 和 $p_{t-j}$ 如3.1节定义，$[·;·]$ 操作是将两个张量拼接。</p>
 <center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig3.jpg" alt="Figure3"></center>
+
+<p>编码部分如式8-9，在时间步 $t-j, j\in \{0, \dots, m \}$，前一个隐藏状态 $\boldsymbol{h}_{t-j-1}$ 传入到当前时间戳和 $\boldsymbol{X}_{t-j}$ 计算得到 $\boldsymbol{h}_{t-j}$。因此，背景向量 $\boldsymbol{C}$ 存储了包括隐藏状态 $(\boldsymbol{h}_{t-m}, \boldsymbol{h}_{t-m+1}, \boldsymbol{h}_{t-1})$ 和输入向量 $(\boldsymbol{X}_{t-m}, \boldsymbol{X}_{t-m+1}, \boldsymbol{X}_t)$ 的信息。</p>
+<p>$$\tag{8}<br>\boldsymbol{h}_{t-j} = \begin{cases}<br>\text{Cell}_{encoder}(\boldsymbol{h}_0, \boldsymbol{X}_{t-j}), \quad &amp;j = m\\<br>\text{Cell}_{encoder}(\boldsymbol{h}_{t-j-1}, \boldsymbol{X}_{t-j}), \quad &amp;j \in \{ 0, \dots, m-1 \}<br>\end{cases}<br>$$</p>
+<p>$$\tag{9}<br>\boldsymbol{C} = \boldsymbol{h}_t<br>$$</p>
+<p>其中 $\boldsymbol{h}_0$ 是初始隐藏状态，通常是 0 向量；$\text{Cell}_{encoder}(·)$ 是编码器的计算函数，由使用的 RNN 结构决定。</p>
+<p>在解码器的部分，关键是利用背景向量 $\boldsymbol{C}$ 作为初始的隐藏向量，一步一步地解码。时间 $t+j, j \in \{1, \dots, n \}$ 步，隐藏状态 $\boldsymbol{h}_{t+j}$ 不仅包括输入信息，还考虑之前的输出状态 $(\boldsymbol{h}_{t+1}, \boldsymbol{h}_{t+2}, \dots, \boldsymbol{h}_{t+j-1})$。</p>
+<p>解码器的输入依赖于训练方法。<em>Teacher forcing</em> 在 NLP 中是一个流行的训练策略。在 teacher-forcing 训练策略中，真值在训练的时候输入到解码器，测试的时候将预测值输入进解码器。这种方法不适合时间序列预测主要是因为在训练和测试的时候，输入到解码器的分布不一致。Li et al. (2017) 使用 <em>scheduled sampling</em> 缓解了这个问题，通过设定概率 $\epsilon$，随机的将真值或预测值放入到解码器中。但这会增加模型的复杂度，给计算造成负担。</p>
+<p>为了解决这个问题，我们提出了一个新的训练策略，将历史的统计信息和时间信息作为输入。在时间序列预测问题中，历史信息可以通过训练和测试阶段获得；这样解码器在训练和测试的时候，其输入的分布就可以相互同步，解决 <em>teacher forcing</em> 的问题。此外，因为历史统计信息在多步预测中很重要，增加这个可以提高模型的预测精度。下面的等式用来计算 $t+j,j \in \{1, \dots, n \}$ 这个时间步解码器的隐藏状态。</p>
+<p>$$\tag{10}<br>\boldsymbol{v}^i_{t+j}(H) = [N_{t+j}; v^i_{t+j, average};v^i_{t+j, median}; v^i_{t+j, max}; v^i_{t+j, min}; d^i_{t+j}]<br>$$</p>
+<p>$$\tag{11}<br>\boldsymbol{h}_{t+j} = \begin{cases}<br>\text{Cell}_{decoder}(\boldsymbol{C}, \boldsymbol{v}^i_{t+j}(H)), \quad &amp;j = 1\\<br>\text{Cell}_{decoder}(\boldsymbol{h}_{t+j-1}, \boldsymbol{v}^i_{t+j}(H)), \quad &amp;j \in \{2, \dots, n \}<br>\end{cases}<br>$$</p>
+<p>其中 $\text{Cell}_{decoder}$ 是解码器的计算公式，与编码器类似。</p>
+
       
 
       
