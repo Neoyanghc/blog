@@ -23,7 +23,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig5_a.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig5_bc.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig6.jpg">
-<meta property="og:updated_time" content="2019-02-21T07:34:42.973Z">
+<meta property="og:updated_time" content="2019-02-21T08:45:43.744Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
 <meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
@@ -187,7 +187,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：4.4k字 | 预计阅读时长：18分钟
+        字数：4.5k字 | 预计阅读时长：18分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -251,7 +251,7 @@
 <p>$$\tag{12}<br>z_t = \sigma(\boldsymbol{W}_z \cdot [\boldsymbol{h}_{t-1}; x_t] + b_z)<br>$$</p>
 <p>$$\tag{13}<br>r_t = \sigma(\boldsymbol{W}_r \cdot [\boldsymbol{h}_{t-1}; x_t] + b_r)<br>$$</p>
 <p>$$\tag{14}<br>c_t = \text{tanh}(\boldsymbol{W}_c \cdot [r_t \odot \boldsymbol{h}_{t-1}; x_t] + b_c)<br>$$</p>
-<p>$$\tag{15}<br>\boldsymbol{h}_t = (1 - z_t) \odot \boldsymbol{h}_{t-1} + z_t \odot \boldsymbol{c}_t<br>$$</p>
+<p>$$\tag{15}<br>\boldsymbol{h}_t = (1 - z_t) \odot \boldsymbol{h}_{t-1} + z_t \odot c_t<br>$$</p>
 <p>$$\tag{16}<br>\sigma(x) = \frac{1}{1 + e^{-x}}<br>$$</p>
 <p>$$\tag{17}<br>\text{tanh}(x) = \frac{e^x - e^{-x}}{e^x+e^{-x}}<br>$$</p>
 <p>在上式中，$z_t$ 和 $r_t$ 分别是更新门和重置门。$c_t$ 是候选输出，$\sigma(\cdot)$ 和 $\text{tanh}(\cdot)$ 是两个激活函数。$W_z$，$W_r$ 和 $W_c$ 是权重矩阵，$b_z$，$b_r$ 和 $b_c$ 是偏置。</p>
@@ -273,6 +273,8 @@
 
 <p>数据范围是2016年10月1日到2016年11月30日。10月1日到11月20日做训练，11月21日到27日做测试。预测的范围是 06:00 到 22:00，因此，每条路段每天包含 192 个数据点。图6展示了划分的数据集。在数据清理后，缺失值通过线性插值的方法填补。</p>
 <center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig6.jpg" alt="Figure6"></center>
+
+<h2 id="4-2-Model-comparisons"><a href="#4-2-Model-comparisons" class="headerlink" title="4.2 Model comparisons"></a>4.2 Model comparisons</h2>
       
 
       
