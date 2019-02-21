@@ -20,7 +20,9 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig2.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig3.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig4.jpg">
-<meta property="og:updated_time" content="2019-02-21T03:31:01.055Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig5_a.jpg">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig5_bc.jpg">
+<meta property="og:updated_time" content="2019-02-21T07:19:54.840Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
 <meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
@@ -73,7 +75,7 @@
 		</nav>
 		<nav>
 			总文章数 57<br>
-			总字数 <span class="post-count">160.7k</span>
+			总字数 <span class="post-count">160.9k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -184,7 +186,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：4.1k字 | 预计阅读时长：17分钟
+        字数：4.4k字 | 预计阅读时长：18分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -262,7 +264,11 @@
 <p>如图3所示，注意力隐藏状态 $\tilde{\boldsymbol{h}}_{t+j}$ 由注意力向量 $\boldsymbol{S}_{t+j}$ 和原始隐藏状态 $\boldsymbol{h}_{t+j}$ 通过一个简单拼接组成，如式 21 所示。式 22 表示从隐藏状态到输出的线性变换。参数 $\boldsymbol{W}_v$ 和 $b_v$ 的维度与输出一致。</p>
 <p>$$\tag{21}<br>\tilde{\boldsymbol{h}}_{t+j} = \text{tanh} (\boldsymbol{W}_h \cdot [\boldsymbol{S}_{t+k};\boldsymbol{h}_{t+j}])<br>$$</p>
 <p>$$\tag{22}<br>\hat{v}_{t+j} = \boldsymbol{W}_v \tilde{h}_{t+j} + b_v<br>$$</p>
-
+<p>为了减少多步预测中的误差，我们定义了所有要预测的时间步上的平均绝对误差：</p>
+<p>$$\tag{23}<br>loss = \frac{1}{n} \sum^n_{j=1} \vert \hat{v}^i_{t+j} - v^i_{t+j} \vert<br>$$</p>
+<p>所有的参数通过随机梯度下降训练。</p>
+<h1 id="4-NUMERICAL-EXAMPLES"><a href="#4-NUMERICAL-EXAMPLES" class="headerlink" title="4 NUMERICAL EXAMPLES"></a>4 NUMERICAL EXAMPLES</h1><h2 id="4-1-Dataset"><a href="#4-1-Dataset" class="headerlink" title="4.1 Dataset"></a>4.1 Dataset</h2><p>数据集是从 A-map 的用户收集的，是中国的一个手机导航应用提供的 (Sohu, 2018)。研究范围选择在了北京 2 环，是北京最堵的地方。如图5(a)所示，我们将 33km 长的二环以 200m 一段分成 163 个路段。此外，我们通过用户的轨迹点计算每个路段上 5 分钟的平均速度。2环上工作和和周末的车速如图5(b)(c)所示，x 轴是经度，y 轴是纬度，z 轴是时间和速度的颜色表。</p>
+<center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig5_a.jpg" alt="Figure5 a"></center><br><center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig5_bc.jpg" alt="Figure5 bc"></center>
       
 
       
