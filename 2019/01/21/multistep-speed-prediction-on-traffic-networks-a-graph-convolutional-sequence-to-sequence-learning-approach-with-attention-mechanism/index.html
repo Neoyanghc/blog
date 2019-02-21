@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig2.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig3.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig4.jpg">
-<meta property="og:updated_time" content="2019-02-21T03:03:42.289Z">
+<meta property="og:updated_time" content="2019-02-21T03:31:01.055Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
 <meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
@@ -73,7 +73,7 @@
 		</nav>
 		<nav>
 			总文章数 57<br>
-			总字数 <span class="post-count">160.6k</span>
+			总字数 <span class="post-count">160.7k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -184,7 +184,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：4k字 | 预计阅读时长：16分钟
+        字数：4.1k字 | 预计阅读时长：17分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -259,6 +259,9 @@
 <p>$$\tag{19}<br>a^{t-i}_{t+j} = \text{softmax}(u^{t-i}_{t+j}) = \frac{\text{exp}(u^{t-i}_{t+j})}{\sum^m_{r=1} \text{exp} (u^{t-r}_{t+j})}, \quad i=0,1,\dots,m<br>$$</p>
 <p>$$\tag{20}<br>\boldsymbol{S}_{t+j} = \sum^m_{i=1} a^{t-i}_{t+j} \boldsymbol{h}_{t-i}<br>$$</p>
 <p>其中，式 18 计算出的 $u^{t-i}_{t+j}$ 可以用来衡量 $\boldsymbol{h}_{t+j}$ 和 $\boldsymbol{h}_{t-i}$ 之间的相似性，我们使用 <em>Luong Attention form</em> (Luong et al., 2015) 作为注意力的计算公式，$\boldsymbol{W}_f$ 和 $\boldsymbol{q}^T$ 是参数，用来调节结果的维数；$a^{t-i}_{t+j}$ 是 $u^{t-i}_{t+j}$ 归一化的结果，用作对应编码器隐藏状态 $\boldsymbol{h}_{t-i}$ 的权重来计算 $\boldsymbol{S}_{t+j}$。</p>
+<p>如图3所示，注意力隐藏状态 $\tilde{\boldsymbol{h}}_{t+j}$ 由注意力向量 $\boldsymbol{S}_{t+j}$ 和原始隐藏状态 $\boldsymbol{h}_{t+j}$ 通过一个简单拼接组成，如式 21 所示。式 22 表示从隐藏状态到输出的线性变换。参数 $\boldsymbol{W}_v$ 和 $b_v$ 的维度与输出一致。</p>
+<p>$$\tag{21}<br>\tilde{\boldsymbol{h}}_{t+j} = \text{tanh} (\boldsymbol{W}_h \cdot [\boldsymbol{S}_{t+k};\boldsymbol{h}_{t+j}])<br>$$</p>
+<p>$$\tag{22}<br>\hat{v}_{t+j} = \boldsymbol{W}_v \tilde{h}_{t+j} + b_v<br>$$</p>
 
       
 
