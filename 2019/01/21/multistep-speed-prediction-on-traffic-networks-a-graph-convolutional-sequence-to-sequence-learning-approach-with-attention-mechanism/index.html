@@ -19,7 +19,8 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig1.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig2.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig3.jpg">
-<meta property="og:updated_time" content="2019-02-20T13:21:12.968Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig4.jpg">
+<meta property="og:updated_time" content="2019-02-21T03:03:42.289Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
 <meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
@@ -72,7 +73,7 @@
 		</nav>
 		<nav>
 			总文章数 57<br>
-			总字数 <span class="post-count">160k</span>
+			总字数 <span class="post-count">160.6k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -183,7 +184,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：3.4k字 | 预计阅读时长：14分钟
+        字数：4k字 | 预计阅读时长：16分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -243,6 +244,21 @@
 <p>$$\tag{10}<br>\boldsymbol{v}^i_{t+j}(H) = [N_{t+j}; v^i_{t+j, average};v^i_{t+j, median}; v^i_{t+j, max}; v^i_{t+j, min}; d^i_{t+j}]<br>$$</p>
 <p>$$\tag{11}<br>\boldsymbol{h}_{t+j} = \begin{cases}<br>\text{Cell}_{decoder}(\boldsymbol{C}, \boldsymbol{v}^i_{t+j}(H)), \quad &amp;j = 1\\<br>\text{Cell}_{decoder}(\boldsymbol{h}_{t+j-1}, \boldsymbol{v}^i_{t+j}(H)), \quad &amp;j \in \{2, \dots, n \}<br>\end{cases}<br>$$</p>
 <p>其中 $\text{Cell}_{decoder}$ 是解码器的计算公式，与编码器类似。</p>
+<p>我们使用 GRU (Chung et al., 2014) 作为编码和解码的结构，如图4。实验效果比标准的 LSTM 好很多。编码器和解码器的计算过程如式12-17所示：</p>
+<p>$$\tag{12}<br>z_t = \sigma(\boldsymbol{W}_z \cdot [\boldsymbol{h}_{t-1}; x_t] + b_z)<br>$$</p>
+<p>$$\tag{13}<br>r_t = \sigma(\boldsymbol{W}_r \cdot [\boldsymbol{h}_{t-1}; x_t] + b_r)<br>$$</p>
+<p>$$\tag{14}<br>c_t = \text{tanh}(\boldsymbol{W}_c \cdot [r_t \odot \boldsymbol{h}_{t-1}; x_t] + b_c)<br>$$</p>
+<p>$$\tag{15}<br>\boldsymbol{h}_t = (1 - z_t) \odot \boldsymbol{h}_{t-1} + z_t \odot \boldsymbol{c}_t<br>$$</p>
+<p>$$\tag{16}<br>\sigma(x) = \frac{1}{1 + e^{-x}}<br>$$</p>
+<p>$$\tag{17}<br>\text{tanh}(x) = \frac{e^x - e^{-x}}{e^x+e^{-x}}<br>$$</p>
+<p>在上式中，$z_t$ 和 $r_t$ 分别是更新门和重置门。$c_t$ 是候选输出，$\sigma(\cdot)$ 和 $\text{tanh}(\cdot)$ 是两个激活函数。$W_z$，$W_r$ 和 $W_c$ 是权重矩阵，$b_z$，$b_r$ 和 $b_c$ 是偏置。</p>
+<center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig4.jpg" alt="Figure4"></center>
+
+<p>为了捕获交通模式的外部信息，我们还集成了注意力机制 (Bahdanau et al., 2014; Luong et al., 2015)。注意力机制的关键在于在每个时间步增加捕获了源信息的相关性的注意力向量来帮助交通速度。在时间步 $t+j, j \in \{1, \dots, n \}$，注意力函数定义为式 18-20，将 query $\boldsymbol{h}_{t+j}$ 和 一组 key $(\boldsymbol{h}_{t-m}, \dots, \boldsymbol{t-1}, \boldsymbol{h}_t)$ 映射起来组成注意力向量 $\boldsymbol{S}_{t+j}$。如下式 18-20，$\boldsymbol{S}_{t+j}$ 通过计算这些 key 的带权和得到，权重通过计算得到：</p>
+<p>$$\tag{18}<br>u^{t-i}_{t+j} = \boldsymbol{q}^T \text{tanh} (\boldsymbol{h}_{t+j} \boldsymbol{W}_f \boldsymbol{h}_{t-j}), \quad i = 0,1,\dots,m<br>$$</p>
+<p>$$\tag{19}<br>a^{t-i}_{t+j} = \text{softmax}(u^{t-i}_{t+j}) = \frac{\text{exp}(u^{t-i}_{t+j})}{\sum^m_{r=1} \text{exp} (u^{t-r}_{t+j})}, \quad i=0,1,\dots,m<br>$$</p>
+<p>$$\tag{20}<br>\boldsymbol{S}_{t+j} = \sum^m_{i=1} a^{t-i}_{t+j} \boldsymbol{h}_{t-i}<br>$$</p>
+<p>其中，式 18 计算出的 $u^{t-i}_{t+j}$ 可以用来衡量 $\boldsymbol{h}_{t+j}$ 和 $\boldsymbol{h}_{t-i}$ 之间的相似性，我们使用 <em>Luong Attention form</em> (Luong et al., 2015) 作为注意力的计算公式，$\boldsymbol{W}_f$ 和 $\boldsymbol{q}^T$ 是参数，用来调节结果的维数；$a^{t-i}_{t+j}$ 是 $u^{t-i}_{t+j}$ 归一化的结果，用作对应编码器隐藏状态 $\boldsymbol{h}_{t-i}$ 的权重来计算 $\boldsymbol{S}_{t+j}$。</p>
 
       
 
