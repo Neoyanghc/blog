@@ -24,7 +24,10 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig5_bc.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig6.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Table1.jpg">
-<meta property="og:updated_time" content="2019-02-22T08:05:29.626Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Table2_a.jpg">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Table2_b.jpg">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Table2_c.jpg">
+<meta property="og:updated_time" content="2019-02-22T08:26:27.036Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
 <meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
@@ -77,7 +80,7 @@
 		</nav>
 		<nav>
 			总文章数 57<br>
-			总字数 <span class="post-count">161.7k</span>
+			总字数 <span class="post-count">161.8k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -188,7 +191,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：5.1k字 | 预计阅读时长：20分钟
+        字数：5.2k字 | 预计阅读时长：21分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -290,7 +293,12 @@
 <p>为了保证共鸣，之前提到的预测模型都有和 AGC-Seq2Seq 同样的输入特征（特征类型和窗口长度），尽管传统的时间序列模型利用了训练集的全部速度记录。窗口长度为 12，也就是用过去一小时预测未来。19 维特征如表 1 所示。</p>
 <center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Table1.jpg" alt="Table1"></center>
 
+<p>所有的符号如 3.1 节定义，$n$ 是定值。我们通过三个错误指标评价模型，MAPE, MAE, RMSE, $\text{MAPE} = \frac{1}{Q} \sum^Q_{i=1} \frac{\vert v_i - \hat{v}_i \vert}{v_i}$, $\text{MAE} = \frac{1}{Q} \sum^Q_{i=1} \vert v_i - \hat{v}_i \vert$, $\text{RMSE} = \sqrt{\frac{1}{Q} \sum^Q_{i=1} (v_i - \hat{v}_i)^2}$，其中 $v_i$ 和 $\hat{v}^i$ 分别是真值和预测值；$Q$ 是测试集大小。</p>
+<center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Table2_a.jpg" alt="Table2 a"></center>
 
+<center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Table2_b.jpg" alt="Table2 b"></center>
+
+<center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Table2_c.jpg" alt="Table2 c"></center>
       
 
       
