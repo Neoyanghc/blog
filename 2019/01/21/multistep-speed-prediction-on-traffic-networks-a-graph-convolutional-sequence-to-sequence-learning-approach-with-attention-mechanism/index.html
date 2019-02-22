@@ -23,7 +23,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig5_a.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig5_bc.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig6.jpg">
-<meta property="og:updated_time" content="2019-02-21T08:45:43.744Z">
+<meta property="og:updated_time" content="2019-02-22T07:45:55.562Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
 <meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
@@ -76,7 +76,7 @@
 		</nav>
 		<nav>
 			总文章数 57<br>
-			总字数 <span class="post-count">161k</span>
+			总字数 <span class="post-count">161.6k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -187,7 +187,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：4.5k字 | 预计阅读时长：18分钟
+        字数：5k字 | 预计阅读时长：20分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -274,7 +274,18 @@
 <p>数据范围是2016年10月1日到2016年11月30日。10月1日到11月20日做训练，11月21日到27日做测试。预测的范围是 06:00 到 22:00，因此，每条路段每天包含 192 个数据点。图6展示了划分的数据集。在数据清理后，缺失值通过线性插值的方法填补。</p>
 <center><img src="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig6.jpg" alt="Figure6"></center>
 
-<h2 id="4-2-Model-comparisons"><a href="#4-2-Model-comparisons" class="headerlink" title="4.2 Model comparisons"></a>4.2 Model comparisons</h2>
+<h2 id="4-2-Model-comparisons"><a href="#4-2-Model-comparisons" class="headerlink" title="4.2 Model comparisons"></a>4.2 Model comparisons</h2><p>在每个部分，提出的模型对比的是其他的 benchmark 模型，包括传统的时间序列分析方法（如 HA 和 ARIMA），还有一些先进的机器学习方法（ANN, KNN, SVR, XGBOOST），深度学习模型（LSTM, GCN, Seq2Seq-Att）。</p>
+<ul>
+<li>HA：历史均值模型通过训练集的统计值预测测试集的未来车速。举个例子，路段 $l_i \in \mathcal{L}$ 在 8:00-8:05 的平均车速通过训练集同时段同路段的历史速度均值估计。</li>
+<li>ARIMA：$(p, d, q)$ 模型 (Box and Pierce, 1970)，差分的阶数设定为 $d = 1$，自回归部分的阶数和移动平均部分的阶数 $(p, q)$ 通过计算对应的 Akaike information criterion 决定，$p \in [0, 2], q \in [7, 12]$。</li>
+<li>ANN：我们用了三层神经网络，sigmoid 激活，隐藏单元数是特征数的 2 倍。因为 ANN 不能区分时间步上的变量，所以它不能捕获时间依赖。</li>
+<li>KNN：k 近邻，获取训练集中特征空间最相近的 k 个观测值。预测值通过对应的特征向量进行线性组合得到。超参数 $K$ 通过 5 到 25 折的交叉验证选定。</li>
+<li>SVR：支持向量回归 (Suykens and Vandewalle, 1999)，通过核函数将特征向量映射到高维空间得到拟合曲线。核函数和超参数通过交叉验证选定。</li>
+<li>XGBOOST：(Chen and Guestrin, 2016) 在很多机器学习任务上表现出了很好的效果；基于树结构可以扩展成端到端的系统。所有的特征 reshape 后输入到 XGBOOST 来训练。</li>
+<li>LSTM：(Hochreiter and Schmidhuber, 1997)，每个路段的所有特征都 reshape 成一个矩阵，一个轴是时间，另一个轴是特征。LSTM 考虑时间依赖，但是没有捕获空间依赖。</li>
+<li>GCN：GCN 中所有的路段的特征 reshape 成一个矩阵，一个轴是路段，另一个轴是特征。GCN 通过拉普拉斯矩阵将卷积泛化到非欧空间；因此，只考虑了空间关联，没有捕获时间依赖。</li>
+</ul>
+
       
 
       
