@@ -18,7 +18,8 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/Fig2.JPG">
-<meta property="og:updated_time" content="2019-03-04T13:51:22.070Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/Fig3.JPG">
+<meta property="og:updated_time" content="2019-03-04T14:26:23.465Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spatiotemporal Multi-Graph Convolution Network for Ride-hailing Demand Forecasting">
 <meta name="twitter:description" content="AAAI 2019，滴滴的网约车需求预测。原文地址：Spatiotemporal Multi-Graph Convolution Network for Ride-hailing Demand Forecasting">
@@ -71,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 58<br>
-			总字数 <span class="post-count">164.6k</span>
+			总字数 <span class="post-count">166k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -182,7 +183,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2.9k字 | 预计阅读时长：11分钟
+        字数：4.2k字 | 预计阅读时长：16分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -221,6 +222,30 @@
 <p><strong>Functional similarity</strong> 对一个区域做预测的时候，很自然的会想到和这个区域在功能上相似的区域会有帮助。区域功能可以由 POI 刻画，两个顶点间的边定义为 POI 的相似度：</p>
 <p>$$\tag{3}<br>A_{S,i,j} = \text{sim}(P_{v_i}, P_{v_j}) \in [0, 1]<br>$$</p>
 <p>其中 $P_{v_i}, P_{v_j}$ 是区域 $v_i$ 和 $v_j$ 的 POI 向量，维度等于 POI 种类的个数，每个分量表示这个区域内这个 POI 类型的数量。</p>
+<p><strong>Transportation connectivity</strong> 运输系统也是一个重要因素。一般来说，这些空间距离上相距较远但是可以很方便到达的区域可以关联起来。这种连接包含高速公路、公路、地铁这样的公共运输。我们定义：如果两个区域间通过这些路直接相连，那么他们之间有边：</p>
+<p>$$\tag{4}<br>A_{C,i,j} = max(0, \text{conn}(v_i, v_j) - A_{N,i,j}) \in \{0, 1\}<br>$$</p>
+<p>$\text{conn}(u, v)$ 表示 $v_i$ 和 $v_j$ 之间的连通性。邻居的边在这个图中移除掉了，减少冗余的关系，所以这个图最后是一个稀疏图。</p>
+<p><strong>Multi-graph convolution for spatial dependency modeling</strong> 有了这些图，我们提出了多图卷积对空间关系建模：</p>
+<p>$$\tag{5}<br>\boldsymbol{X}_{l+1} = \sigma(\bigsqcup_{\bold{A} \in \mathbb{A}} f(\bold{A; \theta_i}) \boldsymbol{X}_l \bold{W}_l)<br>$$</p>
+<p>其中 $\boldsymbol{X}_l \in \mathbb{R}^{\vert V \vert \times P_l}, \boldsymbol{X}_{l+1} \in \mathbb{R}^{\vert V \vert \times P_{l+1}}$ 是第 $l$ 和 $l+1$ 层的特征向量，$\sigma$ 是激活函数，$\bigsqcup$ 表示聚合函数，如 sum, max, average etc. $\mathbb{A}$ 表示图的集合，$f(\bold{A}; \theta_i) \in \mathbb{R}^{\vert V \vert \times \vert V \vert}$ 表示参数为 $\theta_i$ 的基于图 $\bold{A} \in \mathbb{A}$ 的不同样本组成的矩阵的聚合值，$\bold{W}_l \in \mathbb{R}^{P_l \times P_{l+1}}$ 表示特征变换矩阵，举个例子，如果 $f(\bold{A}, \theta_i)$ 是拉普拉斯矩阵 $\bold{L}$ 的多项式，那么这就是多图上的 ChebNet。如果是 $\bold{I}$，那就是全连接神经网络。</p>
+<p>我们实现的是 $K$ 阶 拉普拉斯 $\bold{L}$ 多项式，图 3 是一个中心区域通过图卷积层变换后的例子。假设邻接矩阵中的值不是 0 就是 1，$L^k_{ij} \not = 0$ 表示 $v_i$ 在 $k$ 步内可达 $v_j$。根据卷积操作，$k$ 是空间特征提取时的感受野范围。使用图 1 的道路连通性图 $\mathcal{G}_C = (V, \boldsymbol{A}_C)$ 来说明。在邻接矩阵 $\boldsymbol{A}_C$ 中，我们有：</p>
+<p>$$<br>A_{C,1,4} = 1; A_{C,1,6} = 0; A_{C,4,6} = 1,<br>$$</p>
+<p>在 1 度拉普拉斯矩阵中对应的分量是：</p>
+<p>$$<br>L^1_{C,1,4} \not = 0; L^1_{C,1,6} = 0; L^1_{C,4,6} \not = 0<br>$$</p>
+<center><img src="/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/Fig3.JPG" alt="Figure3"></center>
+
+<p>如果拉普拉斯矩阵的最大度数 $K$ 设为 $1$，那么区域 1 变换的特征向量，即 $\boldsymbol{X}_{l+1, 1,:}$ 不会包含区域 6: $\boldsymbol{X}_{l,6,:}$，因为 $L^1_{C,1,6}=0$。当 $K$ 增大到 2 的时候，对应的元素 $L^2_{C,1,6}$ 变成非零，$\boldsymbol{X}_{l+1,1,:}$ 就可以利用 $\boldsymbol{X}_{l,6,:}$ 的信息了。</p>
+<p>基于多图卷积的空间依赖建模不限于上述三种图，可以轻易地扩展到其他的图上，适用于其他的时空预测问题上。多图卷积对区域间的关系进行特征提取。感受野小的时候，专注于近邻的区域。增大拉普拉斯阶数，或者堆叠卷积层可以增加感受野的范围，鼓励模型捕获全局依赖关系。</p>
+<p>图嵌入是另一种对区域间关系建模的方法。在 DMVST-Net (Yao et al. 2018b)，作者使用图嵌入表示区域间关系，然后将嵌入作为额外特征加到每个区域上。我们认为 ST-MGCN 中的空间依赖建模方法比之前的方法好，因为：ST-MGCN 将区域间关系编码到图中，通过图卷积从相关区域聚合需求值。但是在 DMVST-Net 中区域关系是嵌入到一个基于区域的不随时间变化的特征中，作为的模型的输入，</p>
+<p>尽管 DMVST-Net 也捕获了拓扑结构信息，但是它很难从相关的区域中通过区域关系聚合需求值。而且不变的特征对模型训练的贡献有限。</p>
+<h2 id="Temporal-correlation-modeling"><a href="#Temporal-correlation-modeling" class="headerlink" title="Temporal correlation modeling"></a>Temporal correlation modeling</h2><p>我们提出 Contextual Gated Recurrent Neural Network (CGRNN) 对不同时间步上的样本建模。CGRNN 通过使用一个上下文注意的门机制增强 RNN 将背景信息集成到时间建模中，结构如图 4。假设我们有 $T$ 个观测样本，$\boldsymbol{X}^{(t)} \in \mathbb{R}^{\vert V \vert \times P}$ 表示第 $t$ 个样本，$P$ 是特征数，如果特征只包含订单数，那就是 1。上下文门控机制如下：</p>
+<p>$$tag{6}<br>\hat{\boldsymbol{X}}^{(t)} = [\boldsymbol{X}^{(t)}, F^{K’}_\mathcal{G}(\boldsymbol{X}^{(t)})] \quad \text{for} \quad t = 1,2,\dots,T<br>$$</p>
+<p>首先，上下文门控机制通过将临近区域的历史信息和当前区域拼接，得到了区域的描述信息。从相邻区域来的信息看作是环境信息，通过图卷积 $F^{K’}_\mathcal{G}$ 使用最大阶数为 $K’$ 的拉普拉斯矩阵提取。上下文门控机制用来用图卷积操作集成临近区域的信息，然后使用一个池化：</p>
+<p>$$\tag{7}<br>z^{(t)} = F_{pool}(\hat{\boldsymbol{X}}^{(t)}) = \frac{1}{\vert V \vert} \sum^{\vert V \vert}_{i=1} \hat{X}^{(t)}_{i,:} \quad \text{for} \quad t=1,2,\dots,T<br>$$</p>
+<p>然后，我们在所有的区域上使用全局平均池化 $F_{pool}$ 生成每个时间步观测值的平均值。</p>
+<p>$$tag{8}<br>\boldsymbol{s} = \sigma(\boldsymbol{W}_2 \delta(\boldsymbol{W}_1) \boldsymbol{z})<br>$$</p>
+<p>然后使用一个注意力机制，$\boldsymbol{W}_1, \boldsymbol{W}_2$ 是参数，$\delta, \sigma$ 分别是 ReLU 和 sigmoid 激活。</p>
+<p>$$\tag{9}<br>\tilde{\boldsymbol{X}^{(t)}} = \boldsymbol{X}^{(t)} \circ s^{(t)} \quad \text{for} \quad t=1,2,\dots,T<br>$$</p>
 
       
 
