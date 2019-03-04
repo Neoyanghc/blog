@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/Fig2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/Fig3.JPG">
-<meta property="og:updated_time" content="2019-03-04T14:26:23.465Z">
+<meta property="og:updated_time" content="2019-03-04T14:37:09.249Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spatiotemporal Multi-Graph Convolution Network for Ride-hailing Demand Forecasting">
 <meta name="twitter:description" content="AAAI 2019，滴滴的网约车需求预测。原文地址：Spatiotemporal Multi-Graph Convolution Network for Ride-hailing Demand Forecasting">
@@ -226,9 +226,9 @@
 <p>$$\tag{4}<br>A_{C,i,j} = max(0, \text{conn}(v_i, v_j) - A_{N,i,j}) \in \{0, 1\}<br>$$</p>
 <p>$\text{conn}(u, v)$ 表示 $v_i$ 和 $v_j$ 之间的连通性。邻居的边在这个图中移除掉了，减少冗余的关系，所以这个图最后是一个稀疏图。</p>
 <p><strong>Multi-graph convolution for spatial dependency modeling</strong> 有了这些图，我们提出了多图卷积对空间关系建模：</p>
-<p>$$\tag{5}<br>\boldsymbol{X}_{l+1} = \sigma(\bigsqcup_{\bold{A} \in \mathbb{A}} f(\bold{A; \theta_i}) \boldsymbol{X}_l \bold{W}_l)<br>$$</p>
-<p>其中 $\boldsymbol{X}_l \in \mathbb{R}^{\vert V \vert \times P_l}, \boldsymbol{X}_{l+1} \in \mathbb{R}^{\vert V \vert \times P_{l+1}}$ 是第 $l$ 和 $l+1$ 层的特征向量，$\sigma$ 是激活函数，$\bigsqcup$ 表示聚合函数，如 sum, max, average etc. $\mathbb{A}$ 表示图的集合，$f(\bold{A}; \theta_i) \in \mathbb{R}^{\vert V \vert \times \vert V \vert}$ 表示参数为 $\theta_i$ 的基于图 $\bold{A} \in \mathbb{A}$ 的不同样本组成的矩阵的聚合值，$\bold{W}_l \in \mathbb{R}^{P_l \times P_{l+1}}$ 表示特征变换矩阵，举个例子，如果 $f(\bold{A}, \theta_i)$ 是拉普拉斯矩阵 $\bold{L}$ 的多项式，那么这就是多图上的 ChebNet。如果是 $\bold{I}$，那就是全连接神经网络。</p>
-<p>我们实现的是 $K$ 阶 拉普拉斯 $\bold{L}$ 多项式，图 3 是一个中心区域通过图卷积层变换后的例子。假设邻接矩阵中的值不是 0 就是 1，$L^k_{ij} \not = 0$ 表示 $v_i$ 在 $k$ 步内可达 $v_j$。根据卷积操作，$k$ 是空间特征提取时的感受野范围。使用图 1 的道路连通性图 $\mathcal{G}_C = (V, \boldsymbol{A}_C)$ 来说明。在邻接矩阵 $\boldsymbol{A}_C$ 中，我们有：</p>
+<p>$$\tag{5}<br>\boldsymbol{X}_{l+1} = \sigma(\bigsqcup_{\mathbf{A} \in \mathbb{A}} f(\mathbf{A; \theta_i}) \boldsymbol{X}_l \mathbf{W}_l)<br>$$</p>
+<p>其中 $\boldsymbol{X}_l \in \mathbb{R}^{\vert V \vert \times P_l}, \boldsymbol{X}_{l+1} \in \mathbb{R}^{\vert V \vert \times P_{l+1}}$ 是第 $l$ 和 $l+1$ 层的特征向量，$\sigma$ 是激活函数，$\bigsqcup$ 表示聚合函数，如 sum, max, average etc. $\mathbb{A}$ 表示图的集合，$f(\mathbf{A}; \theta_i) \in \mathbb{R}^{\vert V \vert \times \vert V \vert}$ 表示参数为 $\theta_i$ 的基于图 $\mathbf{A} \in \mathbb{A}$ 的不同样本组成的矩阵的聚合值，$\mathbf{W}_l \in \mathbb{R}^{P_l \times P_{l+1}}$ 表示特征变换矩阵，举个例子，如果 $f(\mathbf{A}, \theta_i)$ 是拉普拉斯矩阵 $\mathbf{L}$ 的多项式，那么这就是多图上的 ChebNet。如果是 $\mathbf{I}$，那就是全连接神经网络。</p>
+<p>我们实现的是 $K$ 阶 拉普拉斯 $\mathbf{L}$ 多项式，图 3 是一个中心区域通过图卷积层变换后的例子。假设邻接矩阵中的值不是 0 就是 1，$L^k_{ij} \not = 0$ 表示 $v_i$ 在 $k$ 步内可达 $v_j$。根据卷积操作，$k$ 是空间特征提取时的感受野范围。使用图 1 的道路连通性图 $\mathcal{G}_C = (V, \boldsymbol{A}_C)$ 来说明。在邻接矩阵 $\boldsymbol{A}_C$ 中，我们有：</p>
 <p>$$<br>A_{C,1,4} = 1; A_{C,1,6} = 0; A_{C,4,6} = 1,<br>$$</p>
 <p>在 1 度拉普拉斯矩阵中对应的分量是：</p>
 <p>$$<br>L^1_{C,1,4} \not = 0; L^1_{C,1,6} = 0; L^1_{C,4,6} \not = 0<br>$$</p>
