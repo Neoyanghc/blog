@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="写完公式渲染不出来，比如\vec{i}_j就会出错">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-07-14T12:40:35.469Z">
+<meta property="og:updated_time" content="2019-03-04T13:38:50.213Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hexo markdown mathjax 冲突问题">
 <meta name="twitter:description" content="写完公式渲染不出来，比如\vec{i}_j就会出错">
@@ -67,8 +67,8 @@
 			</ul>
 		</nav>
 		<nav>
-			总文章数 57<br>
-			总字数 <span class="post-count">161.8k</span>
+			总文章数 58<br>
+			总字数 <span class="post-count">164.6k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -179,12 +179,12 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：131字 | 预计阅读时长：1分钟
+        字数：130字 | 预计阅读时长：1分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>写完公式渲染不出来，比如\vec{i}_j就会出错<br><a id="more"></a><br>markdown中的下划线_表示斜体，在latex中，是下标。<br>\\在latex中是换行，在markdown中会转义成\。<br>所以导致如果写公式\vec{i}_j，本来应该是向量i的j下标，就会渲染不出来。<br>解决方案：<br>修改hexo的渲染源码<br>打开nodes_modules/lib/marked/lib/marked.js<br>将<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escape: /^\\([\\`*&#123;&#125;\[\]()# +\-.!_&gt;])/,</span><br></pre></td></tr></table></figure></p>
+        <p>写完公式渲染不出来，比如\vec{i}_j就会出错<br><a id="more"></a><br>markdown中的下划线_表示斜体，在latex中，是下标。<br>\\在latex中是换行，在markdown中会转义成\。<br>所以导致如果写公式\vec{i}_j，本来应该是向量i的j下标，就会渲染不出来。<br>解决方案：<br>修改hexo的渲染源码<br>打开nodes_modules/marked/lib/marked.js<br>将<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escape: /^\\([\\`*&#123;&#125;\[\]()# +\-.!_&gt;])/,</span><br></pre></td></tr></table></figure></p>
 <p>改为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escape: /^\\([`*&#123;&#125;\[\]()# +\-.!_&gt;])/,</span><br></pre></td></tr></table></figure></p>
 <p>这样就会去掉\\的转义了。<br>将<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">em: /^\b_((?:[^_]|__)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,</span><br></pre></td></tr></table></figure></p>
 <p>改为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">em:/^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,</span><br></pre></td></tr></table></figure></p>
