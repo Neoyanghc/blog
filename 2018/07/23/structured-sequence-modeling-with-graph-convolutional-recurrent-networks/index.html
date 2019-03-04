@@ -195,19 +195,60 @@
 <p>很多重要问题中，空间结构不是简单的网格状。气象站就不是网格状。而且空间结构不一定是空间上的，如社交网络或生物网络。最后，Mikolov et al. 2013等人认为，句子可以解释成在词网上的随机游走，使得我们转向了分析图结构的句子建模问题。</p>
 <p>我们的工作利用了近期的模型——Defferrard et al. 2016; Ranzato et al. 2014; Shi et al. 2015——来设计GCRN模型对时间变化的图结构数据建模和预测。核心思想是融合图结构上的CNN和RNN来同时辨识空间结构和动态模式。图1给出了GCRN的架构。</p>
 <p><img src="/blog/2018/07/23/structured-sequence-modeling-with-graph-convolutional-recurrent-networks/Fig1.JPG" alt="Figure1"></p>
-<h1 id="2-Preliminaries"><a href="#2-Preliminaries" class="headerlink" title="2 Preliminaries"></a>2 Preliminaries</h1><h2 id="2-1-Structured-Sequence-Modeling"><a href="#2-1-Structured-Sequence-Modeling" class="headerlink" title="2.1 Structured Sequence Modeling"></a>2.1 Structured Sequence Modeling</h2><p>序列建模是给定前$J$个观测值，对未来最可能的长度为$K$的序列进行预测：<br>$$\tag{1}<br>\hat{x}_{t+1},…,\hat{x}_{t+K} = \mathop{\mathrm{argmax}}\limits_{x_{t+1},…,x_{t+K}}P(x_{t+1},…,x_{t+K} \mid x_{t-J+1},…,x_t),<br>$$<br>$x_t \in \mathbf{D}$是时间$t$的观测值，$\mathbf{D}$表示观测到的特征的域。原型应用是$n-\mathrm{gram}$模型$(n = J + 1)$，$P(x_{t+1} \mid x_{t-J+1},…,x_t)$对在句子中给定过去$J$个词时$x_{t+1}$出现的概率进行建模。</p>
+<h1 id="2-Preliminaries"><a href="#2-Preliminaries" class="headerlink" title="2 Preliminaries"></a>2 Preliminaries</h1><h2 id="2-1-Structured-Sequence-Modeling"><a href="#2-1-Structured-Sequence-Modeling" class="headerlink" title="2.1 Structured Sequence Modeling"></a>2.1 Structured Sequence Modeling</h2><p>序列建模是给定前$J$个观测值，对未来最可能的长度为$K$的序列进行预测：</p>
+<script type="math/tex; mode=display">\tag{1}
+\hat{x}_{t+1},...,\hat{x}_{t+K} = \mathop{\mathrm{argmax}}\limits_{x_{t+1},...,x_{t+K}}P(x_{t+1},...,x_{t+K} \mid x_{t-J+1},...,x_t),</script><p>$x_t \in \mathbf{D}$是时间$t$的观测值，$\mathbf{D}$表示观测到的特征的域。原型应用是$n-\mathrm{gram}$模型$(n = J + 1)$，$P(x_{t+1} \mid x_{t-J+1},…,x_t)$对在句子中给定过去$J$个词时$x_{t+1}$出现的概率进行建模。</p>
 <p>我们感兴趣的是特别的结构化的句子，也就是句子中$x_t$的特征不是相互独立的，而是有着两两相连的关系。这样的关系广义上通过带权图建模。</p>
 <p>$x_t$可以看作是一个图信号，也就是一个定义在无向带权图$\mathcal{G} = ( \mathcal{V}, \Large{\varepsilon}, \normalsize{A )}$，其中$\mathcal{V}$是$\vert \mathcal{V} \vert = n$个顶点的有限集，$\Large{\varepsilon}$是边集，$A \in \mathbb{R}^{n \times n}$是带权邻接矩阵，编码了两个顶点之间的连接权重。定义在图的顶点上的信号$x_t: \mathcal{V} \rightarrow \mathbb{R}^{d_x}$可以当作是一个矩阵$x_t \in \mathbb{R}^{n \times d_x}$，列$i$是$d_x$维向量，表示$x_t$在第$i$个顶点的值。尽管自由变量的数量在长度为$K$的结构化序列中本质上是$\mathcal{O}(n^K{d_x}^K)$，我们仍然试图去挖掘可能的预测结果的空间结构以减少维度，来使这些问题变得容易解决。</p>
-<h2 id="2-2-Long-Short-Term-Memory"><a href="#2-2-Long-Short-Term-Memory" class="headerlink" title="2.2 Long Short-Term Memory"></a>2.2 Long Short-Term Memory</h2><p>防止梯度过快消失，由Hochreiter &amp; Schmidhuber 1997发明的一种RNN，LSTM。这个模型已经被证明在各种序列建模任务中，对长期依赖关系是稳定且强劲的模型(Graves, 2013; Srivastava et al., 2015; Sutskever et al., 2014)。全连接LSTM(FC-LSTM)可以看作是一个多变量版本的LSTM，其中$x_t \in \mathbb{R}^d_x$是输入，$h_t \in [-1, 1]^{d_h}$是细胞状态，$c_t \in \mathbb{R}^{d_h}$是隐藏状态，他们都是向量。我们使用Graves 2013的FC-LSTM：<br>$$\tag{2}<br>i = \sigma(W_{xi} x_t + W_{hi}h_{t-1} + w_{ci} \odot c_{t-1} + b_i),\\<br>f = \sigma(W_{xf} x_t + W_{hf} h_{t-1} + w_{cf} \odot c_{t-1} + b_f),\\<br>c_t = f_t \odot c_{t-1} + i_t \odot \mathrm{tanh}(W_{xc} x_t + W_{hc} h_{t-1} + b_c),\\<br>o = \sigma(W_{xo} x_t + W_{ho} h_{t-1} + w_{co} \odot c_t + b_o),\\<br>h_t = o \odot \mathrm{tanh}(c_t),<br>$$<br>其中$\odot$表示Hadamard product，$\sigma(\cdot)$表示sigmoid function $\sigma(x) = 1/(1+e^{-x})$，$i,f,o \in [0, 1]^{d_h}$是输入门，遗忘门，输出门。权重$W_{x\cdot} \in \mathbb{R}^{d_h \times d_x}$，$W_{h\cdot} \in \mathbb{R}^{d_h \times d_h}$，$w_{c\cdot} \in \mathbb{R}^{d_h}$，偏置$b_i,b_f,b_c,b_o \in \mathbb{R}^{d_h}$是模型参数。这个模型之所以称为全连接是因为$W_{x\cdot}$和$W_{h\cdot}$与$x$和$h$所有分量进行线性组合。由Gers &amp; Schmidhuber 2000引入可选的peephole connections $w_{c\cdot} \odot c_t$，在某些特定任务上可以提升性能。</p>
-<h2 id="2-3-Convolutional-Neural-Networks-On-Graphs"><a href="#2-3-Convolutional-Neural-Networks-On-Graphs" class="headerlink" title="2.3 Convolutional Neural Networks On Graphs"></a>2.3 Convolutional Neural Networks On Graphs</h2><p>Defferrard et al., 2016选择了谱上的卷积操作：<br>$$\tag{3}<br>y = g_\theta \ast_\mathcal{G} x = g_\theta (L)x = g_\theta (U \Lambda U^T)x = U g_\theta (\Lambda) U^T x \in \mathbb{R}^{n \times d_x},<br>$$<br>对于归一化的拉普拉斯矩阵$L = I_n - D^{-1/2} A D^{-1/2} = U \Lambda U^T \in \mathbb{R}^{n \times n}$来说，$U \in \mathbb{R}^{n \times n}$是矩阵的特征向量，$\Lambda \in \mathbb{R}^{n \times n}$是特征值的对角矩阵。式3的时间复杂度很高，因为$U$的乘法的时间复杂度是$\mathcal{O}(n^2)$。此外，计算$L$的特征值分解对于大的图来说很慢。Defferrard et al., 2016使用切比雪夫多项式：<br>$$\tag{4}<br>g_\theta(\Lambda) = \sum^{K-1}_{k=0} \theta_k T_k(\tilde{\Lambda}),<br>$$<br>参数$\theta \in \mathbb{R}^K$是切比雪夫系数的向量，$T_k(\tilde{\Lambda}) \in \mathbb{R}^{n \times n}$是切比雪夫多项式的k阶项在$\tilde{\Lambda} = 2\Lambda/\lambda_{max} - I_n$的值。图卷积操作可以写为：<br>$$\tag{5}<br>y = g_\theta \ast_{\mathcal{G}} x = g_\theta (L) x = \sum^{K-1}_{k=0} \theta_k T_k (\tilde{L})x,<br>$$<br>$T_0 = 1$，$T_1 = x$，$T_k(x) = 2xT_{k-1}(x)-T_{k-2}(x)$，时间复杂度是$\mathcal{O}(K \vert \Large{\varepsilon} \normalsize \vert)$，也就是和边数相关。这个图卷积是$K$阶局部化的。</p>
-<h1 id="3-Related-Works"><a href="#3-Related-Works" class="headerlink" title="3 Related Works"></a>3 Related Works</h1><p>Shi et al. 2015提出了针对常规网格结构的序列的模型，可以看作是图是图像网格且顶点有序的特殊情况。他们的模型本质上是FC-LSTM，$W$的乘法替换为卷积核$W$：<br>$$\tag{6}<br>i = \sigma(W_{xi} \ast x_t + W_{hi} \ast h_{t-1} + w_{ci} \odot c_{t-1} + b_i),\\<br>f = \sigma(W_{xf} \ast x_t + W_{hf} \ast h_{t-1} + w_{cf} \odot c_{t-1} + b_f),\\<br>c_t = f_t \odot c_{t-1} + i_t \odot \mathrm{tanh}(W_{xc} \ast x_t + W_{hc} \ast h_{t-1} + b_c),\\<br>o = \sigma(W_{xo} \ast x_t + W_{ho} \ast h_{t-1} + w_{co} \odot c_t + b_o),\\<br>h_t = o \odot \mathrm{tanh}(c_t),<br>$$<br>$\ast$表示一组卷积核的2D卷积。在他们的设定中$x_t \in \mathbb{R}^{n_r \times n_c \times d_x}$是一个动态系统中，时间$t$的$d_x$的观测值，这个动态系统建立在一个表示为$n_r$行$n_c$列的空间区域上。模型有着空间分布的隐藏核细胞状态，大小是$d_h$，由张量$c_t$体现，$h_t \in \mathbb{R}^{n_r \times n_c \times d_h}$。卷积核$W_{h\cdot} \in \mathbb{R}^{m \times m \times d_h \times d_h}$和$W_{x\cdot} \in \mathbb{R}^{m \times m \times d_h \times d_x}$的尺寸$m$决定了参数的数量，与网格大小$n_r \times n_c$无关。更早一点，Ranzato et al. 2014提出了相似的RNN变体，使用卷积层而不是全连接层。时间$t$的隐藏状态：<br>$$\tag{7}<br>h_t = \mathrm{tanh}(\sigma(W_{x2} \ast \sigma(W_{x1} \ast x_t)) + \sigma(W_h \ast h_{t-1})),<br>$$<br>卷积核$W_h \in \mathbb{R}^{d_h \times d_h}$受限到$1 \times 1$的大小。</p>
+<h2 id="2-2-Long-Short-Term-Memory"><a href="#2-2-Long-Short-Term-Memory" class="headerlink" title="2.2 Long Short-Term Memory"></a>2.2 Long Short-Term Memory</h2><p>防止梯度过快消失，由Hochreiter &amp; Schmidhuber 1997发明的一种RNN，LSTM。这个模型已经被证明在各种序列建模任务中，对长期依赖关系是稳定且强劲的模型(Graves, 2013; Srivastava et al., 2015; Sutskever et al., 2014)。全连接LSTM(FC-LSTM)可以看作是一个多变量版本的LSTM，其中$x_t \in \mathbb{R}^d_x$是输入，$h_t \in [-1, 1]^{d_h}$是细胞状态，$c_t \in \mathbb{R}^{d_h}$是隐藏状态，他们都是向量。我们使用Graves 2013的FC-LSTM：</p>
+<script type="math/tex; mode=display">\tag{2}
+i = \sigma(W_{xi} x_t + W_{hi}h_{t-1} + w_{ci} \odot c_{t-1} + b_i),\\
+f = \sigma(W_{xf} x_t + W_{hf} h_{t-1} + w_{cf} \odot c_{t-1} + b_f),\\
+c_t = f_t \odot c_{t-1} + i_t \odot \mathrm{tanh}(W_{xc} x_t + W_{hc} h_{t-1} + b_c),\\
+o = \sigma(W_{xo} x_t + W_{ho} h_{t-1} + w_{co} \odot c_t + b_o),\\
+h_t = o \odot \mathrm{tanh}(c_t),</script><p>其中$\odot$表示Hadamard product，$\sigma(\cdot)$表示sigmoid function $\sigma(x) = 1/(1+e^{-x})$，$i,f,o \in [0, 1]^{d_h}$是输入门，遗忘门，输出门。权重$W_{x\cdot} \in \mathbb{R}^{d_h \times d_x}$，$W_{h\cdot} \in \mathbb{R}^{d_h \times d_h}$，$w_{c\cdot} \in \mathbb{R}^{d_h}$，偏置$b_i,b_f,b_c,b_o \in \mathbb{R}^{d_h}$是模型参数。这个模型之所以称为全连接是因为$W_{x\cdot}$和$W_{h\cdot}$与$x$和$h$所有分量进行线性组合。由Gers &amp; Schmidhuber 2000引入可选的peephole connections $w_{c\cdot} \odot c_t$，在某些特定任务上可以提升性能。</p>
+<h2 id="2-3-Convolutional-Neural-Networks-On-Graphs"><a href="#2-3-Convolutional-Neural-Networks-On-Graphs" class="headerlink" title="2.3 Convolutional Neural Networks On Graphs"></a>2.3 Convolutional Neural Networks On Graphs</h2><p>Defferrard et al., 2016选择了谱上的卷积操作：</p>
+<script type="math/tex; mode=display">\tag{3}
+y = g_\theta \ast_\mathcal{G} x = g_\theta (L)x = g_\theta (U \Lambda U^T)x = U g_\theta (\Lambda) U^T x \in \mathbb{R}^{n \times d_x},</script><p>对于归一化的拉普拉斯矩阵$L = I_n - D^{-1/2} A D^{-1/2} = U \Lambda U^T \in \mathbb{R}^{n \times n}$来说，$U \in \mathbb{R}^{n \times n}$是矩阵的特征向量，$\Lambda \in \mathbb{R}^{n \times n}$是特征值的对角矩阵。式3的时间复杂度很高，因为$U$的乘法的时间复杂度是$\mathcal{O}(n^2)$。此外，计算$L$的特征值分解对于大的图来说很慢。Defferrard et al., 2016使用切比雪夫多项式：</p>
+<script type="math/tex; mode=display">\tag{4}
+g_\theta(\Lambda) = \sum^{K-1}_{k=0} \theta_k T_k(\tilde{\Lambda}),</script><p>参数$\theta \in \mathbb{R}^K$是切比雪夫系数的向量，$T_k(\tilde{\Lambda}) \in \mathbb{R}^{n \times n}$是切比雪夫多项式的k阶项在$\tilde{\Lambda} = 2\Lambda/\lambda_{max} - I_n$的值。图卷积操作可以写为：</p>
+<script type="math/tex; mode=display">\tag{5}
+y = g_\theta \ast_{\mathcal{G}} x = g_\theta (L) x = \sum^{K-1}_{k=0} \theta_k T_k (\tilde{L})x,</script><p>$T_0 = 1$，$T_1 = x$，$T_k(x) = 2xT_{k-1}(x)-T_{k-2}(x)$，时间复杂度是$\mathcal{O}(K \vert \Large{\varepsilon} \normalsize \vert)$，也就是和边数相关。这个图卷积是$K$阶局部化的。</p>
+<h1 id="3-Related-Works"><a href="#3-Related-Works" class="headerlink" title="3 Related Works"></a>3 Related Works</h1><p>Shi et al. 2015提出了针对常规网格结构的序列的模型，可以看作是图是图像网格且顶点有序的特殊情况。他们的模型本质上是FC-LSTM，$W$的乘法替换为卷积核$W$：</p>
+<script type="math/tex; mode=display">\tag{6}
+i = \sigma(W_{xi} \ast x_t + W_{hi} \ast h_{t-1} + w_{ci} \odot c_{t-1} + b_i),\\
+f = \sigma(W_{xf} \ast x_t + W_{hf} \ast h_{t-1} + w_{cf} \odot c_{t-1} + b_f),\\
+c_t = f_t \odot c_{t-1} + i_t \odot \mathrm{tanh}(W_{xc} \ast x_t + W_{hc} \ast h_{t-1} + b_c),\\
+o = \sigma(W_{xo} \ast x_t + W_{ho} \ast h_{t-1} + w_{co} \odot c_t + b_o),\\
+h_t = o \odot \mathrm{tanh}(c_t),</script><p>$\ast$表示一组卷积核的2D卷积。在他们的设定中$x_t \in \mathbb{R}^{n_r \times n_c \times d_x}$是一个动态系统中，时间$t$的$d_x$的观测值，这个动态系统建立在一个表示为$n_r$行$n_c$列的空间区域上。模型有着空间分布的隐藏核细胞状态，大小是$d_h$，由张量$c_t$体现，$h_t \in \mathbb{R}^{n_r \times n_c \times d_h}$。卷积核$W_{h\cdot} \in \mathbb{R}^{m \times m \times d_h \times d_h}$和$W_{x\cdot} \in \mathbb{R}^{m \times m \times d_h \times d_x}$的尺寸$m$决定了参数的数量，与网格大小$n_r \times n_c$无关。更早一点，Ranzato et al. 2014提出了相似的RNN变体，使用卷积层而不是全连接层。时间$t$的隐藏状态：</p>
+<script type="math/tex; mode=display">\tag{7}
+h_t = \mathrm{tanh}(\sigma(W_{x2} \ast \sigma(W_{x1} \ast x_t)) + \sigma(W_h \ast h_{t-1})),</script><p>卷积核$W_h \in \mathbb{R}^{d_h \times d_h}$受限到$1 \times 1$的大小。</p>
 <p>观察到自然语言表示出语法性质，自然的将词融入短语中，Tai et al. 2015提出了一个处理树结构的模型，每个LSTM可以获取他们的孩子的状态。他们在semantic relatedness and sentiment classification上获得了state-of-the-art的结果。Liang et al. 2016在之后提出了在图上的变体。他们复杂的网络结构在4个数据集上获得了semantic object parsing的state-of-the-art结果。这些模型中，状态通过一个可训练的权重矩阵的带权加和从邻居上聚集。然而这些权重并不在图上共享，否则需要对顶点排序，就像其他图卷积的空间定义一样。此外，他们的公式受限于当前顶点的一阶邻居，给其他的邻居相同的权重。</p>
 <p>受到如人体动作和物体交互等时空任务的启发，Jain et al 2016提出了一个方法将时空图看作是一个富RNN的混合，本质上是将一个RNN连接到每个顶点与每条边上。同样的，通信受限于直接连接的顶点与边。</p>
 <p>和我们的工作最相关的模型可能是Li et al 2015提出的模型，在program verification上表现出了最好的结果。尽管他们使用Scarselli et al. 2009提出的GNN，以迭代的步骤传播顶点的表示，直到收敛，我们使用的是Defferrard et al. 2016提出的GCN在顶点间扩散信息。尽管他们的动机和我们很不一样，这些模型的关联是使用$K$阶多项式定义的谱滤波器可以实现成一个$K$层的GNN。</p>
 <h1 id="4-Proposed-GCRN-Models"><a href="#4-Proposed-GCRN-Models" class="headerlink" title="4 Proposed GCRN Models"></a>4 Proposed GCRN Models</h1><p>我们提出了两种GCRN架构</p>
-<p><strong>Model 1.</strong><br>$$\tag{8}<br>x^{\mathrm{CNN}}_t = \mathrm{CNN}_\mathcal{G}(x_t)\\<br>i = \sigma(W_{xi} x^{\mathrm{CNN}}_t + W_{hi}h_{t-1} + w_{ci} \odot c_{t-1} + b_i),\\<br>f = \sigma(W_{xf} x^{\mathrm{CNN}}_t + W_{hf} h_{t-1} + w_{cf} \odot c_{t-1} + b_f),\\<br>c_t = f_t \odot c_{t-1} + i_t \odot \mathrm{tanh}(W_{xc} x^{\mathrm{CNN}}_t + W_{hc} h_{t-1} + b_c),\\<br>o = \sigma(W_{xo} x^{\mathrm{CNN}}_t + W_{ho} h_{t-1} + w_{co} \odot c_t + b_o),\\<br>h_t = o \odot \mathrm{tanh}(c_t).<br>$$<br>我们简单地写成$x^{\mathrm{CNN}}_t = W^{\mathrm{CNN}} \ast_\mathcal{G} x_t$，其中$W^{\mathrm{CNN}} \in \mathbb{R}^{K \times d_x \times d_x}$是切比雪夫系数。Peepholes由$w_{c\cdot} \in \mathbb{R}^{n \times d_h}$控制。这样的架构可能足以捕获数据的分布，通过挖掘局部静止性以及性质的组合性，还有动态属性。</p>
-<p><strong>Model 2.</strong><br>$$\tag{9}<br>i = \sigma(W_{xi} \ast_\mathcal{G} x_t + W_{hi} \ast_\mathcal{G} h_{t-1} + w_{ci} \odot c_{t-1} + b_i),\\<br>f = \sigma(W_{xf} \ast_\mathcal{G} x_t + W_{hf} \ast_\mathcal{G} h_{t-1} + w_{cf} \odot c_{t-1} + b_f),\\<br>c_t = f_t \odot c_{t-1} + i_t \odot \mathrm{tanh}(W_{xc} \ast_\mathcal{G} x_t + W_{hc} \ast_\mathcal{G} h_{t-1} + b_c),\\<br>o = \sigma(W_{xo} \ast_\mathcal{G} x_t + W_{ho} \ast_\mathcal{G} h_{t-1} + w_{co} \odot c_t + b_o),\\<br>h_t = o \odot \mathrm{tanh}(c_t),<br>$$<br>图卷积核是切比雪夫系数$W_{h\cdot} \in \mathbb{R}^{K \times d_h \times d_h}$，$W_{x\cdot} \in \mathbb{R}^{K \times d_h \times d_x}$决定了参数的数目，与顶点数$n$无关。<br>这种RNN和CNN的混合，不限于LSTM。普通的RNN $h_t = \mathrm{tanh}(W_x x_t + W_h h_{t-1})$可以写为：<br>$$\tag{10}<br>h_t = \mathrm{tanh}(W_x \ast_\mathcal{G} x_t + W_h \ast_\mathcal{G} h_{t-1}),<br>$$<br>GRU的版本可以写为：<br>$$\tag{11}<br>z = \sigma(W_{xz} \ast_\mathcal{G} x_t + W_{hz} \ast_\mathcal{G} h_{t-1}),\\<br>r = \sigma(W_{xr} \ast_\mathcal{G} x_t + W_{hr} \ast_\mathcal{G} h_{t-1}),\\<br>\tilde{h} = \mathrm{tanh}(W_{xh} \ast_\mathcal{G} x_t + W_{hh} \ast_\mathcal{G} (r \odot h_{t-1})),\\<br>h_t = z \odot h_{t-1} + (1 - z) \odot \tilde{h}.<br>$$</p>
-<h1 id="5-Experiments"><a href="#5-Experiments" class="headerlink" title="5 Experiments"></a>5 Experiments</h1><p><img src="/blog/2018/07/23/structured-sequence-modeling-with-graph-convolutional-recurrent-networks/Table1.JPG" alt="Table1"></p>
+<p><strong>Model 1.</strong></p>
+<script type="math/tex; mode=display">\tag{8}
+x^{\mathrm{CNN}}_t = \mathrm{CNN}_\mathcal{G}(x_t)\\
+i = \sigma(W_{xi} x^{\mathrm{CNN}}_t + W_{hi}h_{t-1} + w_{ci} \odot c_{t-1} + b_i),\\
+f = \sigma(W_{xf} x^{\mathrm{CNN}}_t + W_{hf} h_{t-1} + w_{cf} \odot c_{t-1} + b_f),\\
+c_t = f_t \odot c_{t-1} + i_t \odot \mathrm{tanh}(W_{xc} x^{\mathrm{CNN}}_t + W_{hc} h_{t-1} + b_c),\\
+o = \sigma(W_{xo} x^{\mathrm{CNN}}_t + W_{ho} h_{t-1} + w_{co} \odot c_t + b_o),\\
+h_t = o \odot \mathrm{tanh}(c_t).</script><p>我们简单地写成$x^{\mathrm{CNN}}_t = W^{\mathrm{CNN}} \ast_\mathcal{G} x_t$，其中$W^{\mathrm{CNN}} \in \mathbb{R}^{K \times d_x \times d_x}$是切比雪夫系数。Peepholes由$w_{c\cdot} \in \mathbb{R}^{n \times d_h}$控制。这样的架构可能足以捕获数据的分布，通过挖掘局部静止性以及性质的组合性，还有动态属性。</p>
+<p><strong>Model 2.</strong></p>
+<script type="math/tex; mode=display">\tag{9}
+i = \sigma(W_{xi} \ast_\mathcal{G} x_t + W_{hi} \ast_\mathcal{G} h_{t-1} + w_{ci} \odot c_{t-1} + b_i),\\
+f = \sigma(W_{xf} \ast_\mathcal{G} x_t + W_{hf} \ast_\mathcal{G} h_{t-1} + w_{cf} \odot c_{t-1} + b_f),\\
+c_t = f_t \odot c_{t-1} + i_t \odot \mathrm{tanh}(W_{xc} \ast_\mathcal{G} x_t + W_{hc} \ast_\mathcal{G} h_{t-1} + b_c),\\
+o = \sigma(W_{xo} \ast_\mathcal{G} x_t + W_{ho} \ast_\mathcal{G} h_{t-1} + w_{co} \odot c_t + b_o),\\
+h_t = o \odot \mathrm{tanh}(c_t),</script><p>图卷积核是切比雪夫系数$W_{h\cdot} \in \mathbb{R}^{K \times d_h \times d_h}$，$W_{x\cdot} \in \mathbb{R}^{K \times d_h \times d_x}$决定了参数的数目，与顶点数$n$无关。<br>这种RNN和CNN的混合，不限于LSTM。普通的RNN $h_t = \mathrm{tanh}(W_x x_t + W_h h_{t-1})$可以写为：</p>
+<script type="math/tex; mode=display">\tag{10}
+h_t = \mathrm{tanh}(W_x \ast_\mathcal{G} x_t + W_h \ast_\mathcal{G} h_{t-1}),</script><p>GRU的版本可以写为：</p>
+<script type="math/tex; mode=display">\tag{11}
+z = \sigma(W_{xz} \ast_\mathcal{G} x_t + W_{hz} \ast_\mathcal{G} h_{t-1}),\\
+r = \sigma(W_{xr} \ast_\mathcal{G} x_t + W_{hr} \ast_\mathcal{G} h_{t-1}),\\
+\tilde{h} = \mathrm{tanh}(W_{xh} \ast_\mathcal{G} x_t + W_{hh} \ast_\mathcal{G} (r \odot h_{t-1})),\\
+h_t = z \odot h_{t-1} + (1 - z) \odot \tilde{h}.</script><h1 id="5-Experiments"><a href="#5-Experiments" class="headerlink" title="5 Experiments"></a>5 Experiments</h1><p><img src="/blog/2018/07/23/structured-sequence-modeling-with-graph-convolutional-recurrent-networks/Table1.JPG" alt="Table1"></p>
 <p>数据集是moving-MNIST(Shi et al., 2015)。</p>
 <p><img src="/blog/2018/07/23/structured-sequence-modeling-with-graph-convolutional-recurrent-networks/Fig3.JPG" alt="Figure3 &amp; Figure4"></p>
 
@@ -549,14 +590,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">graph</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">STDM</a>
               </li>
              
@@ -566,6 +599,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -581,6 +618,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Kafka</a>
               </li>
              
@@ -593,11 +634,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
+                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
+                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -610,14 +651,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">reinforcement learning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NER</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -637,11 +670,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
+                <a href="javascript:void(0)" class="js-tag color4">NER</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -650,6 +687,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">machine translation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
               </li>
             
             <div class="clearfix"></div>

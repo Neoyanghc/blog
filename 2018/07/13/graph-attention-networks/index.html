@@ -16,7 +16,6 @@
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="ICLR 2018。图注意力网络，使用 self-attention 来构建 graph attentional layer，attention 会考虑当前顶点所有的邻居对它的重要性，基于谱图理论的模型不能应用到其他不同结构的图上，而这个基于attention的方法能有效的解决这个问题。原文链接：Graph Attention Networks">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://davidham3.github.io/blog/2018/07/13/graph-attention-networks/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/13/graph-attention-networks/Table1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/13/graph-attention-networks/Table2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/13/graph-attention-networks/Table3.JPG">
@@ -25,7 +24,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Graph Attention Networks">
 <meta name="twitter:description" content="ICLR 2018。图注意力网络，使用 self-attention 来构建 graph attentional layer，attention 会考虑当前顶点所有的邻居对它的重要性，基于谱图理论的模型不能应用到其他不同结构的图上，而这个基于attention的方法能有效的解决这个问题。原文链接：Graph Attention Networks">
-<meta name="twitter:image" content="https://davidham3.github.io/blog/2018/07/13/graph-attention-networks/Fig1.JPG">
+<meta name="twitter:image" content="https://davidham3.github.io/blog/2018/07/13/graph-attention-networks/Table1.JPG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
   
@@ -204,21 +203,21 @@
 <h2 id="2-1-Graph-Attentional-Layer"><a href="#2-1-Graph-Attentional-Layer" class="headerlink" title="2.1 Graph Attentional Layer"></a>2.1 Graph Attentional Layer</h2><p>首先描述单个 graph attentional layer，因为这种层会在整个 GAT 架构中使用。我们使用的 attention 和 Bahdanau et al., 2015 的工作相似。</p>
 <p>输入是一组顶点特征，${\mathbf{h}} = \{ \vec{h}_1, \vec{h}_2, …, \vec{h}_N \}, \vec{h}_i \in \mathbb{R}^F$，其中 $N$ 是顶点数，$F$ 是每个顶点的特征数。这个层会生成一组新的顶点特征，${\mathbf{h}’} = \{ \vec{h}’_1, \vec{h}’_2, …, \vec{h}’_N\}, \vec{h}’_i \in \mathbb{R}^{F’}$，作为输出。</p>
 <p>为了在将输入特征变换到高维特征时获得充足的表现力，至少需要一个可学习的线性变换。为了到达这个目的，每个顶点都会使用一个共享参数的线性变换，参数为 ${\mathbf{W}} \in \mathbb{R}^{F’ \times F}$。然后在每个顶点上做一个 self-attention ——一个共享的attention机制 $a : \mathbb{R}^{F’} \times \mathbb{R}^{F’} \rightarrow \mathbb{R}$ 来计算注意力分数 <em>attention coefficients</em>：</p>
-<p>$$\tag{1}<br>e_{ij} = a(\mathbf{W} \vec{h}_i, \mathbf{W} \vec{h}_j)<br>$$</p>
-<p>表示顶点 $j$ 的特征对顶点 $i$ 的重要性(<em>importance</em>)。在一般的公式中，模型可以使每个顶点都注意其他的每个顶点，扔掉所有的结构信息。我们使用 <em>mask attention</em> 使得图结构可以注入到注意力机制中——我们只对顶点 $j \in \mathcal{N_i}$ 计算$e_{ij}$，其中$\mathcal{N_i}$ 是顶点 $i$ 在图中的一些邻居。在我们所有的实验中，这些是 $i$ 的一阶邻居（包括 $i$ ）。为了让系数在不同的顶点都可比，我们对所有的 $j$ 使用 softmax 进行了归一化：</p>
-<p>$$\tag{2}<br>\alpha_{ij} = \mathrm{softmax}_j (e_{ij}) = \frac{\exp{e_{ij}}}{\sum_{k \in \mathcal{N}_i} \exp{e_{ik}}}<br>$$</p>
-<div align="center"><img src="/blog/2018/07/13/graph-attention-networks/Fig1.JPG" alt="Figure1"></div>
+<script type="math/tex; mode=display">\tag{1}
+e_{ij} = a(\mathbf{W} \vec{h}_i, \mathbf{W} \vec{h}_j)</script><p>表示顶点 $j$ 的特征对顶点 $i$ 的重要性(<em>importance</em>)。在一般的公式中，模型可以使每个顶点都注意其他的每个顶点，扔掉所有的结构信息。我们使用 <em>mask attention</em> 使得图结构可以注入到注意力机制中——我们只对顶点 $j \in \mathcal{N_i}$ 计算$e_{ij}$，其中$\mathcal{N_i}$ 是顶点 $i$ 在图中的一些邻居。在我们所有的实验中，这些是 $i$ 的一阶邻居（包括 $i$ ）。为了让系数在不同的顶点都可比，我们对所有的 $j$ 使用 softmax 进行了归一化：</p>
+<script type="math/tex; mode=display">\tag{2}
+\alpha_{ij} = \mathrm{softmax}_j (e_{ij}) = \frac{\exp{e_{ij}}}{\sum_{k \in \mathcal{N}_i} \exp{e_{ik}}}</script><div align="center">![Figure1](Fig1.JPG)</div>
 
 <p>在我们的实验中，注意力机制 $a$ 是一个单层的前向传播网络，参数为权重向量 $\vec{\text{a}} \in \mathbb{R}^{2F’}$，使用LeakyReLU作为非线性层（斜率$\alpha = 0.2$）。整个合并起来，注意力机制计算出的分数（如图1左侧所示）表示为：</p>
-<p>$$\tag{3}<br>\alpha_{ij} = \frac{ \exp{ ( \mathrm{LeakyReLU} ( \vec{\text{a}}^T [\mathbf{W} \vec{h}_i \Vert \mathbf{W} \vec{h}_j ] ))}}{\sum_{k \in \mathcal{N_i}} \exp{(\mathrm{LeakyReLU}(\vec{\text{a}}^T [\mathbf{W} \vec{h}_i \Vert \mathbf{W} \vec{h}_k]))}}<br>$$</p>
-<p>其中 $·^T$ 表示转置，$\Vert$ 表示concatenation操作。</p>
+<script type="math/tex; mode=display">\tag{3}
+\alpha_{ij} = \frac{ \exp{ ( \mathrm{LeakyReLU} ( \vec{\text{a}}^T [\mathbf{W} \vec{h}_i \Vert \mathbf{W} \vec{h}_j ] ))}}{\sum_{k \in \mathcal{N_i}} \exp{(\mathrm{LeakyReLU}(\vec{\text{a}}^T [\mathbf{W} \vec{h}_i \Vert \mathbf{W} \vec{h}_k]))}}</script><p>其中 $·^T$ 表示转置，$\Vert$ 表示concatenation操作。</p>
 <p>得到归一化的分数后，使用归一化的分数计算对应特征的线性组合，作为每个顶点最后的输出特征（最后可以加一个非线性层，$\sigma$）：</p>
-<p>$$\tag{4}<br>\vec{h}’_i = \sigma(\sum_{j \in \mathcal{N}_i} \alpha_{ij} \mathbf{W} \vec{h}_j)<br>$$</p>
-<p>为了稳定 self-attention 的学习过程，我们发现使用 <em>multi-head attention</em> 来扩展我们的注意力机制是很有效的，就像 Vaswani et al., 2017。特别地，$K$ 个独立的 attention 机制执行 式4 这样的变换，然后他们的特征连(concatednated)在一起，就可以得到如下的输出：</p>
-<p>$$\tag{5}<br>\vec{h}’_i = \Vert^{K}_{k=1} \sigma(\sum_{j \in \mathcal{N}_i} \alpha^k_{ij} \mathbf{W}^k \vec{h}_j)<br>$$</p>
-<p>其中 $\Vert$ 表示concatenation，$\alpha^k_{ij}$ 是通过第 $k$ 个注意力机制 $(a^k)$ 计算出的归一化的注意力分数，$\mathbf{W}^k$ 是对应的输入线性变换的权重矩阵。注意，在这里，最后的返回输出 $\mathbf{h}’$，每个顶点都会有 $KF’$ 个特征（不是 $F’$ ）。<br>特别地，如果我们在网络的最后一层使用 multi-head attention，concatenation 就不再可行了，我们会使用 <em>averaging</em>，并且延迟使用最后的非线性层（分类问题通常是 softmax 或 sigmoid ）：</p>
-<p>$$<br>\vec{h}’_i = \sigma(\frac{1}{K} \sum^K_{k=1} \sum_{j \in \mathcal{N}_i} \alpha^k_{ij} \mathbf{W}^k \vec{h}_j)<br>$$</p>
-<p>multi-head 图注意力层的聚合过程如图1右侧所示。</p>
+<script type="math/tex; mode=display">\tag{4}
+\vec{h}'_i = \sigma(\sum_{j \in \mathcal{N}_i} \alpha_{ij} \mathbf{W} \vec{h}_j)</script><p>为了稳定 self-attention 的学习过程，我们发现使用 <em>multi-head attention</em> 来扩展我们的注意力机制是很有效的，就像 Vaswani et al., 2017。特别地，$K$ 个独立的 attention 机制执行 式4 这样的变换，然后他们的特征连(concatednated)在一起，就可以得到如下的输出：</p>
+<script type="math/tex; mode=display">\tag{5}
+\vec{h}'_i = \Vert^{K}_{k=1} \sigma(\sum_{j \in \mathcal{N}_i} \alpha^k_{ij} \mathbf{W}^k \vec{h}_j)</script><p>其中 $\Vert$ 表示concatenation，$\alpha^k_{ij}$ 是通过第 $k$ 个注意力机制 $(a^k)$ 计算出的归一化的注意力分数，$\mathbf{W}^k$ 是对应的输入线性变换的权重矩阵。注意，在这里，最后的返回输出 $\mathbf{h}’$，每个顶点都会有 $KF’$ 个特征（不是 $F’$ ）。<br>特别地，如果我们在网络的最后一层使用 multi-head attention，concatenation 就不再可行了，我们会使用 <em>averaging</em>，并且延迟使用最后的非线性层（分类问题通常是 softmax 或 sigmoid ）：</p>
+<script type="math/tex; mode=display">
+\vec{h}'_i = \sigma(\frac{1}{K} \sum^K_{k=1} \sum_{j \in \mathcal{N}_i} \alpha^k_{ij} \mathbf{W}^k \vec{h}_j)</script><p>multi-head 图注意力层的聚合过程如图1右侧所示。</p>
 <h2 id="2-2-Comparisons-to-related-work"><a href="#2-2-Comparisons-to-related-work" class="headerlink" title="2.2 Comparisons to related work"></a>2.2 Comparisons to related work</h2><p>2.1节描述的图注意力层直接解决了之前在图结构上使用神经网络建模的方法的几个问题：<br>· 计算高效：self-attention层的操作可以在所有的边上并行，输出特征的计算可以在所有顶点上并行。没有耗时的特征值分解。单个的GAT计算$F’$个特征的时间复杂度可以压缩至$O(\vert V \vert F F’ + \vert E \vert F’)$，$F$是输入的特征数，$\vert V \vert$和$\vert E \vert$是图中顶点数和边数。复杂度与Kipf &amp; Welling, 2017的GCN差不多。尽管使用multi-head attention可以并行计算，但也使得参数和空间复杂度变成了$K$倍。<br>· 对比GCN，我们的模型允许对顶点的同一个邻居分配不同的重要度，使得模型能力上有一个飞跃。不仅如此，对学习到的attentional权重进行分析可以得到更好的解释性，就像机器翻译领域一样（比如Bahdanau et al., 2015的定性分析）。<br>· 注意力机制以一种共享的策略应用在图的所有的边上，因此它并不需要在之前就需要得到整个图结构或是所有的顶点的特征（很多之前的方法的缺陷）。因此这个方法有几个影响：</p>
 <ul>
 <li>图不需要是无向的（如果边$j \rightarrow i$没有出现，我们可以直接抛弃掉$\alpha_{ij}$的计算）</li>
@@ -582,14 +581,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">graph</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">STDM</a>
               </li>
              
@@ -599,6 +590,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -614,6 +609,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Kafka</a>
               </li>
              
@@ -626,11 +625,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
+                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
+                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -643,14 +642,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">reinforcement learning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NER</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -670,11 +661,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
+                <a href="javascript:void(0)" class="js-tag color4">NER</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -683,6 +678,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">machine translation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
               </li>
             
             <div class="clearfix"></div>

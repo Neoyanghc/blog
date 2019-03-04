@@ -186,6 +186,7 @@
       
         <p>对看过的图神经网络做个总结，目前主要是GCN。<br><a id="more"></a></p>
 <p>Semi-Supervised Classification With Graph Convolutional Networks. Kipf &amp; Welling 2017<br>ICLR 2017。使用切比雪夫多项式的1阶近似完成了高效的图卷积架构。</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -200,7 +201,9 @@
 </tr>
 </tbody>
 </table>
+</div>
 <p>Convolution on Graph: A High-Order and Adaptive Approach.<br>NIPS 2016，重新定义了卷积的定义，利用k阶邻接矩阵，定义考虑k阶邻居的卷积，利用邻接矩阵和特征矩阵构建能同时考虑顶点特征和图结构信息的卷积核。在预测顶点、预测图、生成图三个任务上验证了模型的效果。</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -214,7 +217,9 @@
 </tr>
 </tbody>
 </table>
+</div>
 <p>Graph Convolutional Neural Networks for Web-Scale Recommender Systems.<br>KDD 2018。使用图卷积对顶点进行表示，学习顶点的embedding，通过卷积将该顶点的邻居信息融入到向量中。</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -229,7 +234,9 @@
 </tr>
 </tbody>
 </table>
+</div>
 <p>Diffusion-Convolutional Neural Networks.<br>NIPS 2016。在卷积操作中融入了h-hop转移概率矩阵，通过对每个顶点计算该顶点到其他所有顶点的转移概率与特征矩阵的乘积，构造顶点新的特征表示，即diffusion-convolutional representation，表征顶点信息的扩散，然后乘以权重矩阵W，加激活函数，得到卷积的定义。在顶点分类和图分类上做了测试。</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -253,11 +260,13 @@
 </tr>
 </tbody>
 </table>
+</div>
 <p>Graph Attention Networks.<br>ICLR 2018。图注意力网络，使用self-attention来构建graph attentional layer，attention会考虑当前顶点所有的邻居对它的重要度，基于谱理论的模型不能应用到其他不同结构的图上，而这个基于attention的方法能有效的解决这个问题。</p>
 <p>Inductive Representation Learning on Large Graphs.<br>NIPS 2017。提出的方法叫GraphSAGE，针对的问题是之前的NRL是transductive，作者提出的GraphSAGE是inductive。主要考虑了如何聚合顶点的邻居信息，对顶点或图进行分类。</p>
 <p>应用：</p>
 <p>Spatio-Temporal Graph Convolutional Networks: A Deep Learning Framework for Traffic.<br>IJCAI 2018，大体思路：使用Kipf &amp; Welling 2017的近似谱图卷积得到的图卷积作为空间上的卷积操作，时间上使用一维卷积对所有顶点进行卷积，两者交替进行，组成了时空卷积块，在加州PeMS和北京市的两个数据集上做了验证。</p>
 <p>Spatial Temporal Graph Convolutional Networks for Skeleton-Based Action Recognition.<br>AAAI 2018，以人体关节为图的顶点，构建空间上的图，然后通过时间上的关系，连接连续帧上相同的关节，构成一个三维的时空图。针对每个顶点，对其邻居进行子集划分，每个子集乘以对应的权重向量，得到时空图上的卷积定义。实现时使用Kipf &amp; Welling 2017的方法实现。</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -272,6 +281,7 @@
 </tr>
 </tbody>
 </table>
+</div>
 
       
 
@@ -607,14 +617,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">graph</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">STDM</a>
               </li>
              
@@ -624,6 +626,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -639,6 +645,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Kafka</a>
               </li>
              
@@ -651,11 +661,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
+                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
+                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -668,14 +678,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">reinforcement learning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NER</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -695,11 +697,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
+                <a href="javascript:void(0)" class="js-tag color4">NER</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -708,6 +714,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">machine translation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
               </li>
             
             <div class="clearfix"></div>

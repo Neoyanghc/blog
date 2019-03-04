@@ -189,19 +189,25 @@
 <h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h1><p>很多深度神经网络要训练好多天。BN 除了提升了收敛速度，从批量统计量得到的随机性在训练的时候还会作为一个正则项。</p>
 <p>尽管 BN 简单，但是它需要输入统计量之和的平均值。在定长的 FNN 中，把每个层的 BN 存起来就行。但是，RNN 的循环单元的输入通常随序列长度而变化，所以将 BN 应用在 RNN 上面，不同时间步需要不同的统计量。此外，BN 不能应用在在线学习等任务上，或是非常大的分布式模型上，因为 minibatch 会很小。</p>
 <h1 id="2-Background"><a href="#2-Background" class="headerlink" title="2 Background"></a>2 Background</h1><p>前向神经网络是从输入模式 $\rm{x}$ 映射到输出向量 $y$ 的非线性变换。在深度前向神经网络中的第 $l$ 个隐藏层，$a^l$ 表示这层神经元的输入。汇总后的输入通过一个线性映射计算如下：</p>
-<p>$$\tag{1}<br>a^l_i = {w^l_i}^\text{T} h^l\\<br>h^{l+1}_i = f(a^l_i + b^l_i)<br>$$</p>
-<p>其中 $f(\cdot)$ 是激活函数，$w^l_i$ 和 $b^l_i$ 分别是第 $l$ 个隐藏层的权重和偏置参数。参数通过基于梯度的学习方法得到。</p>
+<script type="math/tex; mode=display">\tag{1}
+a^l_i = {w^l_i}^\text{T} h^l\\
+h^{l+1}_i = f(a^l_i + b^l_i)</script><p>其中 $f(\cdot)$ 是激活函数，$w^l_i$ 和 $b^l_i$ 分别是第 $l$ 个隐藏层的权重和偏置参数。参数通过基于梯度的学习方法得到。</p>
 <p>深度学习的一个挑战是：某一层权重的梯度和上一层的输出高度相关，尤其是当这些输出以一种高度相关的方式变化的时候。BN 提出来是减少这种不希望的 covariate shift 现象。这种方法在输入样例在每个隐藏单元的输入上做计算。详细来说，对于第 $l$ 层的第 $i$ 个输入，BN 根据他们在数据中的分布，将输入缩放了：</p>
-<p>$$\tag{2}<br>\bar{a}^l_i = \frac{g^l_i}{\sigma^l_i}(a^l_i - \mu^l_i)\\<br>\mu^l_i = \mathbb{E}_{\mathrm{x} \sim P(\mathrm{x})}[a^l_i]\\<br>\sigma^l_i = \sqrt{\mathbb{E}_{\mathrm{x} \sim P(\mathrm{x})}[(a^l_i - \mu^l_i)^2]}<br>$$</p>
-<p>其中 $\bar{a}^l_i$ 是第 $l$ 层第 $i$ 个输入的归一化结果，$g_i$ 是在非线性激活函数之前的一个增益参数，对归一化激活值进行缩放。注意，期望是在所有训练数据上的。事实上计算式2中的期望是不实际的，因为这需要用当前的参数，前向传播过所有的训练集。实际中是用当前的 mini-batch 来估计 $\mu$ 和 $\sigma$。这就给 batch size 增加了限制，而且很难应用到 RNN 上。</p>
+<script type="math/tex; mode=display">\tag{2}
+\bar{a}^l_i = \frac{g^l_i}{\sigma^l_i}(a^l_i - \mu^l_i)\\
+\mu^l_i = \mathbb{E}_{\mathrm{x} \sim P(\mathrm{x})}[a^l_i]\\
+\sigma^l_i = \sqrt{\mathbb{E}_{\mathrm{x} \sim P(\mathrm{x})}[(a^l_i - \mu^l_i)^2]}</script><p>其中 $\bar{a}^l_i$ 是第 $l$ 层第 $i$ 个输入的归一化结果，$g_i$ 是在非线性激活函数之前的一个增益参数，对归一化激活值进行缩放。注意，期望是在所有训练数据上的。事实上计算式2中的期望是不实际的，因为这需要用当前的参数，前向传播过所有的训练集。实际中是用当前的 mini-batch 来估计 $\mu$ 和 $\sigma$。这就给 batch size 增加了限制，而且很难应用到 RNN 上。</p>
 <h1 id="3-Layer-normalization"><a href="#3-Layer-normalization" class="headerlink" title="3 Layer normalization"></a>3 Layer normalization</h1><p>层归一化用来克服批量归一化的一些缺点。</p>
 <p>一个层输出的变换倾向于导致下一层的输入之间有着关联度很高的变化，尤其是使用 ReLU 激活后，这些输出的变化很多。这表明 covariate shift 问题可以通过固定每层的输入的均值和方差解决。因此，在同一层中所有隐藏单元的层归一化统计量如下：</p>
-<p>$$\tag{3}<br>\mu^l = \frac{1}{H} \sum^H_{i = 1}a^l_i\\<br>\sigma^l = \sqrt{\frac{1}{H} \sum^H_{i=1} (a^l_i - \mu^l)^2}<br>$$</p>
-<p>其中 $H$ 表示层内的隐藏单元数。式2和式3的区别是在层归一化之下，层内所有隐藏单元共享相同的归一化项 $\mu$ 和 $\sigma$，但是不同的样本有着不同的归一化项。不像 BN，层归一化不会有 batch size 的限制，而且可以使用在 batch size 设为1的时候的在线学习上。</p>
+<script type="math/tex; mode=display">\tag{3}
+\mu^l = \frac{1}{H} \sum^H_{i = 1}a^l_i\\
+\sigma^l = \sqrt{\frac{1}{H} \sum^H_{i=1} (a^l_i - \mu^l)^2}</script><p>其中 $H$ 表示层内的隐藏单元数。式2和式3的区别是在层归一化之下，层内所有隐藏单元共享相同的归一化项 $\mu$ 和 $\sigma$，但是不同的样本有着不同的归一化项。不像 BN，层归一化不会有 batch size 的限制，而且可以使用在 batch size 设为1的时候的在线学习上。</p>
 <h2 id="3-1-Layer-normalized-recurrent-neural-networks"><a href="#3-1-Layer-normalized-recurrent-neural-networks" class="headerlink" title="3.1 Layer normalized recurrent neural networks"></a>3.1 Layer normalized recurrent neural networks</h2><p>最近的序列到序列模型 [Sutskever et al., 2014] 利用了紧致的 RNN 来解决 NLP 中的序列预测问题。在 NLP 任务中不同的训练样例长度不一致是很常见的。RNN 在每个时间步使用的参数都是相同的。但是在使用 BN 来处理 RNN 时，我们需要计算并存储序列中每个时间步的统计量。如果一个测试的序列比任何训练的序列都长，那就会出问题了。层归一化不会有这样的问题，因为它的归一化项只依赖于当前时间步层的输入。它在所有的时间步上也有一组共享的 gain 和 bias 参数。</p>
 <p>在标准的 RNN 中，循环层的输入通过当前的输入 $\mathrm{x}^t$ 和前一层的隐藏状态 $\mathrm{h}^{t-1}$，得到 $\mathrm{a}^t = W_{hh}h^{t-1} + W_{xh} \mathrm{x}^t$。层归一化后的循环层会将它的激活值使用像式3一样的归一化项缩放到：</p>
-<p>$$\tag{4}<br>\mathrm{h}^t = f[\frac{\mathrm{g}}{\sigma^t} \odot (\mathrm{a}^t - \mu^t) + b]\\<br>\mu^t = \frac{1}{H} \sum^H_{i=1}a^t_i\\<br>\sigma^t = \sqrt{\frac{1}{H} \sum^H_{i=1}(a^t_i - \mu^t)^2}<br>$$</p>
-<p>其中 $W_{hh}$ 是循环隐藏到隐藏的权重，$W_{xh}$ 是输入到隐藏的权重，$\odot$ 是element-wise multiplication。$\rm b$ 和 $\rm g$是和 $\mathrm{h}^t$ 同维度的 bias 和 gain 参数。</p>
+<script type="math/tex; mode=display">\tag{4}
+\mathrm{h}^t = f[\frac{\mathrm{g}}{\sigma^t} \odot (\mathrm{a}^t - \mu^t) + b]\\
+\mu^t = \frac{1}{H} \sum^H_{i=1}a^t_i\\
+\sigma^t = \sqrt{\frac{1}{H} \sum^H_{i=1}(a^t_i - \mu^t)^2}</script><p>其中 $W_{hh}$ 是循环隐藏到隐藏的权重，$W_{xh}$ 是输入到隐藏的权重，$\odot$ 是element-wise multiplication。$\rm b$ 和 $\rm g$是和 $\mathrm{h}^t$ 同维度的 bias 和 gain 参数。</p>
 <p>在标准的 RNN 中，每个时间步的循环单元的输入的数量级倾向于增大或减小，导致梯度的爆炸或消失问题。在一个层归一化的 RNN 里，归一化项使它对一个层的输入的缩放不发生变化，使得隐藏到隐藏动态性更稳定。</p>
 
       
@@ -542,14 +548,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">graph</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">STDM</a>
               </li>
              
@@ -559,6 +557,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -574,6 +576,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Kafka</a>
               </li>
              
@@ -586,11 +592,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
+                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
+                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -603,14 +609,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">reinforcement learning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NER</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -630,11 +628,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
+                <a href="javascript:void(0)" class="js-tag color4">NER</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -643,6 +645,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">machine translation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
               </li>
             
             <div class="clearfix"></div>

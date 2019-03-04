@@ -197,17 +197,23 @@
 <p>我们提出了一个递进学习方法，在对序列预测任务上使用RNN的训练和推测时构建了桥梁。我们提出，改变训练过程，为了逐渐地使模型处理它的错误，使它在推断时也可以进行。这样，模型在训练时会探索更多的情况，因此在推断时会更鲁棒的纠正它的错误，因为它在训练时就学习过这个。我们会展示这个方法在几个序列预测问题上的结果。</p>
 <h1 id="2-Proposed-Approach"><a href="#2-Proposed-Approach" class="headerlink" title="2 Proposed Approach"></a>2 Proposed Approach</h1><p>我们考虑一个监督学习任务，训练集是给定的 $N$ 个样本的输入输出对，$\{X^i, Y^i\}^N_{i=1}$，$X^i$ 是输入，要么静态（图像），要么动态（序列），输出 $Y^i$ 是一个可变数量的token的序列 $y^i_1, y^i_2, …, y^i_{T_i}$，token属于一个已知的词典。</p>
 <h2 id="2-1-Model"><a href="#2-1-Model" class="headerlink" title="2.1 Model"></a>2.1 Model</h2><p>给定一个输入/输出对儿 $(X, Y)$，log 概率 $P(Y \mid X)$ 可由下式计算：</p>
-<p>$$\tag{1}<br>\begin{aligned}<br>\mathrm{log} P(Y \mid X) &amp;= \mathrm{log} P(y^T_1 \mid X) \\<br>&amp;= \sum^T_{t = 1} \mathrm{log} P(y_t \mid y^{t-1}_1, X)<br>\end{aligned}<br>$$</p>
-<p>其中，$Y$ 是长度为 $T$ 的序列，$y_1, y_2, …, y_T$。在前面的等式中，后面的项通过一个参数为 $\theta$ 的循环神经网络，通过一个状态向量 $h_t$估计得到，也就是通过前一个输出 $y_{t-1}$ 和前一个状态 $h_{t-1}$估计得到：</p>
-<p>$$\tag{2}<br>\mathrm{log} P(y_t \mid y^{t-1}_1, X; \theta) = \mathrm{log} P(y_t \mid h_t; \theta)<br>$$</p>
-<p>其中，$h_t$ 通过如下的一个循环神经网络计算得到：</p>
-<p>$$\tag{3}<br>h_t = \begin{cases}<br>f(X; \theta)   \mathrm{if} t = 1\\<br>f(h_{t-1}, y_{t-1}; \theta) \mathrm{otherwise}.<br>\end{cases}<br>$$</p>
-<p>$P(y_t \mid h_t; \theta)$ 经常通过状态向量 $h_t$ 的一个线性变换，变换到一个 vector of scores 实现，这个向量是输出字典的每个token的分数，然后用一个 softmax 确保分数适当的归一化。$f(h, y)$通常是一个非线性函数，这个函数融合了之前的状态和之前的输出来生成当前的状态。</p>
+<script type="math/tex; mode=display">\tag{1}
+\begin{aligned}
+\mathrm{log} P(Y \mid X) &= \mathrm{log} P(y^T_1 \mid X) \\
+&= \sum^T_{t = 1} \mathrm{log} P(y_t \mid y^{t-1}_1, X)
+\end{aligned}</script><p>其中，$Y$ 是长度为 $T$ 的序列，$y_1, y_2, …, y_T$。在前面的等式中，后面的项通过一个参数为 $\theta$ 的循环神经网络，通过一个状态向量 $h_t$估计得到，也就是通过前一个输出 $y_{t-1}$ 和前一个状态 $h_{t-1}$估计得到：</p>
+<script type="math/tex; mode=display">\tag{2}
+\mathrm{log} P(y_t \mid y^{t-1}_1, X; \theta) = \mathrm{log} P(y_t \mid h_t; \theta)</script><p>其中，$h_t$ 通过如下的一个循环神经网络计算得到：</p>
+<script type="math/tex; mode=display">\tag{3}
+h_t = \begin{cases}
+f(X; \theta) \ \ \mathrm{if} t = 1\\
+f(h_{t-1}, y_{t-1}; \theta) \mathrm{otherwise}.
+\end{cases}</script><p>$P(y_t \mid h_t; \theta)$ 经常通过状态向量 $h_t$ 的一个线性变换，变换到一个 vector of scores 实现，这个向量是输出字典的每个token的分数，然后用一个 softmax 确保分数适当的归一化。$f(h, y)$通常是一个非线性函数，这个函数融合了之前的状态和之前的输出来生成当前的状态。</p>
 <p>这就意味着模型专注于给定模型当前状态，学习预测下一个输出。因此，模型会以最普通的形式表示序列的概率分布——不像条件随机场以及其他的模型，在给定隐变量状态后，假设不同时间步的输出相互独立。模型的容量只会被循环层和前向传播层的表示容量限制。LSTM，因为他们能学习长范围的结构，所以对这种问题来说非常适合，也就可以学习序列上的rich distributions。</p>
 <p>为了学习边长序列，一个特殊的token，<eos>，表示序列的结束被添加进字典和模型中。在训练的过程中，<eos>会拼接在每个序列的结尾处。在推理的时候，模型会生成tokens直到它生成了<eos>。</eos></eos></eos></p>
 <h2 id="2-2-Training"><a href="#2-2-Training" class="headerlink" title="2.2 Training"></a>2.2 Training</h2><p>训练循环神经网络来解决这样的问题通常通过mini-batch随机梯度下降求解，通过给定输入数据 $X^i$，为所有的训练对儿 $(X^i, Y^i)$最大化生成正确的目标序列 $Y^i$ 的似然，找到一组参数$\theta^*$。</p>
-<p>$$\tag{4}<br>\theta^* = \mathop{\arg \max_\theta} \sum_{(X^i, Y^i)} \mathrm{log} P(Y^i \mid X^i; \theta)<br>$$</p>
-<h2 id="2-3-Inference"><a href="#2-3-Inference" class="headerlink" title="2.3 Inference"></a>2.3 Inference</h2><p>在推理的过程中，模型可以在给定 $X$ 的情况下通过一次生成一个token，生成整个序列 $y^T_1$。生成一个 <eos> 后，它标志着序列的结束。对于这个过程，在时间 $t$，模型为了生成 $y_t$，需要从最后一个时间戳讲输出的token $y_{t-1}$ 作为输入。因为我们没法知道真正的上一个token是什么，我们可以要么选择模型给出的最可能的那个，要么根据这个来抽样。</eos></p>
+<script type="math/tex; mode=display">\tag{4}
+\theta^* = \mathop{\arg \max_\theta} \sum_{(X^i, Y^i)} \mathrm{log} P(Y^i \mid X^i; \theta)</script><h2 id="2-3-Inference"><a href="#2-3-Inference" class="headerlink" title="2.3 Inference"></a>2.3 Inference</h2><p>在推理的过程中，模型可以在给定 $X$ 的情况下通过一次生成一个token，生成整个序列 $y^T_1$。生成一个 <eos> 后，它标志着序列的结束。对于这个过程，在时间 $t$，模型为了生成 $y_t$，需要从最后一个时间戳讲输出的token $y_{t-1}$ 作为输入。因为我们没法知道真正的上一个token是什么，我们可以要么选择模型给出的最可能的那个，要么根据这个来抽样。</eos></p>
 <p>给定 $X$ 搜索最大概率的序列 $Y$ 非常费时，因为序列的长度是组合地上升的。我们使用一个beam search来生成 $k$ 个最好的序列。我们通过维护 $m$ 个最优候选序列组成的一个堆来做这个。每次通过给每个候选序列扩充一个token并把它增加到堆内，都能得到一个新的候选序列。在这步的结尾，堆重新地剪枝到只有 $m$ 个候选序列。beam searching在没有新的序列增加的时候就会截断，然后返回 $k$ 个最优的序列。</p>
 <p>尽管beam search通常用于基于HMM这样的模型的离散状态，这些模型可以使用动态规划，但是对于像RNN这样的连续状态模型就很难了，因为没有办法再连续空间内factor the followed state paths，因此在beam search解码的时候，可以控制的候选序列的实际数量是很小的。</p>
 <p>在所有的情况里，如果在时间 $t-1$ 有一个错误生成，那么模型就会在一个和训练分布不同的状态空间中，而且它会在这个空间中不知所措。更糟的是，这会导致模型在决策的时候导致不好的决策的累计——a classic problem in sequential Gibbs sampling type appraoches to sampling, where future samples can have no influence on the past.</p>
@@ -560,14 +566,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">graph</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">STDM</a>
               </li>
              
@@ -577,6 +575,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -592,6 +594,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Kafka</a>
               </li>
              
@@ -604,11 +610,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
+                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
+                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -621,14 +627,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">reinforcement learning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NER</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -648,11 +646,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
+                <a href="javascript:void(0)" class="js-tag color4">NER</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -661,6 +663,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">machine translation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
               </li>
             
             <div class="clearfix"></div>

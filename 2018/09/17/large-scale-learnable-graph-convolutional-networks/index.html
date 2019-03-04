@@ -193,8 +193,9 @@
 <h1 id="3-methods"><a href="#3-methods" class="headerlink" title="3. methods"></a>3. methods</h1><h2 id="3-1-Challenges-of-Applying-Convolutional-Operations-on-Graph-Data"><a href="#3-1-Challenges-of-Applying-Convolutional-Operations-on-Graph-Data" class="headerlink" title="3.1 Challenges of Applying Convolutional Operations on Graph Data"></a>3.1 Challenges of Applying Convolutional Operations on Graph Data</h2><p>为了让传统的卷积操作可以应用在图上，需要解决两个图结构数据和网格数据的差异。首先，顶点的邻居数量通常会变化。其次，我们不能对邻居顶点进行排序，因为他们没有可供排序的信息。举个例子，社交网络中，每个人都可以看作是一个顶点，边表示人与人之间的关系。显然，每个顶点的邻居顶点数量是不同的，因为人们可以有不同数量的朋友。而且，如果没有额外的信息，很难对他们进行排序。</p>
 <p>网格数据可以看作是一种特殊的图结构数据，每个顶点有固定数量的邻居。因为卷积操作是直接应用在图像这样的网格数据上。为了看清楚固定邻居数量以及排序信息的重要性，我们举个例子，有一个$3 \times 3$的卷积核，扫描一张图像。我们将这张图片考虑成一个特殊的图，每个像素是一个顶点。在扫描的过程中，计算包括了中心结点和周围8个邻居结点的计算。这8个顶点在这个特殊的图中通过边连接到中心结点。与此同时，我们使用他们和中心结点的相对位置对他们排序，这对于卷积操作很重要，因为在扫描的过程中，滤波器的权重和图中的顶点要一一对应。举个例子，在上面的例子中，$3 \times 3$的卷积核，左上角的权重应该总是对应中心节点左上方的邻居结点。没有这样的排序信息，卷积的输出结果就不再是确定的。从刚才的讨论中可以看到传统卷积在图结构数据上应用的挑战。为了解决这两个挑战，我们提出了一个方法将图结构数据变换到网格数据内。</p>
 <h2 id="3-2-learnable-Graph-Convolutional-Layers"><a href="#3-2-learnable-Graph-Convolutional-Layers" class="headerlink" title="3.2 learnable Graph Convolutional Layers"></a>3.2 learnable Graph Convolutional Layers</h2><p>为了让传统卷积可以在图上可用，我们提出了LGCL。LGCL的layer-wise传播规则写为：</p>
-<p>$$\tag{3}<br>\tilde{X}_l = g(X_l, A, k),\\<br>X_{l+1} = c(\tilde{X}_l)<br>$$</p>
-<p>其中，$A$是邻接矩阵，$g(\cdot)$使用了$k$-largest Node Selection，将图结构数据映射到网格结构，$c(\cdot)$表示1维常规的CNN，将顶点信息聚合，为每个顶点输出了一个新的特征向量。我们会在下面分开讨论$g(\cdot)$和$c(\cdot)$。</p>
+<script type="math/tex; mode=display">\tag{3}
+\tilde{X}_l = g(X_l, A, k),\\
+X_{l+1} = c(\tilde{X}_l)</script><p>其中，$A$是邻接矩阵，$g(\cdot)$使用了$k$-largest Node Selection，将图结构数据映射到网格结构，$c(\cdot)$表示1维常规的CNN，将顶点信息聚合，为每个顶点输出了一个新的特征向量。我们会在下面分开讨论$g(\cdot)$和$c(\cdot)$。</p>
 <p><strong>$k$-largest Node Selection</strong>. 我们提出了一个新的方法称为$k$-largest Node Selection，将图结构映射到网格数据上，其中$k$是LGCL的超参数。在这个操作之后，每个顶点的邻居信息聚合，表示成一个有$(k+1)$个位置的1维的网格状。变换后的数据会输入到CNN中来生成新的特征向量。</p>
 <p>假设有行向量$x^1_l, x^2_l, …, x^N_l$的$X_l \in \mathbb{R}^{N \times C}$，表示$N$个顶点的图，每个顶点有$C$个特征。邻接矩阵$A \in \mathbb{N}^{N \times N}$，$k$为定值。顶点$i$的特征向量是$x^i_l$，它有$n$个邻居。通过在$A$中的一个简单查找，我们可以获得这些邻居结点的下标，$i_1, i_2, …, i_n$。对它们对应的特征向量$x^{i_1}_l, x^{i_2}_l, …, x^{i_n}_l$进行拼接，得到$M^i_l \in \mathbb{R}^{n \times C}$。假设$n \geq k$，就没有泛化上的损失。如果$n &lt; k$，我们可以使用全为0的列，给$M^i_l$加padding。$k$-largest node selection是在$M^i_l$上做的：也就是，对于每列，我们排出$n$个值，然后选最大的$k$个数。我们就可以得到一个$k \times C$的输出矩阵。因为$M^i_l$表示特征，这个操作等价于为每个特征选择$k$个最大值。通过在第一行插入$x^i_l$，输出变为$\tilde{M}^i_l \in \mathbb{R}^{(k+1) \times C}$。如图2左部分。通过对每个顶点重复这个操作，$g(\cdot)$将$X_l$变为$\tilde{X}_l \in \mathbb{R}^{N \times (k + 1) \times C}$。</p>
 <p><img src="/blog/2018/09/17/large-scale-learnable-graph-convolutional-networks/Fig2.JPG" alt="Figure2"></p>
@@ -203,8 +204,8 @@
 <p>注意，$N$看作是batch size，与$c(\cdot)$的设计无关。结果就是，我们只聚焦于一个样本，也就是图中的一个顶点。对于顶点$i$，变换得到的输出是$\tilde{M}^i_l \in \mathbb{R}^{(k + 1) \times C}$，是$c(\cdot)$的输入。由于任何一个卷积核大于1且没有padding的卷积都会减少空间的大小，最简单的$c(\cdot)$只有一个卷积核大小为$(k+1)$的卷积，没有padding。输入和输出的通道数分别为$C$和$D$。同时，可以部署任意一个多层CNN，得到最后的输出的维度是$1 \times D$。图2右侧展示了一个两层CNN的例子。再对所有的$N$个顶点使用一次$c(\cdot)$，输出$X_{l+1} \in \mathbb{R}^{N \times D}$。总结一下，我们的LGCL使用$k$最大顶点选择以及传统的一维CNN，将图结构变换到网格数据，实现了对每个顶点进行的特征聚合和特征过滤。</p>
 <h2 id="3-3-可学习的图卷积网络"><a href="#3-3-可学习的图卷积网络" class="headerlink" title="3.3 可学习的图卷积网络"></a>3.3 可学习的图卷积网络</h2><p>越深的网络一般会产生越好的结果。然而，之前在图上的深度模型，如GCN，只有两层。尽管随着深度的增加，它们的性能有有所下降[Kipf &amp; Welling 2017]，我们的LGCL可以构造的很深，构造出图顶点分类的可学习的图卷积网络。我们基于densely connected convolutional networks(DCNNs)，构造了LGCNs，前者获得了ImageNet分类任务最好的成绩。</p>
 <p>在LGCN中，我们先用一个图嵌入层来生成顶点的低维表示，因为原始输入一般都是高维特征，比如Cora数据集。第一层的图嵌入层本质上就是一个线性变换，表示为：</p>
-<p>$$\tag{4}<br>X_1 = X_0 W_0<br>$$</p>
-<p>其中，$X_0 \in \mathbb{R}^{N \times C_0}$表示高维的输入，$W_0 \in \mathbb{R}^{C_0 \times C_1}$将特征空间从$C_0$映射到了$C_1$。结果就是，$X_1 \in \mathbb{R}^{N \times C_1}$和$C_1 &lt; C_0$。或者，使用一个GCN层来做图嵌入。如第二部分描述的，GCN层中的参数数量等价于传统的图嵌入层中参数的数量。</p>
+<script type="math/tex; mode=display">\tag{4}
+X_1 = X_0 W_0</script><p>其中，$X_0 \in \mathbb{R}^{N \times C_0}$表示高维的输入，$W_0 \in \mathbb{R}^{C_0 \times C_1}$将特征空间从$C_0$映射到了$C_1$。结果就是，$X_1 \in \mathbb{R}^{N \times C_1}$和$C_1 &lt; C_0$。或者，使用一个GCN层来做图嵌入。如第二部分描述的，GCN层中的参数数量等价于传统的图嵌入层中参数的数量。</p>
 <p>在图嵌入层后，我们堆叠多个LGCL，多少个取决于数据的复杂程度。因为每个LGCL只能聚合一阶邻居的信息，也就是直接相连的邻居顶点，堆叠LGCL可以从一个更大的顶点集中获得信息，这也是传统CNN的功能。为了提升模型的性能，帮助训练过程，我们使用skip connections来拼接LGCL的输入和输出。最后，在softmax激活前使用一个全连接层。</p>
 <p>就像LGCN的设计理念，$k$以及堆叠的LGCL的数量是最重要的超参数。顶点的平均度是选择$k$的一个重要参数。LGCL的数量应该依赖任务的复杂度，比如类别的个数，图的顶点数等。越复杂的模型需要越深的模型。</p>
 <h2 id="3-4-Sub-Graph-Training-on-Large-Scale-Data"><a href="#3-4-Sub-Graph-Training-on-Large-Scale-Data" class="headerlink" title="3.4 Sub-Graph Training on Large-Scale Data"></a>3.4 Sub-Graph Training on Large-Scale Data</h2><p>大部分图上的深度学习模型都有另一个限制。在训练的时候，输入的是所有顶点的特征向量以及整个图的邻接矩阵。图的尺寸大的时候这个矩阵就会变大。这些方法在小尺度的图上表现的还可以。但是对于大尺度的图，这些方法一般都会导致内存和计算资源极大的开销，限制了这些模型的一些应用。</p>
@@ -562,14 +563,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">graph</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">STDM</a>
               </li>
              
@@ -579,6 +572,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -594,6 +591,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Kafka</a>
               </li>
              
@@ -606,11 +607,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
+                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
+                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -623,14 +624,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">reinforcement learning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NER</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -650,11 +643,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
+                <a href="javascript:void(0)" class="js-tag color4">NER</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -663,6 +660,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">machine translation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
               </li>
             
             <div class="clearfix"></div>

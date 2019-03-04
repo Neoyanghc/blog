@@ -16,12 +16,10 @@
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="ICML 2017. Facebook 2017年的卷积版seq2seq。卷积加注意力机制，外加GLU，训练速度很快，因为RNN训练时依靠上一个元素的隐藏状态，CNN可以并行训练。原文链接：Convolutional Sequence to Sequence Learning">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://davidham3.github.io/blog/2018/05/22/convolutional-sequence-to-sequence-learning/Fig1.JPG">
 <meta property="og:updated_time" content="2018-11-21T04:09:05.755Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Convolutional Sequence to Sequence Learning">
 <meta name="twitter:description" content="ICML 2017. Facebook 2017年的卷积版seq2seq。卷积加注意力机制，外加GLU，训练速度很快，因为RNN训练时依靠上一个元素的隐藏状态，CNN可以并行训练。原文链接：Convolutional Sequence to Sequence Learning">
-<meta name="twitter:image" content="https://davidham3.github.io/blog/2018/05/22/convolutional-sequence-to-sequence-learning/Fig1.JPG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
   
@@ -200,18 +198,21 @@
 <h1 id="3-A-Convolutional-Architecture"><a href="#3-A-Convolutional-Architecture" class="headerlink" title="3. A Convolutional Architecture"></a>3. A Convolutional Architecture</h1><p>接下来我们介绍一个序列到序列的完全卷积架构。我们使用卷积神经网络替代 RNN 来计算中间的编码器状态 $\bf{z}$ 和解码器状态 $\bf{h}$。</p>
 <h2 id="3-1-Position-Embeddings"><a href="#3-1-Position-Embeddings" class="headerlink" title="3.1. Position Embeddings"></a>3.1. Position Embeddings</h2><p>首先，我们将输入序列 $\mathbf{x} = (x_1, …, x_m)$ 嵌入到一个分布的空间内 $\mathbf{w} = (w_1, …, w_m)$中，其中 $w_j \in \mathbb{R}^f$ 是嵌入矩阵 $\mathcal{D} \in \mathbb{R}^{V \times f}$ 的一列。我们也通过嵌入输入元素 $\mathbf{p} = (p_1, …, p_m)$ 的绝对位置使模型对顺序敏感，其中 $p_j \in \mathbb{R}^f$。这两者做加和获得输入元素的表示 $\mathbf{e} = (w_1+p_1, …, w_m+p_m)$。我们对解码器输出的元素也做相似的工作来生成输出元素表示 $\mathbf{g} = (g_1, …, g_n)$，然后再传入解码网络。位置嵌入在我们的架构中很有用，因为他们能让模型知道当前正在处理的输入或输出序列中的哪个部分。</p>
 <h2 id="3-2-Convolutional-Block-Structure"><a href="#3-2-Convolutional-Block-Structure" class="headerlink" title="3.2. Convolutional Block Structure"></a>3.2. Convolutional Block Structure</h2><p>编码器和解码器网络共享一个简单的块状结构，这个块状结构会基于固定长度的输入元素计算出中间状态。我们将解码器的第 $l$ 个块的输出记为 $\mathbf{h}^l = (h^l_1, …, h^l_n)$，编码器的第 $l$ 个输出记为 $\mathbf{z}^l=(z^l_1, …, z^l_m)$；我们交替地称块和层。每个块包含一个一维卷积加一个非线性单元。对于一个有着一个块和宽度为 $k$ 的卷积核的解码网络来说，每个结果状态 $h^l_i$ 包含了过去 $k$ 个输入元素的信息。堆叠多个块增加了在一个状态中可以表示的输入元素的数量。比如，堆叠6个宽度为 $k=5$ 的块可以得到输入空间为25个元素的表示，也就是每个输出依赖于25个输入。非线性单元允许网络利用整个输入空间，或者在必要时关注更少的元素。</p>
-<p>每个卷积核的参数为 $W \in \mathbb{R}^{2d \times kd}$，$b_w \in \mathbb{R}^{2d}$，接收的输入为 $X \in \mathbb{R}^{k \times d}$，输入是 $k$ 个输入元素嵌入到 $d$ 维空间得到的向量的拼接，然后将他们映射到一个有着输入元素维数两倍的输出元素 $Y \in \mathbb{R}^{2d}$ 上；后续的层对前一层的 $k$ 个输出元素进行操作。我们选择门控线性单元（GLU; Dauphin et al., 2016）作为非线性激活单元，这是一个在卷积 $Y=[A  B] \in \mathbb{R}^{2d}$ 的输出上实现的一个简单的门控机制：</p>
-<p>$$<br>v([A B])=A \otimes \sigma(B)<br>$$</p>
-<p>其中 $A, B \in \mathbb{R}^d$ 是非线性层的输入，$\otimes$ 是元素对元素相乘，输出 $v([A B]) \in \mathbb{R}^d$ 是 $Y$ 的大小的一半。门 $\sigma(B)$ 控制当前的上下文环境中哪个输入 $A$ 是相关的。一个相似的非线性单元由 Oord et al. (2016b) 提出，他们在 $A$ 上加了 $tanh$ 但是 Dauphin et al. (2016) 展示了GLUs在语言模型中表现的更好。</p>
+<p>每个卷积核的参数为 $W \in \mathbb{R}^{2d \times kd}$，$b_w \in \mathbb{R}^{2d}$，接收的输入为 $X \in \mathbb{R}^{k \times d}$，输入是 $k$ 个输入元素嵌入到 $d$ 维空间得到的向量的拼接，然后将他们映射到一个有着输入元素维数两倍的输出元素 $Y \in \mathbb{R}^{2d}$ 上；后续的层对前一层的 $k$ 个输出元素进行操作。我们选择门控线性单元（GLU; Dauphin et al., 2016）作为非线性激活单元，这是一个在卷积 $Y=[A \ B] \in \mathbb{R}^{2d}$ 的输出上实现的一个简单的门控机制：</p>
+<script type="math/tex; mode=display">
+v([A B])=A \otimes \sigma(B)</script><p>其中 $A, B \in \mathbb{R}^d$ 是非线性层的输入，$\otimes$ 是元素对元素相乘，输出 $v([A B]) \in \mathbb{R}^d$ 是 $Y$ 的大小的一半。门 $\sigma(B)$ 控制当前的上下文环境中哪个输入 $A$ 是相关的。一个相似的非线性单元由 Oord et al. (2016b) 提出，他们在 $A$ 上加了 $tanh$ 但是 Dauphin et al. (2016) 展示了GLUs在语言模型中表现的更好。</p>
 <p>为了让深度卷积网络可行，我们在每个卷积的输入和块的输出间加入了残差连接（He et al., 2015a）。</p>
-<p>$$<br>h^l_i=v(W^l[h^{l-1}_{i-k/2}, …, h^{l-1}_{i+k/2}] + b^l_w) + h^{l-1}_i<br>$$</p>
-<p>对于编码器网络，我们确信卷积层的输出通过在每层增加 padding 可以匹配输入长度。然而，对于解码器网络我们需要注意对于解码器来说没有可用的未来信息（Oord et al., 2016a）。详细来说就是，我们在输入的左右两侧都加了 $k-1$ 个 0 作为 padding，并且从卷积输出的末端删除了 $k$ 个元素。</p>
+<script type="math/tex; mode=display">
+h^l_i=v(W^l[h^{l-1}_{i-k/2}, ..., h^{l-1}_{i+k/2}] + b^l_w) + h^{l-1}_i</script><p>对于编码器网络，我们确信卷积层的输出通过在每层增加 padding 可以匹配输入长度。然而，对于解码器网络我们需要注意对于解码器来说没有可用的未来信息（Oord et al., 2016a）。详细来说就是，我们在输入的左右两侧都加了 $k-1$ 个 0 作为 padding，并且从卷积输出的末端删除了 $k$ 个元素。</p>
 <p>我们也在嵌入的大小 $f$ 和 卷积的输出，也就是大小为 $2d$ 的空间中做了线性映射关系。我们在将嵌入表示输入到编码器的时候，对 $\bf{w}$ 使用了这样的变换，也对编码器输出 $z^y_j$，解码器在 softmax $\bf{h^L}$ 之前的最后一层，以及计算注意力值之前的解码器的每一层$h^l$。</p>
 <p>最后，我们计算了在 $T$ 个可能的下一个目标元素 $y_{i+1}$ 上的分布，通过将解码器最上面的输出做权重为 $W_o$ 偏置为 $b_o$ 的线性组合得到：</p>
-<p>$$<br>p(y_{i+1} \mid y_1, …, y_i, \mathbf{x}) = \text{softmax} (W_oh^L_i+b_o) \in \mathbb{R}^T<br>$$</p>
-<h2 id="3-3-Multi-step-Attention"><a href="#3-3-Multi-step-Attention" class="headerlink" title="3.3. Multi-step Attention"></a>3.3. Multi-step Attention</h2><center><img src="/blog/2018/05/22/convolutional-sequence-to-sequence-learning/Fig1.JPG" alt="Figure1"></center>
+<script type="math/tex; mode=display">
+p(y_{i+1} \mid y_1, ..., y_i, \mathbf{x}) = \text{softmax} (W_oh^L_i+b_o) \in \mathbb{R}^T</script><h2 id="3-3-Multi-step-Attention"><a href="#3-3-Multi-step-Attention" class="headerlink" title="3.3. Multi-step Attention"></a>3.3. Multi-step Attention</h2><center>![Figure1](Fig1.JPG)</center>
 
-<p>我们对于每一个解码层引入了一个分开的注意力机制。为了计算注意力，我们融合了当前解码器状态$h^l_i$和前一个目标元素$g_i$的嵌入表示：<br>$$d^l_i=W^l_dh^l_i + b^l_d + g_i$$<br>解码器层$l$的注意力$a^l_{ij}$的状态$i$和源元素$j$是通过解码器状态的汇总$d^l_i$和最后一个编码器块$u$的每个输出$z^u_j$的点乘得到：<br>$$a^l_{ij}=\frac{\exp(d^l_i \cdot z^u_j)}{\sum^m_{t=1}\exp(d^l_i \cdot z^u_t)}$$<br>对当前解码器层的条件输入$c^l_i$是编码器输出的加权求和，也就是输入元素嵌入$e_j$（图1，中右侧）：<br>$$c^l_i=\sum^m_{j=1}a^l_{ij}(z^u_j+e_j)$$<br>这与循环神经网络的方法稍有不同，在循环神经网络中，注意力和$z^u_j$的加权求和是同时计算的(This is slightly different to recurrent approaches which compute both the attention and the weighted sum over $z^u_j$ only)。我们发现加入$e_j$更有效，而且它与键值记忆网络相似，后者的键是$z^u_j$，值是$z^u_j+e_j$（Miller et al., 2016）。编码器输出$z^u_j$潜在地表达了大量的输入上下文，$e_j$提供了一个在做预测时有效的输入元素的点信息。一旦$c^l_i$被计算得出，它就会被简单的加到对应解码层$h^l_i$的输出上。<br>对比单步注意力机制（Bahdanau et al., 2014; Luong et al., 2015; Zhou et al., 2016; Wu et al., 2016）来说，这可以被看作是多步“跳跃”（Sukhbaater et al., 2015）的注意力机制。特别地，第一层的注意力决定了被输入到第二层的一个有效的源上下文，第二层在计算注意力的时候考虑了这个信息。解码器也可以直接获取注意力的前$k-1$步历史，因为条件输入$c^{l-1}_{i-k}, …, c^{l-1}_{i}$是$h^{l-1}_{i-k}, …, h^{l-1}_i$的一部分，而后者是$h^l_i$的输入。对于循环神经网络来说，前几步的输入在隐藏状态中，并且需要经过多个非线性单元后还保存下来，但是对于卷积的网络来说，考虑已经被加入的前几步信息更加简单。总的来说，我们的注意力机制考虑了我们之前已经加入的哪个单词，并且每个时间步都实现了多次跳跃注意力机制。在后记$C$中，我们绘制了对于深层解码器的注意力分数，显示出了不同层，被考虑的源输入的不同位置。<br>我们的卷积架构与RNN相比可以批量的计算一个序列的所有元素的注意力（图1，中间）。我们分别地计算了每个解码器层。</p>
+<p>我们对于每一个解码层引入了一个分开的注意力机制。为了计算注意力，我们融合了当前解码器状态$h^l_i$和前一个目标元素$g_i$的嵌入表示：</p>
+<script type="math/tex; mode=display">d^l_i=W^l_dh^l_i + b^l_d + g_i</script><p>解码器层$l$的注意力$a^l_{ij}$的状态$i$和源元素$j$是通过解码器状态的汇总$d^l_i$和最后一个编码器块$u$的每个输出$z^u_j$的点乘得到：</p>
+<script type="math/tex; mode=display">a^l_{ij}=\frac{\exp(d^l_i \cdot z^u_j)}{\sum^m_{t=1}\exp(d^l_i \cdot z^u_t)}</script><p>对当前解码器层的条件输入$c^l_i$是编码器输出的加权求和，也就是输入元素嵌入$e_j$（图1，中右侧）：</p>
+<script type="math/tex; mode=display">c^l_i=\sum^m_{j=1}a^l_{ij}(z^u_j+e_j)</script><p>这与循环神经网络的方法稍有不同，在循环神经网络中，注意力和$z^u_j$的加权求和是同时计算的(This is slightly different to recurrent approaches which compute both the attention and the weighted sum over $z^u_j$ only)。我们发现加入$e_j$更有效，而且它与键值记忆网络相似，后者的键是$z^u_j$，值是$z^u_j+e_j$（Miller et al., 2016）。编码器输出$z^u_j$潜在地表达了大量的输入上下文，$e_j$提供了一个在做预测时有效的输入元素的点信息。一旦$c^l_i$被计算得出，它就会被简单的加到对应解码层$h^l_i$的输出上。<br>对比单步注意力机制（Bahdanau et al., 2014; Luong et al., 2015; Zhou et al., 2016; Wu et al., 2016）来说，这可以被看作是多步“跳跃”（Sukhbaater et al., 2015）的注意力机制。特别地，第一层的注意力决定了被输入到第二层的一个有效的源上下文，第二层在计算注意力的时候考虑了这个信息。解码器也可以直接获取注意力的前$k-1$步历史，因为条件输入$c^{l-1}_{i-k}, …, c^{l-1}_{i}$是$h^{l-1}_{i-k}, …, h^{l-1}_i$的一部分，而后者是$h^l_i$的输入。对于循环神经网络来说，前几步的输入在隐藏状态中，并且需要经过多个非线性单元后还保存下来，但是对于卷积的网络来说，考虑已经被加入的前几步信息更加简单。总的来说，我们的注意力机制考虑了我们之前已经加入的哪个单词，并且每个时间步都实现了多次跳跃注意力机制。在后记$C$中，我们绘制了对于深层解码器的注意力分数，显示出了不同层，被考虑的源输入的不同位置。<br>我们的卷积架构与RNN相比可以批量的计算一个序列的所有元素的注意力（图1，中间）。我们分别地计算了每个解码器层。</p>
 <h3 id="正则化的策略"><a href="#正则化的策略" class="headerlink" title="正则化的策略"></a>正则化的策略</h3><p>我们通过小心的权重初始化稳定了学习过程$\text{\S3.5}$，并且通过缩放网络的部分使透过网络中的方差不会剧烈的变化。特别地，我们也对残差块的输出和注意力进行缩放来保持激活后的方差。我们将输入的加和和一个残差块的输出乘以了$\sqrt{0.5}$，来使和的方差减半。这假设了被加数有着相同的方差，虽说不一定总是能这样，但是在使用的时候还是很有效的。<br>通过注意力机制生成的条件输入$c^l_i$是$m$个向量的加权求和，我们通过缩放$m\sqrt{1/m}$抵消了在方差上的一个变化；我们假设注意力分数是均匀分布的，对输入乘以了$m$来使他从原来的大小放大。一般我们不这么干，但是我们发现在实际情况中表现得还挺好。<br>对于带有多个注意力机制的卷积解码器，我们根据我们的使用的注意力机制的数量对编码层的梯度进行缩放；我们排除了源单词的嵌入。我们发现这样可以稳定训练过程，因为如果不这样编码器就会接受到很大的梯度。</p>
 <h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>在对不同层的输出进行加和的时候，比如残差连接，对激活单元进行归一化时需要很小心的权重初始化。我们的初始化策略是受到了归一化的启发：保持网络前向和反向传播时激活后的值的方差。所有的嵌入表示从一个均值为0，标准差为0.1的正态分布中初始化得到。对于输出不直接输入到门控线性单元的层，我们从$\mathcal{N}(0, \sqrt{1/n_l})$中初始化权重，其中$n_l$是每个神经元输入连接数。这确保了一个均匀分布输入的方差是保持不变的。<br>对于通过GLU激活的层来说，我们提出了一个通过adapting the derivations in（He et al., 2015b; Glorot &amp; Bengio, 2010; Appendix A）的初始化机制。如果GLU的输入服从均值为0的分布，并且有充分小的方差，那么我们可以用输入方差的四分之一来近似输出方差（Appendix A.1）。因此，我们初始化权重，使得GLU激活的输入有着4倍的输入的方差。这可以通过对$\mathcal{N}(0, \sqrt{r/n_l})$采样初始化得到。偏置项在网络构建时均匀的设置为0。<br>我们在某些层的输入使用了dropout，以便输入保持一个概率$p$。这可以看作是一个伯努利随机变量取值为$1/p$的概率为$p$，其他为0（Srivastava et al., 2014）。dropout的应用会使得方差被$1/p$缩放。我们的目标是通过使用大的权重来初始化各个层来恢复进入的方差(We aim to restore the incoming variance by initializing the respective layers with larger weights)。特别地，我们使用$\mathcal{N}(0, \sqrt{4p/n_l})$初始化那些输出会输入至GLU的层，使用$\mathcal{N}(0, \sqrt{p/n_l})$来初始化其他的。</p>
 
@@ -561,14 +562,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">graph</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">STDM</a>
               </li>
              
@@ -578,6 +571,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -593,6 +590,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Kafka</a>
               </li>
              
@@ -605,11 +606,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
+                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
+                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -622,14 +623,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">reinforcement learning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NER</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -649,11 +642,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
+                <a href="javascript:void(0)" class="js-tag color4">NER</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -662,6 +659,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">machine translation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
               </li>
             
             <div class="clearfix"></div>

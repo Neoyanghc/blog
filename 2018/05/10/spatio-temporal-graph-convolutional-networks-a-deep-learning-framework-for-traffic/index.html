@@ -200,26 +200,33 @@
 <p>\begin{equation}<br>    \tag{1}    \hat{v}_{t+1}, …, \hat{v}_{t+H} = \mathop{\arg\min}_{v_{t+1},…,v_{t+H}}logP(v_{t+1},…,v_{t+H}\vert v_{t-M+1},…v_t)<br>\end{equation}</p>
 <p>这里$v_t \in \mathbb{R}^n$是$n$个路段在时间戳$t$观察到的一个向量，每个元素记录了一条路段的历史观测数据。<br>在我们的工作中，我们在一个图上定义了一个交通网络，并专注于结构化的交通时间序列。观测到的样本$v_t$间不是相互独立的，而是在图中两两相互连接的。因此，数据点$v_t$可以被视为定义在权重为$w_{ij}$，如图1展示的无向图（或有向图）$\mathcal{G}$上的一个信号。在第$t$个时间戳，在图$\mathcal{G_t}=(\mathcal{V_t}, \mathcal{\varepsilon}, W)$, $\mathcal{V_t}$是当顶点的有限集，对应在交通网络中$n$个监测站；$\epsilon$是边集，表示观测站之间的连通性；$W \in \mathbb{R^{n \times n}}$表示$\mathcal{G_t}$的邻接矩阵。<br><img src="/blog/2018/05/10/spatio-temporal-graph-convolutional-networks-a-deep-learning-framework-for-traffic/Fig1.PNG" alt="Fig1"></p>
 <h2 id="图上的卷积"><a href="#图上的卷积" class="headerlink" title="图上的卷积"></a>图上的卷积</h2><p>传统网格上的标准卷积很明显是不能应用在广义图上的。现在有两个基本的方法正在探索如何泛化结构化数据上的CNN。一个是扩展卷积的空间定义[Niepert <em>et al.</em>, 2016]，另一个是使用图傅里叶变换在谱域中进行操作[Bruna <em>et al.</em>, 2013]。前一个方法重新将顶点安排至确定的表格形式内，然后就可以使用传统的卷积方法了。后者引入了谱框架，在谱域中应用图卷积，经常被称为谱图卷积。一些后续的研究通过将时间复杂度从$O(n^2)$降至线性[Defferrard <em>et al.</em>, 2016;Kipf and Welling, 2016]使谱图卷积的效果更好。<br>我们基于谱图卷积的定义引入图卷积操作“$\ast_{\mathcal{G}}$”的符号，也就是一个核$\Theta$和信号$x \in \mathbb{R}^n$的乘法，</p>
-<p>$$\tag{2} \Theta \ast_{\mathcal{G}}x=\Theta(L)x=\Theta(U \Lambda U^T)x=U\Theta(\Lambda)U^Tx$$</p>
-<p>这里图的傅里叶基$U \in \mathbb{R}^{n \times n}$是归一化的拉普拉斯矩阵$L=I_n-D^{-1/2}WD^{-1/2}= U \Lambda U^T \in \mathbb{R}^{n \times n}$的特征向量组成的矩阵，其中$I_n$是单位阵，$D \in \mathbb{R}^{n \times n}$是对角的度矩阵$D_{ii}=\sum_j{W_{ij}}$；$\Lambda \in \mathbb{R}^{n \times n}$是$L$的特征值组成的矩阵，卷积核$\Theta(\Lambda)$是一个对角矩阵。通过这个定义，一个图信号$x$是被一个核$\Theta$通过$\Theta$和图傅里叶变换$U^Tx$[Shuman <em>et al.</em>, 2013]过滤的。</p>
+<script type="math/tex; mode=display">\tag{2} \Theta \ast_{\mathcal{G}}x=\Theta(L)x=\Theta(U \Lambda U^T)x=U\Theta(\Lambda)U^Tx</script><p>这里图的傅里叶基$U \in \mathbb{R}^{n \times n}$是归一化的拉普拉斯矩阵$L=I_n-D^{-1/2}WD^{-1/2}= U \Lambda U^T \in \mathbb{R}^{n \times n}$的特征向量组成的矩阵，其中$I_n$是单位阵，$D \in \mathbb{R}^{n \times n}$是对角的度矩阵$D_{ii}=\sum_j{W_{ij}}$；$\Lambda \in \mathbb{R}^{n \times n}$是$L$的特征值组成的矩阵，卷积核$\Theta(\Lambda)$是一个对角矩阵。通过这个定义，一个图信号$x$是被一个核$\Theta$通过$\Theta$和图傅里叶变换$U^Tx$[Shuman <em>et al.</em>, 2013]过滤的。</p>
 <h1 id="提出的模型"><a href="#提出的模型" class="headerlink" title="提出的模型"></a>提出的模型</h1><h2 id="网络架构"><a href="#网络架构" class="headerlink" title="网络架构"></a>网络架构</h2><p>在这部分，我们详细说明了时空图卷积网络的框架。如图二所示，STGCN有多个时空卷积块组成，每一个都是像一个“三明治”结构的组成，有两个门序列卷积层和一个空间图卷积层在中间。每个模块的细节如下。<br><img src="/blog/2018/05/10/spatio-temporal-graph-convolutional-networks-a-deep-learning-framework-for-traffic/Fig2.PNG" alt="Fig2"><br>图二：时空图卷积网络的架构图。STGCN的架构有两个时空卷积块和一个全连接的在末尾的输出层组成。每个ST-Conv块包含了两个时间门卷积层，中间有一个空间图卷积层。每个块中都使用了残差连接和bottleneck策略。输入$v_{t-M+1},…v_t$被ST-Conv块均匀的（uniformly）处理，来获取时空依赖关系。全部特征由一个输出层来整合，生成最后的预测$\hat{v}$。</p>
 <h2 id="提取空间特征的图卷积神经网络"><a href="#提取空间特征的图卷积神经网络" class="headerlink" title="提取空间特征的图卷积神经网络"></a>提取空间特征的图卷积神经网络</h2><p>交通网络大体上是一个图结构。由数学上的图来构成路网是很自然也很合理的。然而，之前的研究忽视了交通网络的空间属性：因为交通网络被分成了块或网格状，所以网络的全局性和连通性被过分的关注了。即使是在网格上的二维卷积，由于数据建模的折中，也只能捕捉到大体的空间局部性。根据以上情况，在我们的模型中，图卷积被直接的应用在了图结构数据上为了在空间中抽取很有意义的模式和特征。集是在图卷积中由式2可以看出核$\Theta$的计算的时间复杂度由于傅里叶基的乘法可以达到$O(n^2)$，两个近似的策略可以解决这个问题。</p>
 <p><strong>切比雪夫多项式趋近</strong><br>为了局部化过滤器并且减少参数，核$\Theta$可以被一个关于$\Lambda$的多项式限制起来，也就是$\Theta(\Lambda)=\sum_{k=0}^{K-1} \theta_k \Lambda^k$，其中$\theta \in \mathbb{R}^K$是一个多项式系数的向量。$K$是图卷积核的大小，它决定了卷积从中心节点开始的最大半径。一般来说，切比雪夫多项式$T_k(x)$被用于近似核，作为$K-1$阶展开的一部分，也就是$\Theta(\Lambda) \approx \sum_{k=0}^{K-1} \theta_k T_k(\widetilde{\Lambda})$，其中$\widetilde{\Lambda}=2\Lambda/\lambda_{max}-I_n$（$\lambda_{max}$表示$L$的最大特征值）[Hammond <em>et al.</em>, 2011]。图卷积因此可以被写成</p>
-<p>$$\tag{3} \Theta \ast_{\mathcal{G}} x = \Theta(L)x \approx \sum_{k=0}^{K-1}\theta_k T_k(\widetilde{L})x$$</p>
-<p>其中$T_k(\widetilde{L}) \in \mathbb{R}^{n \times n}$是k阶切比雪夫多项式对缩放后（scaled）的拉普拉斯矩阵$\widetilde{L}=2L/\lambda_{max}-I_n$。通过递归地使用趋近后的切比雪夫多项式计算K阶卷积操作，式2的复杂度可以被降低至$O(K\vert \varepsilon \vert)$，如式3所示[Defferrard <em>et al.</em>, 2016]。</p>
+<script type="math/tex; mode=display">\tag{3} \Theta \ast_{\mathcal{G}} x = \Theta(L)x \approx \sum_{k=0}^{K-1}\theta_k T_k(\widetilde{L})x</script><p>其中$T_k(\widetilde{L}) \in \mathbb{R}^{n \times n}$是k阶切比雪夫多项式对缩放后（scaled）的拉普拉斯矩阵$\widetilde{L}=2L/\lambda_{max}-I_n$。通过递归地使用趋近后的切比雪夫多项式计算K阶卷积操作，式2的复杂度可以被降低至$O(K\vert \varepsilon \vert)$，如式3所示[Defferrard <em>et al.</em>, 2016]。</p>
 <p><strong>1阶近似</strong><br>一个针对层的线性公式可以由堆叠多个使用拉普拉斯矩阵的一阶近似的局部图卷积层[Kipf and Welling, 2016]。结果就是，这样可以构建出一个深的网络，这个网络可以深入地恢复空间信息并且不需要指定多项式中的参数。由于在神经网络中要缩放和归一化，我们可以进一步假设$\lambda_{max} \approx 2$。因此，式3可以简写为</p>
-<p>\begin{aligned}<br>\Theta \ast_{\mathcal{G}}x \approx &amp; \theta_0x+\theta_1(\frac{2}{\lambda_{max}}L-I_n)x\ <br>                         \approx &amp; \theta_0 x- \theta_1(D^{-\frac{1}{2}} W D^{-\frac{1}{2}}) x<br>\end{aligned}</p>
+<p>\begin{aligned}<br>\Theta \ast_{\mathcal{G}}x \approx &amp; \theta_0x+\theta_1(\frac{2}{\lambda_{max}}L-I_n)x\\<br>                         \approx &amp; \theta_0 x- \theta_1(D^{-\frac{1}{2}} W D^{-\frac{1}{2}}) x<br>\end{aligned}</p>
 <p>其中，$\theta_0$，$\theta_1$是核的两个共享参数。为了约束参数并为稳定数值计算，$\theta_0$和$\theta_1$用一个参数$\theta$来替换，$\theta=\theta_0=-\theta_1$；$W$和$D$是通过$\widetilde{W}=W+I_n$和$\widetilde{D}_{ii}=\sum_j\widetilde{W}_{ij}$重新归一化得到的。之后，图卷积就可以表达为<br>\begin{aligned}<br>\Theta \ast_{\mathcal{G}} x = &amp; \theta(I_n + D^{-\frac{1}{2}} W D^{\frac{1}{2}})x\\<br>= &amp; \theta (\widetilde{D}^{-\frac{1}{2}} \widetilde{W} \widetilde{D}^{-\frac{1}{2}})x<br>\end{aligned}<br>竖直地堆叠一阶近似的图卷积可以获得和平行的K阶卷积相同的效果，所有的卷积可以从一个顶点的$K-1$阶邻居中获取到信息。在这里，$K$是连续卷积操作的次数或是模型中的卷积层数。进一步说，针对层的线性结构是节省参数的，并且对大型的图来说是效率很高的，因为多项式趋近的阶数为1。</p>
-<p><strong>图卷积的泛化</strong><br>图卷积操作$\ast_{\mathcal{G}}$也可以被扩展到多维张量上。对于一个有着$C_i$个通道的信号$X \in \mathbb{R}^{n \times C_i}$，图卷积操作可以扩展为<br>$$y_j = \sum_{i=1}^{C_i} \Theta_{i,j}(L) x_i \in \mathbb{R}^n, 1 \leq j \leq C_o$$<br>其中，$C_i \times C_o$个向量是切比雪夫系数$\Theta_{i,j} \in \mathbb{R}^K$（$C_i$，$C_o$分别是feature map的输入和输出大小）。针对二维变量的图卷积表示为$\Theta \ast_{\mathcal{G}} X$，其中$\Theta \in \mathbb{R}^{K \times C_i \times C_o}$。需要注意的是，输入的交通预测是由$M$帧路网组成的，如图1所示。每帧$v_t$可以被视为一个矩阵，它的第$i$列是图$\mathcal{G_t}$中第$i$个顶点的一个为$C_i$维的值，也就是$X \in \mathbb{R}^{n \times C_i}$（在这个例子中，$C_i=1$）。对于$M$中的每个时间步$t$，相同的核与相同的图卷积操作是在$X_t \in \mathbb{R}^{n \times C_i}$中并行进行的。因此，图卷积操作也可以泛化至三维，记为$\Theta \ast_{\mathcal{G}} \mathcal{X}$，其中$\mathcal{X} \in \mathbb{R}^{M \times n \times C_i}$</p>
-<h2 id="抽取时间特征的门控卷积神经网络"><a href="#抽取时间特征的门控卷积神经网络" class="headerlink" title="抽取时间特征的门控卷积神经网络"></a>抽取时间特征的门控卷积神经网络</h2><p>尽管基于RNN的模型可以广泛的应用于时间序列分析，用于交通预测的循环神经网络仍然会遇到费时的迭代，复杂的门控机制，对动态变化的响应慢。相反，CNN训练快，结构简单，而且不依赖于前一步。受到[Gehring <em>et al.</em>, 2017]的启发，我们在时间轴上部署了整块的卷积结构，用来捕获交通流的动态时间特征。这个特殊的设计可以让并行而且可控的训练过程通过多层卷积结构形成层次表示。<br>如图2右侧所示，时间卷积层包含了一个一维卷积，核的宽度为$K_t$，之后接了一个门控线性单元(GLU)作为激活。对于图$\mathcal{G}$中的每个顶点，时间卷积对输入元素的$K_t$个邻居进行操作，导致每次将序列长度缩短$K_t-1$。因此，每个顶点的时间卷积的输入可以被看做是一个长度为$M$的序列，有着$C_i$个通道，记作$Y \in \mathbb{R}^{M \times C_i}$。卷积核$\Gamma \in \mathbf{R}^{K_t \times C_i \times 2C_o}$是被设计为映射$Y$到一个单个的输出$[P Q] \in \mathbb{R}^{(M-K_t+1) \times (2C_o)}$($P$, $Q$是通道数的一半)。作为结果，时间门控卷积可以定义为：<br>$$\Gamma \ast_ \tau Y = P \otimes \sigma (Q) \in \mathbb{R}^{(M-K_t+1) \times C_o}$$<br>其中，$P$, $Q$分别是GLU的输入门，$\otimes$表示哈达玛积，sigmoid门$\sigma(Q)$控制当前状态的哪个输入$P$对于发现时间序列中的组成结构和动态方差是相关的。非线性门通过堆叠时间层对挖掘输入也有贡献。除此以外，在堆叠时间卷积层时，实现了残差连接。相似地，通过在每个节点$\mathcal{Y_i} \in \mathbb{R}^{M \times C_i}$(比如监测站)上都使用同样的卷积核$\Gamma$，时间卷积就可以泛化至3D变量上，记作$\Gamma \ast_\tau \mathcal{Y}$，其中$\mathcal{Y} \in \mathbb{R}^{M \times n \times C_i}$。<br><strong>这里我之前认为残差是用了 padding 的，其实不是，看了作者的代码后发现作者是用了一半数量的卷积核完成卷积，这样就和 P 的维度一致了，然后直接和 P 相加，然后与 sigmoid 激活后的值进行点对点的相乘。</strong></p>
-<h2 id="时空卷积块"><a href="#时空卷积块" class="headerlink" title="时空卷积块"></a>时空卷积块</h2><p>为了同时从空间和时间领域融合特征，时空卷积块(ST-Conv block)的构建是为了同时处理图结构的时间序列的。如图2（中）所示，bottleneck策略的应用形成了三明治的结构，其中含有两个时间门控卷积层，分别在上下两层，一个空间图卷积层填充中间的部分。空间卷积层导致的通道数$C$的减小促使了参数的减少，并且减少了训练的时间开销。除此以外，每个时空块都使用了层归一化来抑制过拟合。<br>ST-Conv块的输入和输出都是3D张量。对于块$l$的输入$v^l \in \mathbb{R}^{M \times n \times C^l}$，输出$v^{l+1} \in \mathbb{R}^{(M-2(K_t-1)) \times n \times C^{l+1}}$通过以下式子计算得到：<br>$$v^{l+1} = \Gamma^l_1 \ast_\tau \rm ReLU(\Theta^l \ast_{\mathcal{G}}(\Gamma^l_0 \ast_\tau v^l))$$<br>其中$\Gamma^l_0$，$\Gamma^l_1$是块$l$的上下两个时间层；$\Theta^l$是图卷积谱核；$\rm ReLU(·)$表示ReLU激活函数。我们在堆叠两个ST-Conv块后，加了一个额外的时间卷积和全连接层作为最后的输出层（图2左侧）。时间卷积层将最后一个ST-Conv块的输出映射到一个最终的单步预测上。之后，我们可以从模型获得一个最后的输出$Z \in \mathbb{R}^{n \times c}$，通过一个跨$c$个通道的线性变换$\hat{v} = Zw+b$来预测$n$个节点的速度，其中$w \in \mathbb{R}^c$是权重向量,$b$是偏置。对交通预测的STGCN的损失函数可以写成：<br>$$L(\hat{v}; W_\theta) = \sum_t \Vert \hat{v}(v_{t-M+1, …, v_t, W_\theta}) - v_{t+1} \Vert^2$$<br>其中，$W_\theta$是模型中所有的训练参数; $v_{t+1}$是ground truth，$\hat{v}(·)$表示模型的预测。<br>我们来总结一下我们的STGCN的主要特征：</p>
+<p><strong>图卷积的泛化</strong><br>图卷积操作$\ast_{\mathcal{G}}$也可以被扩展到多维张量上。对于一个有着$C_i$个通道的信号$X \in \mathbb{R}^{n \times C_i}$，图卷积操作可以扩展为</p>
+<script type="math/tex; mode=display">y_j = \sum_{i=1}^{C_i} \Theta_{i,j}(L) x_i \in \mathbb{R}^n, 1 \leq j \leq C_o</script><p>其中，$C_i \times C_o$个向量是切比雪夫系数$\Theta_{i,j} \in \mathbb{R}^K$（$C_i$，$C_o$分别是feature map的输入和输出大小）。针对二维变量的图卷积表示为$\Theta \ast_{\mathcal{G}} X$，其中$\Theta \in \mathbb{R}^{K \times C_i \times C_o}$。需要注意的是，输入的交通预测是由$M$帧路网组成的，如图1所示。每帧$v_t$可以被视为一个矩阵，它的第$i$列是图$\mathcal{G_t}$中第$i$个顶点的一个为$C_i$维的值，也就是$X \in \mathbb{R}^{n \times C_i}$（在这个例子中，$C_i=1$）。对于$M$中的每个时间步$t$，相同的核与相同的图卷积操作是在$X_t \in \mathbb{R}^{n \times C_i}$中并行进行的。因此，图卷积操作也可以泛化至三维，记为$\Theta \ast_{\mathcal{G}} \mathcal{X}$，其中$\mathcal{X} \in \mathbb{R}^{M \times n \times C_i}$</p>
+<h2 id="抽取时间特征的门控卷积神经网络"><a href="#抽取时间特征的门控卷积神经网络" class="headerlink" title="抽取时间特征的门控卷积神经网络"></a>抽取时间特征的门控卷积神经网络</h2><p>尽管基于RNN的模型可以广泛的应用于时间序列分析，用于交通预测的循环神经网络仍然会遇到费时的迭代，复杂的门控机制，对动态变化的响应慢。相反，CNN训练快，结构简单，而且不依赖于前一步。受到[Gehring <em>et al.</em>, 2017]的启发，我们在时间轴上部署了整块的卷积结构，用来捕获交通流的动态时间特征。这个特殊的设计可以让并行而且可控的训练过程通过多层卷积结构形成层次表示。<br>如图2右侧所示，时间卷积层包含了一个一维卷积，核的宽度为$K_t$，之后接了一个门控线性单元(GLU)作为激活。对于图$\mathcal{G}$中的每个顶点，时间卷积对输入元素的$K_t$个邻居进行操作，导致每次将序列长度缩短$K_t-1$。因此，每个顶点的时间卷积的输入可以被看做是一个长度为$M$的序列，有着$C_i$个通道，记作$Y \in \mathbb{R}^{M \times C_i}$。卷积核$\Gamma \in \mathbf{R}^{K_t \times C_i \times 2C_o}$是被设计为映射$Y$到一个单个的输出$[P Q] \in \mathbb{R}^{(M-K_t+1) \times (2C_o)}$($P$, $Q$是通道数的一半)。作为结果，时间门控卷积可以定义为：</p>
+<script type="math/tex; mode=display">\Gamma \ast_ \tau Y = P \otimes \sigma (Q) \in \mathbb{R}^{(M-K_t+1) \times C_o}</script><p>其中，$P$, $Q$分别是GLU的输入门，$\otimes$表示哈达玛积，sigmoid门$\sigma(Q)$控制当前状态的哪个输入$P$对于发现时间序列中的组成结构和动态方差是相关的。非线性门通过堆叠时间层对挖掘输入也有贡献。除此以外，在堆叠时间卷积层时，实现了残差连接。相似地，通过在每个节点$\mathcal{Y_i} \in \mathbb{R}^{M \times C_i}$(比如监测站)上都使用同样的卷积核$\Gamma$，时间卷积就可以泛化至3D变量上，记作$\Gamma \ast_\tau \mathcal{Y}$，其中$\mathcal{Y} \in \mathbb{R}^{M \times n \times C_i}$。<br><strong>这里我之前认为残差是用了 padding 的，其实不是，看了作者的代码后发现作者是用了一半数量的卷积核完成卷积，这样就和 P 的维度一致了，然后直接和 P 相加，然后与 sigmoid 激活后的值进行点对点的相乘。</strong></p>
+<h2 id="时空卷积块"><a href="#时空卷积块" class="headerlink" title="时空卷积块"></a>时空卷积块</h2><p>为了同时从空间和时间领域融合特征，时空卷积块(ST-Conv block)的构建是为了同时处理图结构的时间序列的。如图2（中）所示，bottleneck策略的应用形成了三明治的结构，其中含有两个时间门控卷积层，分别在上下两层，一个空间图卷积层填充中间的部分。空间卷积层导致的通道数$C$的减小促使了参数的减少，并且减少了训练的时间开销。除此以外，每个时空块都使用了层归一化来抑制过拟合。<br>ST-Conv块的输入和输出都是3D张量。对于块$l$的输入$v^l \in \mathbb{R}^{M \times n \times C^l}$，输出$v^{l+1} \in \mathbb{R}^{(M-2(K_t-1)) \times n \times C^{l+1}}$通过以下式子计算得到：</p>
+<script type="math/tex; mode=display">v^{l+1} = \Gamma^l_1 \ast_\tau \rm ReLU(\Theta^l \ast_{\mathcal{G}}(\Gamma^l_0 \ast_\tau v^l))</script><p>其中$\Gamma^l_0$，$\Gamma^l_1$是块$l$的上下两个时间层；$\Theta^l$是图卷积谱核；$\rm ReLU(·)$表示ReLU激活函数。我们在堆叠两个ST-Conv块后，加了一个额外的时间卷积和全连接层作为最后的输出层（图2左侧）。时间卷积层将最后一个ST-Conv块的输出映射到一个最终的单步预测上。之后，我们可以从模型获得一个最后的输出$Z \in \mathbb{R}^{n \times c}$，通过一个跨$c$个通道的线性变换$\hat{v} = Zw+b$来预测$n$个节点的速度，其中$w \in \mathbb{R}^c$是权重向量,$b$是偏置。对交通预测的STGCN的损失函数可以写成：</p>
+<script type="math/tex; mode=display">L(\hat{v}; W_\theta) = \sum_t \Vert \hat{v}(v_{t-M+1, ..., v_t, W_\theta}) - v_{t+1} \Vert^2</script><p>其中，$W_\theta$是模型中所有的训练参数; $v_{t+1}$是ground truth，$\hat{v}(·)$表示模型的预测。<br>我们来总结一下我们的STGCN的主要特征：</p>
 <ol>
 <li>STGCN是处理结构化的时间序列的通用框架，不仅可以解决交通网络建模，还可以应用到其他的时空序列学习的挑战中，比如社交网络和推荐系统。</li>
 <li>时空块融合了图卷积和门控时间卷积，可以同时抽取有用的空间信息，捕获本质上的时间特征。</li>
 <li>模型完全由卷积层组成，因此可以在输入序列上并行运算，空间域中参数少易于训练。更重要的是，这个经济的架构可以使模型更高效的处理大规模的网络。</li>
 </ol>
 <h1 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h1><h2 id="数据集描述"><a href="#数据集描述" class="headerlink" title="数据集描述"></a>数据集描述</h2><p>我们在两个真实的数据集上验证了模型，分别是<strong>BJER4</strong>和<strong>PeMSD7</strong>，由北京市交委和加利福尼亚运输部提供。每个数据集包含了交通观测数据的关键属性和对应时间的地图信息。<br><strong>BJER4</strong>是通过double-loop detector获取的东四环周边的数据。我们的实验中有12条道路。交通数据每五分钟聚合一次。时间是从2014年的7月1日到8月31日，不含周末。我们选取了第一个月的车速速度记录作为训练集，剩下的分别做验证和测试。<br><strong>PeMSD7</strong>是Caltrans Performance Measurement System(PeMS)通过超过39000个监测站实时获取的数据，这些监测站分布在加州高速公路系统主要的都市部分[Chen <em>et al</em>., 2001]。数据是30秒的数据样本聚合成5分钟一次的数据。我们在加州的District 7随机选取了一个小的和一个大的范围作为数据源，分别有228和1026个监测站，分别命名为PeMSD7(S)和PeMSD7(L)（如图3左侧所示）。PeMSD7数据集的时间范围是2012年五月和六月的周末。我们使用同样的原则对数据进行了训练集和测试集的划分。<br><img src="/blog/2018/05/10/spatio-temporal-graph-convolutional-networks-a-deep-learning-framework-for-traffic/Fig3.PNG" alt="Fig1"></p>
-<h2 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h2><p>两个数据集的间隔设定为5分钟。因此，路网中的每个顶点每天就有288个数据点。数据清理后使用了线性插值的方法来填补缺失值。通过核对相关性，每条路的方向和OD(origin-destination)点，环路系统可以被数值化成一个有向图。<br>在PeMSD7，路网的邻接矩阵通过交通网络中的监测站的距离来计算。带权邻接矩阵$W$通过以下公式计算：<br>$$<br>w_{ij} = \begin{cases}<br>\exp{(-\frac{d^2_{ij}}{\sigma^2})}&amp;,i \neq j  \rm and \exp{(-\frac{d^2_{ij}}{\sigma^2}) \geq \epsilon} \\<br>0&amp;, \rm otherwise<br>\end{cases}<br>$$<br>其中$w_{ij}$是边的权重，通过$d_{ij}$得到，也就是$i$和$j$之间的距离。$\sigma^2$和$\epsilon$是来控制矩阵$W$的分布和稀疏性的阈值，我们用了10和0.5。$W$的可视化在图3的右侧。</p>
+<h2 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h2><p>两个数据集的间隔设定为5分钟。因此，路网中的每个顶点每天就有288个数据点。数据清理后使用了线性插值的方法来填补缺失值。通过核对相关性，每条路的方向和OD(origin-destination)点，环路系统可以被数值化成一个有向图。<br>在PeMSD7，路网的邻接矩阵通过交通网络中的监测站的距离来计算。带权邻接矩阵$W$通过以下公式计算：</p>
+<script type="math/tex; mode=display">
+w_{ij} = \begin{cases}
+\exp{(-\frac{d^2_{ij}}{\sigma^2})}&,i \neq j \ \rm and \exp{(-\frac{d^2_{ij}}{\sigma^2}) \geq \epsilon} \\
+0&, \rm otherwise
+\end{cases}</script><p>其中$w_{ij}$是边的权重，通过$d_{ij}$得到，也就是$i$和$j$之间的距离。$\sigma^2$和$\epsilon$是来控制矩阵$W$的分布和稀疏性的阈值，我们用了10和0.5。$W$的可视化在图3的右侧。</p>
 <h1 id="复现代码"><a href="#复现代码" class="headerlink" title="复现代码"></a>复现代码</h1><p>代码里面的输入矩阵$X \in \mathbb{R}^{n_samples \times n_nodes \times C \times M}$<br>其中$n_samples$是样本数，$n_nodes$是图的顶点数，$C$是顶点的特征数，$M$是时间长度。<br>论文原文使用RMSprop优化，batch_size为50，学习率为1e-3，每迭代5轮学习率衰减0.7倍<br><a href="https://github.com/Davidham3/STGCN" target="_blank" rel="noopener">仓库地址</a></p>
 
       
@@ -580,14 +587,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">graph</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">STDM</a>
               </li>
              
@@ -597,6 +596,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -612,6 +615,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Kafka</a>
               </li>
              
@@ -624,11 +631,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
+                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
+                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -641,14 +648,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">reinforcement learning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NER</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -668,11 +667,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
+                <a href="javascript:void(0)" class="js-tag color4">NER</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -681,6 +684,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">machine translation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
               </li>
             
             <div class="clearfix"></div>
