@@ -188,7 +188,6 @@
 <p>记录一下安装5节点的高可用Hadoop集群的安装过程。High availability表示高可用，在Hadoop集群中，表示两个主节点。HDFS中是两个Namenode，Yarn中是两个ResourceManager。本教程中的Hadoop和HBase均为HA，MySQL为双机热备。</p>
 <p>操作系统：CentOS 7.</p>
 <p>软件服务如下：</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -265,9 +264,7 @@
 </tr>
 </tbody>
 </table>
-</div>
 <p>各节点搭载的服务为：</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -298,7 +295,6 @@
 </tr>
 </tbody>
 </table>
-</div>
 <p><strong>本系列教程中，命令以#开头的是需要使用root用户执行，$开头的使用普通用户（一般为hadoop用户）。而且本教程的操作系统是CentOS7，有些配置文件内的内容可能与Ubuntu等系统不符。</strong></p>
 <h1 id="关闭防火墙和Selinux"><a href="#关闭防火墙和Selinux" class="headerlink" title="关闭防火墙和Selinux"></a>关闭防火墙和Selinux</h1><p>// 关闭防火墙和selinux<br><code># systemctl stop firewalld.service</code></p>
 <p>// 禁止firewall 开机启动<br><code># systemctl disable firewalld.service</code></p>
@@ -660,11 +656,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
+                <a href="javascript:void(0)" class="js-tag color1">graph</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -724,15 +720,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">large-scale learning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">NER</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">large-scale learning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -752,15 +748,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">seq2seq</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">machine translation</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
               </li>
             
             <div class="clearfix"></div>

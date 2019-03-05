@@ -201,21 +201,15 @@
 <p><strong>Supervised learning over graphs.</strong> 除了顶点嵌入方法，还有很多在图结构数据上的监督学习方法。包括很多核方法，图的特征向量从多个图的核得到。最近又很多用于图结构的监督学习的神经网络方法。我们的方法从概念上是受到了这些方法的启发。然而，尽管这些方法试图对整个图（或子图）进行分类，我们的工作关注的是如何对单个顶点生成有效的表示。</p>
 <p><strong>Graph convolutional networks.</strong> 近些年，一些用于图的卷积神经网络被相继提出。这些方法的大部分都不能扩展到大的图上，或是为了整个图的分类而设计（或是两点都有）。然而，我们的方法与Kipf et al.提出的图卷积很相关，在训练的时候需要整个图的拉普拉斯矩阵。我们算法的一个简单的变体可以看作是GCN框架在inductive setting上的扩展，我们会在3.3说明。</p>
 <h1 id="3-GraphSAGE"><a href="#3-GraphSAGE" class="headerlink" title="3 GraphSAGE"></a>3 GraphSAGE</h1><p>我们的关键思想在于我们的方法是学习如何从一个顶点的局部邻居聚合特征信息（比如度或近邻顶点的文本特征）。3.1描述embedding的生成算法。3.2描述随机梯度下降学习参数。</p>
-<h2 id="3-1-Embedding-generation-i-e-forward-propagation-algorithm"><a href="#3-1-Embedding-generation-i-e-forward-propagation-algorithm" class="headerlink" title="3.1 Embedding generation (i.e., forward propagation) algorithm"></a>3.1 Embedding generation (i.e., forward propagation) algorithm</h2><p>假设已经学习到了$K$个聚合函数（表示为$AGGERGATE_k, \forall k \in \{1,…,K\}$）的参数，对顶点的信息聚合，还有一组权重矩阵$\mathbf{W}^k, \forall k \in \{1,…,K\}$，用来在模型的不同层或搜索深度间传播信息。下一节描述参数是怎么训练的。<br><img src="/blog/2018/07/19/inductive-representation-learning-on-large-graphs/Alg1.JPG" alt="Algo1"></p>
+<h2 id="3-1-Embedding-generation-i-e-forward-propagation-algorithm"><a href="#3-1-Embedding-generation-i-e-forward-propagation-algorithm" class="headerlink" title="3.1 Embedding generation (i.e., forward propagation) algorithm"></a>3.1 Embedding generation (i.e., forward propagation) algorithm</h2><p>假设已经学习到了$K$个聚合函数（表示为$AGGERGATE_k, \forall k \in {1,…,K}$）的参数，对顶点的信息聚合，还有一组权重矩阵$\mathbf{W}^k, \forall k \in {1,…,K}$，用来在模型的不同层或搜索深度间传播信息。下一节描述参数是怎么训练的。<br><img src="/blog/2018/07/19/inductive-representation-learning-on-large-graphs/Alg1.JPG" alt="Algo1"></p>
 <p>算法1背后的直觉是在每次迭代，或搜索深度，顶点从他们的局部邻居聚合信息，并且随着这个过程的迭代，顶点会从越来越远的地方获得信息。</p>
-<p>算法1描述了在各整个图上生成embedding的过程，$\mathcal{G} = \left( \mathcal{V}, \Large{\varepsilon} \right)$，以及所有顶点的特征$X_v, \forall v \in \mathcal{V}$作为输入。在算法1最外层循环的每一步如下，$k$表示外循环（或搜索深度）的当前一步，$\mathbf{h}^k$表示当前这步的一个顶点的表示：首先，每个顶点$v \in \mathcal{V}$聚合了在它在中间邻居的表示，$\{ \mathbf{h}^{k-1}_u, \forall u \in \mathcal{N}(u) \}$，聚合到向量$\mathbf{h}^{k-1}_{\mathcal{N}(v)}$中。注意，这个聚合步骤依赖于外循环前一次迭代生成的表示（比如$k - 1$），$k = 0$表示输入的顶点特征。聚合邻居特征向量后，GraphSAGE之后拼接了顶点当前的表示，$\mathbf{h}^{k-1}_v$，核聚合的邻居向量一起，$\mathbf{h}^{k-1}_{\mathcal{N}(v)}$，拼接后的向量输入到了激活函数为$\sigma$的全连接层中，将表示变换为下一步使用的形式（$\mathbf{h}^k_v, \forall v \in \mathcal{V}$）。为了记号的简单，我们将深度为$K$的输出表示记为$\mathbf{z} \equiv \mathbf{h}^K_v, \forall v \in \mathcal{V}$。邻居表示的聚合可以通过多个聚合架构得到（在算法1中表示为$\mathrm{AGGERGATE}$），我们会在3.3讨论不同的架构。</p>
+<p>算法1描述了在各整个图上生成embedding的过程，$\mathcal{G} = \left( \mathcal{V}, \Large{\varepsilon} \right)$，以及所有顶点的特征$X_v, \forall v \in \mathcal{V}$作为输入。在算法1最外层循环的每一步如下，$k$表示外循环（或搜索深度）的当前一步，$\mathbf{h}^k$表示当前这步的一个顶点的表示：首先，每个顶点$v \in \mathcal{V}$聚合了在它在中间邻居的表示，${ \mathbf{h}^{k-1}_u, \forall u \in \mathcal{N}(u) }$，聚合到向量$\mathbf{h}^{k-1}_{\mathcal{N}(v)}$中。注意，这个聚合步骤依赖于外循环前一次迭代生成的表示（比如$k - 1$），$k = 0$表示输入的顶点特征。聚合邻居特征向量后，GraphSAGE之后拼接了顶点当前的表示，$\mathbf{h}^{k-1}_v$，核聚合的邻居向量一起，$\mathbf{h}^{k-1}_{\mathcal{N}(v)}$，拼接后的向量输入到了激活函数为$\sigma$的全连接层中，将表示变换为下一步使用的形式（$\mathbf{h}^k_v, \forall v \in \mathcal{V}$）。为了记号的简单，我们将深度为$K$的输出表示记为$\mathbf{z} \equiv \mathbf{h}^K_v, \forall v \in \mathcal{V}$。邻居表示的聚合可以通过多个聚合架构得到（在算法1中表示为$\mathrm{AGGERGATE}$），我们会在3.3讨论不同的架构。</p>
 <p>为了将算法1扩展到minibatch设定上，给定一组输入顶点，我们先采样采出需要的邻居集合（到深度$K$），然后运行内部循环（算法1的第三行），但不是迭代所有的顶点，我们在每个深度只计算必须满足的表示（后记A包括了完整的minibatch伪代码）。</p>
-<h2 id="3-2-Learning-the-parameters-of-GraphSAGE"><a href="#3-2-Learning-the-parameters-of-GraphSAGE" class="headerlink" title="3.2 Learning the parameters of GraphSAGE"></a>3.2 Learning the parameters of GraphSAGE</h2><p>为了在半监督设定下学习一个有效的表示，我们使用基于图的损失函数来输出表示$\mathbf{z}_u, \forall u \in \mathcal{V}$，调整权重矩阵$\mathbf{W}^k, \forall k \in \{1,…,K\}$，聚合函数的参数通过随机梯度下降训练。基于图的损失函数倾向于使得相邻的顶点有相似的表示，尽管这会使相互远离的顶点的表示很不一样：</p>
-<script type="math/tex; mode=display">\tag{1}
-J\mathcal{G}(\mathbf{z}_u) = -\log(\sigma(\mathbf{z}^T_u \mathbf{z}_v)) - Q \cdot \mathbb{E}_{v_n \sim P_n(v)} \log(\sigma(-\mathbf{z}^T_u \mathbf{z}_{v_n})),</script><p>其中$v$是通过定长随机游走得到的$u$旁边的共现顶点，$\sigma$是sigmoid函数，$P_n$是负采样分布，$Q$定义了负样本的数目。重要的是，不像之前的那些方法，我输入到损失函数的表示$\mathbf{z}_u$是从包含一个顶点局部邻居的特征生成出来的，而不是对每个顶点训练一个独一无二的embedding（通过一个embedding查询表）。</p>
+<h2 id="3-2-Learning-the-parameters-of-GraphSAGE"><a href="#3-2-Learning-the-parameters-of-GraphSAGE" class="headerlink" title="3.2 Learning the parameters of GraphSAGE"></a>3.2 Learning the parameters of GraphSAGE</h2><p>为了在半监督设定下学习一个有效的表示，我们使用基于图的损失函数来输出表示$\mathbf{z}_u, \forall u \in \mathcal{V}$，调整权重矩阵$\mathbf{W}^k, \forall k \in {1,…,K}$，聚合函数的参数通过随机梯度下降训练。基于图的损失函数倾向于使得相邻的顶点有相似的表示，尽管这会使相互远离的顶点的表示很不一样：<br>$$\tag{1}<br>J\mathcal{G}(\mathbf{z}_u) = -\log(\sigma(\mathbf{z}^T_u \mathbf{z}_v)) - Q \cdot \mathbb{E}_{v_n \sim P_n(v)} \log(\sigma(-\mathbf{z}^T_u \mathbf{z}_{v_n})),<br>$$<br>其中$v$是通过定长随机游走得到的$u$旁边的共现顶点，$\sigma$是sigmoid函数，$P_n$是负采样分布，$Q$定义了负样本的数目。重要的是，不像之前的那些方法，我输入到损失函数的表示$\mathbf{z}_u$是从包含一个顶点局部邻居的特征生成出来的，而不是对每个顶点训练一个独一无二的embedding（通过一个embedding查询表）。</p>
 <p>这个无监督设定模拟了顶点特征提供给后续机器学习应用的情况。在那些表示只在后续的任务中使用的情况下，无监督损失（式1）可以被替换或改良，通过一个以任务为导向的目标函数（比如cross-entropy）。</p>
-<h2 id="3-3-聚合架构"><a href="#3-3-聚合架构" class="headerlink" title="3.3 聚合架构"></a>3.3 聚合架构</h2><p>不像在$N$维网格（如句子、图像、$3\rm{D}$）上的机器学习，一个顶点的邻居是无序的；因此，算法1中的聚合函数必须在以一个无序的向量上运行。理想上来说，一个聚合函数需要是对称的（也就是对它输入的全排列来说是不变的），而且还要可训练，且保持表示的能力。聚合函数的对称性之确保了我们的神经网络模型可以被训练且可以应用于任意顺序的顶点邻居特征集合上。我们检验了三种聚合函数：<br><strong>Mean aggregator.</strong> 第一个聚合函数是均值聚合，我们简单的取$\{ \mathbf{h}^{k-1}_u, \forall v \in \mathcal{N}(v) \}$中的向量的element-wise均值。均值聚合近似等价在transducttive GCN框架[17]中的卷积传播规则。特别地，我们可以通过替换算法1中的4行和5行为以下内容得到GCN的inductive变形：</p>
-<script type="math/tex; mode=display">\tag{2}
-\mathbf{h}^k_v \leftarrow \sigma(\mathbf{W} \cdot \mathrm{MEAN}(\{ \mathbf{h}^{k-1}_v \} \cup \{ \mathbf{h}^{k-1}_u, \forall u \in \mathcal{N}(v) \})).</script><p>我们称这个修改后的基于均值的聚合器是<em>convolutional</em>，因为它是一个粗略的，局部化谱卷积的的线性近似[17]。这个卷积聚合器和我们的其他聚合器的重要不同在于它没有算法1中第5行的拼接操作——卷积聚合器没有将顶点前一层的表示$\mathbf{h}^{k-1}_v$和聚合的邻居向量$\mathbf{h}^k_{\mathcal{N}(v)}$拼接起来。拼接操作可以看作一个是在不同的搜索深度或层之间的简单的skip connection的形式，它使得模型获得了巨大的提升。</p>
+<h2 id="3-3-聚合架构"><a href="#3-3-聚合架构" class="headerlink" title="3.3 聚合架构"></a>3.3 聚合架构</h2><p>不像在$N$维网格（如句子、图像、$3\rm{D}$）上的机器学习，一个顶点的邻居是无序的；因此，算法1中的聚合函数必须在以一个无序的向量上运行。理想上来说，一个聚合函数需要是对称的（也就是对它输入的全排列来说是不变的），而且还要可训练，且保持表示的能力。聚合函数的对称性之确保了我们的神经网络模型可以被训练且可以应用于任意顺序的顶点邻居特征集合上。我们检验了三种聚合函数：<br><strong>Mean aggregator.</strong> 第一个聚合函数是均值聚合，我们简单的取${ \mathbf{h}^{k-1}_u, \forall v \in \mathcal{N}(v) }$中的向量的element-wise均值。均值聚合近似等价在transducttive GCN框架[17]中的卷积传播规则。特别地，我们可以通过替换算法1中的4行和5行为以下内容得到GCN的inductive变形：<br>$$\tag{2}<br>\mathbf{h}^k_v \leftarrow \sigma(\mathbf{W} \cdot \mathrm{MEAN}({ \mathbf{h}^{k-1}_v } \cup { \mathbf{h}^{k-1}_u, \forall u \in \mathcal{N}(v) })).<br>$$<br>我们称这个修改后的基于均值的聚合器是<em>convolutional</em>，因为它是一个粗略的，局部化谱卷积的的线性近似[17]。这个卷积聚合器和我们的其他聚合器的重要不同在于它没有算法1中第5行的拼接操作——卷积聚合器没有将顶点前一层的表示$\mathbf{h}^{k-1}_v$和聚合的邻居向量$\mathbf{h}^k_{\mathcal{N}(v)}$拼接起来。拼接操作可以看作一个是在不同的搜索深度或层之间的简单的skip connection的形式，它使得模型获得了巨大的提升。</p>
 <p><strong>LSTM aggregator.</strong> 我们也检验了一个基于LSTM的复杂的聚合器。对比均值聚合器，LSTM有更强的表达能力。然而，LSTM不是对称的这个需要注意，因为他们处理他们的输入是以一个序列的方式。我们简单地将LSTM应用在一个顶点邻居的随机序列上。</p>
-<p><strong>Pooling aggregator.</strong> 我们检验的最后一个聚合器既是对称的，又是可训练的。在这个<em>池化</em>方法种，每个邻居的向量都是相互独立输入到全连接神经网络中的；随着这种变化，一个element-wise最大池化操作应用在邻居集合上来聚合信息：</p>
-<script type="math/tex; mode=display">\tag{3}
-\mathrm{AGGREGATE}^{pool}_k = \mathrm{max}(\{ \sigma (\mathbf{W}_{pool} \mathbf{h}^k_{u_i} + \mathbf{b}), \forall u_i \in \mathcal{N}(v) \}),</script><p>其中，$\mathrm{max}$表示element-wise最大值操作，$\sigma$是非线性激活函数。原则上，在最大池化使用之前，函数可以是任意的深度多层感知机，但是我们关注的是单个的单层结构。方法是搜到了最近的神经网络架构在学习general point sets上的启发[29]。直觉上来说，多层感知机可以看作是一组函数，这组函数为邻居集合中的每个顶点计算表示。通过对每个计算得到的特征使用最大池化操作，模型有效地捕获了邻居集合的不同方面。注意，原则上，任何对称的向量函数都可以替换$\mathrm{max}$操作器（比如element-wise mean）。我们发现最大池化和均值池化在测试时没有太大的差别，所以使用了最大池化完成了后续的实验。</p>
+<p><strong>Pooling aggregator.</strong> 我们检验的最后一个聚合器既是对称的，又是可训练的。在这个<em>池化</em>方法种，每个邻居的向量都是相互独立输入到全连接神经网络中的；随着这种变化，一个element-wise最大池化操作应用在邻居集合上来聚合信息：<br>$$\tag{3}<br>\mathrm{AGGREGATE}^{pool}_k = \mathrm{max}({ \sigma (\mathbf{W}_{pool} \mathbf{h}^k_{u_i} + \mathbf{b}), \forall u_i \in \mathcal{N}(v) }),<br>$$<br>其中，$\mathrm{max}$表示element-wise最大值操作，$\sigma$是非线性激活函数。原则上，在最大池化使用之前，函数可以是任意的深度多层感知机，但是我们关注的是单个的单层结构。方法是搜到了最近的神经网络架构在学习general point sets上的启发[29]。直觉上来说，多层感知机可以看作是一组函数，这组函数为邻居集合中的每个顶点计算表示。通过对每个计算得到的特征使用最大池化操作，模型有效地捕获了邻居集合的不同方面。注意，原则上，任何对称的向量函数都可以替换$\mathrm{max}$操作器（比如element-wise mean）。我们发现最大池化和均值池化在测试时没有太大的差别，所以使用了最大池化完成了后续的实验。</p>
 <h1 id="4-实验"><a href="#4-实验" class="headerlink" title="4 实验"></a>4 实验</h1><p>我们在三个benchmark上测试了GraphSAGE：1. 使用Web of Science citation dataset对不同的学术文章进行主题分类。2. 对属于不同社区的Reddit posts进行分类，3. 对多个PPI图进行蛋白质功能分类。在所有的实验中，我们在训练时没有见过的顶点上做预测，对PPI上对完全未见过的图做预测。</p>
 <p><strong>Experimental set-up.</strong> 为了在inductive benchmark上面将经验结果置于上下文中考虑，我们对比了四个baseline：随即分类器，基于特征的逻辑回归，raw features和DeepWalk embedding拼接的embedding。我们也比较了GraphSAGE的四个变体，分别使用不同的聚合函数（3.3部分）。因为，GraphSAGE的卷积变体是一种扩展形式，是Kipf et al. 半监督GCN的inductive version，我们称这个变体为GraphSAGE-GCN。我们测试了根据式1的损失函数训练的GraphSAGE变体，还有在cross-entropy上训练的监督变体。对于所有的GraphSAGE变体我们使用ReLU作为激活，$K = 2$，邻居采样大小$S_1 = 25$，$S_2 = 10$（详情见4.4节）。</p>
 <p>对于Reddit和citation数据集，我们使用”online”来训练DeepWalk，如Perozzi et al. 提到的那样，我们在做预测前，跑一轮新的SGD来嵌入新的测试顶点（详情见后记）。在多图设定中，我们不能使用DeepWalk，因为通过DeepWalk在不同不相交的图上运行后生成的嵌入空间对其他来说可以是arbitrarily rotated（后记D）。</p>
@@ -563,11 +557,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
+                <a href="javascript:void(0)" class="js-tag color1">graph</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -627,15 +621,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">large-scale learning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">NER</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">large-scale learning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -655,15 +649,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">seq2seq</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">machine translation</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
               </li>
             
             <div class="clearfix"></div>

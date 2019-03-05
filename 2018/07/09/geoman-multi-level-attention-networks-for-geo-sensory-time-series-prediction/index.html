@@ -204,7 +204,7 @@
 <li><em>外部因素融合模型</em>。我们设计了一个通用融合模型融合不同领域的外部因素。学习到的隐含表示会输入至多级注意力网络中来提升这些外部因素的重要性。</li>
 <li><em>真实的评价</em>。我们基于两个真实的数据集评估我们的方法。大量的实验证明了我们的方法相比于baseline的优越性。</li>
 </ol>
-<h1 id="2-Preliminary"><a href="#2-Preliminary" class="headerlink" title="2 Preliminary"></a>2 Preliminary</h1><h2 id="2-1-notations"><a href="#2-1-notations" class="headerlink" title="2.1 notations"></a>2.1 notations</h2><p>假设，有$N_g$个检测器，每个都生成$N_l$种时间序列。我们指定其中的一个为<em>target series</em>来预测，其它序列作为特征。时间窗为$T$，我们使用$\rm Y = (y^1, y^2, …, y^{N_g}) \in \mathbb{R}^{N_g \times T} $来表示所有目标序列在过去$T$个小时的监测值，其中$y^i \in \mathbb{R}^T$属于监测器$i$。我们使用$X^i = (x^{i, 1}, x^{i, 2}, …, x^{i, N_l})^{\rm T} = (x^i_1, x^i_2, …, x^i_T) \in \mathbb{R}^{N_l \times T} \in \mathbb{R}^{N_l \times T}$作为检测器$i$的局部特征，其中$x^{i,k} \in \mathbb{R}^T$是这个检测器的第$k$个时间序列，$x^i_t = (x^{i,1}_t, x^{i,2}_t, …, x^{i,N_l}_t)^{\rm T} \in \mathbb{R}^{N_l}$表示检测器$i$在时间$t$的所有时间序列的值。除了检测器$i$的局部特征，由于不同检测器间的空间关系，其他的检测器会共享对于预测有用的大量的信息。为了这个目的，我们融合每个检测器的局部特征到集合$\mathcal{X}^i = \{X^1, X^2, …, X^{N_g}\}$中作为检测器$i$的全局特征。</p>
+<h1 id="2-Preliminary"><a href="#2-Preliminary" class="headerlink" title="2 Preliminary"></a>2 Preliminary</h1><h2 id="2-1-notations"><a href="#2-1-notations" class="headerlink" title="2.1 notations"></a>2.1 notations</h2><p>假设，有$N_g$个检测器，每个都生成$N_l$种时间序列。我们指定其中的一个为<em>target series</em>来预测，其它序列作为特征。时间窗为$T$，我们使用$\rm Y = (y^1, y^2, …, y^{N_g}) \in \mathbb{R}^{N_g \times T} $来表示所有目标序列在过去$T$个小时的监测值，其中$y^i \in \mathbb{R}^T$属于监测器$i$。我们使用$X^i = (x^{i, 1}, x^{i, 2}, …, x^{i, N_l})^{\rm T} = (x^i_1, x^i_2, …, x^i_T) \in \mathbb{R}^{N_l \times T} \in \mathbb{R}^{N_l \times T}$作为检测器$i$的局部特征，其中$x^{i,k} \in \mathbb{R}^T$是这个检测器的第$k$个时间序列，$x^i_t = (x^{i,1}_t, x^{i,2}_t, …, x^{i,N_l}_t)^{\rm T} \in \mathbb{R}^{N_l}$表示检测器$i$在时间$t$的所有时间序列的值。除了检测器$i$的局部特征，由于不同检测器间的空间关系，其他的检测器会共享对于预测有用的大量的信息。为了这个目的，我们融合每个检测器的局部特征到集合$\mathcal{X}^i = {X^1, X^2, …, X^{N_g}}$中作为检测器$i$的全局特征。</p>
 <h2 id="2-2-问题陈述"><a href="#2-2-问题陈述" class="headerlink" title="2.2 问题陈述"></a>2.2 问题陈述</h2><p>给定每个检测器之前的值和外部因素，预测检测器$i$在未来$\tau$个小时的值，表示为$\hat{y}^i = (\hat{y}^i_{T+1}, \hat{y}^i_{T+2}, …, \hat{y}^i_{T+\tau})^{\rm T} \in \mathbb{R}^{\tau}$</p>
 <h1 id="3-多级注意力网络"><a href="#3-多级注意力网络" class="headerlink" title="3 多级注意力网络"></a>3 多级注意力网络</h1><p><img src="/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig2.PNG" alt="Fig2"><br>图2展示了我们方法的框架。基于编码解码架构[Cho et al., 2014b]，我们用两个分开的LSTM，一个对输入序列编码，也就是对历史的geo-sensory时间序列，另一个来预测输出的序列$\hat{y}^i$。更具体的来说，我们的模型GeoMAN有两个主要部分：</p>
 <ol>
@@ -558,11 +558,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
+                <a href="javascript:void(0)" class="js-tag color1">graph</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -622,15 +622,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">large-scale learning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">NER</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">large-scale learning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -650,15 +650,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">seq2seq</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">machine translation</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
               </li>
             
             <div class="clearfix"></div>

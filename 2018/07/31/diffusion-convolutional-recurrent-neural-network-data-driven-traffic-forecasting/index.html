@@ -202,27 +202,14 @@
 <p><div align="center"><img src="/blog/2018/07/31/diffusion-convolutional-recurrent-neural-network-data-driven-traffic-forecasting/Fig1.JPG" alt="Figure1"></div></p>
 <p>交通预测已经研究了几十年，有两个主要类别：知识驱动的方法和数据驱动的方法。在运输和操作研究中，知识驱动的方法经常使用排队论，模拟交通中的用户行为(Cascetta, 2013)。时间序列社区中，数据驱动的方法如 Auto-Regressive Integrated Moving Average(ARIMA) 模型，Kalman filtering 还是很流行的(Liu et al., 2011; Lippi et al., 2013)。然而，简单的时间序列模型通常依赖平稳假设，这经常与实际交通数据不符。最近开始在交通预测上应用深度学习模型 (Lv et al., 2015; Yu et al., 2017b) ，但是没有考虑空间结构。Wu &amp; Tan 2016和Ma et al. 2017 使用 CNN 对空间关系进行建模，但是在欧氏空间中的。Bruna et al. 2014，Defferrard et al. 2016 研究了图卷积，但是只能处理无向图。</p>
 <p>我们使用一个有向图来表示 pair-wise spatial correlations。图的顶点是sensors，边是权重，通过路网上 sensor 之间的距离得到。我们使用扩散卷积 (diffusion convolution) 操作来捕获空间依赖关系，以扩散性是对交通流的动态性建模。提出了 <em>Diffusion Convolutional Recurrent Neural Network</em> (DCRNN)，整合了 <em>diffusion convolution</em> 和 <em>sequence to sequence</em> 架构以及 <em>scheduled sampling</em> 技术。在真实数据集上衡量模型时，DCRNN 比state-of-the-art好很多。<br>· 我们研究了交通预测问题，在有向图上对交通的空间依赖以扩散形式建模。提出了 <em>diffusion convolution</em>，有着直观的解释以及高效的计算。<br>· 我们提出了 <em>Diffusion Convolutional Recurrent Neural Network</em> (DCRNN)，使用 <em>diffusion convolution</em>，<em>sequence to sequence</em>，<em>scheduled sampling</em> 同时对时间和空间依赖关系进行捕获的方法。DCRNN 不限于运输领域，可以应用到其他的时空预测问题上。<br>· 做了很多实验，效果很好。</p>
-<h1 id="2-Methodology"><a href="#2-Methodology" class="headerlink" title="2 Methodology"></a>2 Methodology</h1><h2 id="2-1-Traffic-Forecasting-Problem"><a href="#2-1-Traffic-Forecasting-Problem" class="headerlink" title="2.1 Traffic Forecasting Problem"></a>2.1 Traffic Forecasting Problem</h2><p>$N$ 个sensors。检测器网络表示成带权有向图 $\mathcal{G} = (\mathcal{V}, \mathcal{E}, \boldsymbol{W})$，$\mathcal{V}$ 是顶点集，$\vert \mathcal{V} \vert = N$，$\mathcal{E}$ 是边集，$\boldsymbol{W} \in \mathbb{R}^{N \times N}$ 是带权邻接矩阵，表示顶点相似性（如路网距离的一个函数）。图信号矩阵$\boldsymbol{X} \in \mathbb{R}^{N \times P}$，$P$ 是每个顶点的特征数。$\boldsymbol{X}^{(t)}$ 表示时间 $t$ 观测到的图信号，交通预测问题目的是学习一个函数 $h(\cdot)$，将 $T’$ 个历史的图信号映射到未来的 $T$ 个图信号上，给定图 $\mathcal{G}$:</p>
-<script type="math/tex; mode=display">[\boldsymbol{X}^{(t-T'+1)}, ..., \boldsymbol{X}^{(t)}; \mathcal{G}] \xrightarrow{h(\cdot)} [\boldsymbol{X}^{(t+1)}, ..., \boldsymbol{X}^{(t+T)}]</script><h2 id="2-2-Spatial-Dependency-Modeling"><a href="#2-2-Spatial-Dependency-Modeling" class="headerlink" title="2.2 Spatial Dependency Modeling"></a>2.2 Spatial Dependency Modeling</h2><p>扩散形式以 $\mathcal{G}$ 上的随机游走来刻画，重启概率 $\alpha \in [0, 1]$，状态转移矩阵 $\boldsymbol{D}^{-1}_O \boldsymbol{W}$。这里，$\boldsymbol{D}_{\boldsymbol{O}} = \mathrm{diag}(\boldsymbol{W1})$ 是出度的对角矩阵，$\mathbf{1} \in \mathbb{R}^N$ 表示所有都为1的向量。多个时间步之后，Markov process 会收敛到平稳分布 $\mathcal{P} \in \mathbb{R}^{N \times N}$上，第 $i$ 行 $\mathcal{P}_{i,:} \in \mathbb{R}^N$ 表示从顶点 $v_i \in \mathcal{V}$ 扩散的可能性，也就是对顶点 $v_i$ 的 proximity。下面的引理是平稳分布的闭式解。</p>
-<p><strong>Lemma 2.1</strong> (Teng et al., 2016) 扩散过程的平稳分布可以表示为图上的无限随机游走的带权组合，可以通过以下式子计算：</p>
-<script type="math/tex; mode=display">\tag{1}
-\mathcal{P} = \sum^\infty_{k=0} \alpha(1 - \alpha)^k (\boldsymbol{D}^{-1}_O \boldsymbol{W})^k</script><p>其中 $k$ 是diffusion step。实际上，我们使用有限的 $K$ 阶扩散过程，给每一步分配一个可训练的权重。我们也融入反向扩散过程，因为双向扩散可以让模型更灵活地去捕获上游和下游交通带来的影响。</p>
-<p><strong>Diffusion Convolution</strong> 图信号 $\boldsymbol{X} \in \mathbb{R}^{N \times P}$ 和滤波器 $f_\theta$ 的扩散卷积操作的结果是：</p>
-<script type="math/tex; mode=display">\tag{2}
-\boldsymbol{X}_{:,p} \star_{\mathcal{G}} f_\theta = \sum^{K-1}_{k=0} (\theta_{k,1} (\boldsymbol{D}^{-1}_O \boldsymbol{W})^k + \theta_{k,2}(\boldsymbol{D}^{-1}_I \boldsymbol{W}^T)^k) \boldsymbol{X}_{:,p} \ \ \ \  \mathrm{for} \ \ p \in \{1, ..., P \}</script><p>其中 $\theta \in \mathbb{R}^{K \times 2}$ 表示卷积核参数，$\boldsymbol{D}^{-1}_O \boldsymbol{W}$ 和 $\boldsymbol{D}^{-1}_I \boldsymbol{W}^T$ 表示扩散过程和反向扩散的转移概率矩阵。一般，计算卷积是很耗时的。然而，如果 $\mathcal{G}$ 是稀疏的，式2可以通过递归的复杂度为 $O(K)$ 的sparse-dense矩阵乘法高效的计算，总时间复杂度为 $O(K \vert \mathcal{E} \vert) \ll O(N^2)$。附录B有详细的描述。</p>
-<p><strong>Diffusion Convolutional Layer</strong> 式2定义的卷积操作，我们可以构建一个扩散卷积层，将 $P$ 维特征映射到 $Q$ 维输出上。将参数表示为 $\mathbf{\Theta} \in \mathbb{R}^{Q \times P \times K \times 2} = [ \boldsymbol{\theta} ]_{q, p}$，其中 $\mathbf{\Theta}_{q,p,:,:} \in \mathbb{R}^{K \times 2}$ 是第 $p$ 个输入和 $q$ 个输出的参数。扩散卷积层为：</p>
-<script type="math/tex; mode=display">\tag{3}
-\boldsymbol{H}_{:,q} = \boldsymbol{a}(\sum^P_{p=1} \boldsymbol{X}_{:,p} \star_{\mathcal{G}} f_{\mathbf{\Theta}_{q,p,:,:}}) \ \ \ \ \mathrm{for} \ q \in \{1, ..., Q \}</script><p>其中，$\boldsymbol{X} \in \mathbb{R}^{N \times P}$ 是输入，$\boldsymbol{H} \in \mathbb{R}^{N \times Q}$ 是输出，$\{ f_{\mathbf{\Theta}_{q,p,:,:}} \}$ 是滤波器，$a$ 是激活函数。扩散卷积层学习图结构数据的表示，我们可以使用基于随机梯度的方法训练它。</p>
+<h1 id="2-Methodology"><a href="#2-Methodology" class="headerlink" title="2 Methodology"></a>2 Methodology</h1><h2 id="2-1-Traffic-Forecasting-Problem"><a href="#2-1-Traffic-Forecasting-Problem" class="headerlink" title="2.1 Traffic Forecasting Problem"></a>2.1 Traffic Forecasting Problem</h2><p>$N$ 个sensors。检测器网络表示成带权有向图 $\mathcal{G} = (\mathcal{V}, \mathcal{E}, \boldsymbol{W})$，$\mathcal{V}$ 是顶点集，$\vert \mathcal{V} \vert = N$，$\mathcal{E}$ 是边集，$\boldsymbol{W} \in \mathbb{R}^{N \times N}$ 是带权邻接矩阵，表示顶点相似性（如路网距离的一个函数）。图信号矩阵$\boldsymbol{X} \in \mathbb{R}^{N \times P}$，$P$ 是每个顶点的特征数。$\boldsymbol{X}^{(t)}$ 表示时间 $t$ 观测到的图信号，交通预测问题目的是学习一个函数 $h(\cdot)$，将 $T’$ 个历史的图信号映射到未来的 $T$ 个图信号上，给定图 $\mathcal{G}$:<br>$$[\boldsymbol{X}^{(t-T’+1)}, …, \boldsymbol{X}^{(t)}; \mathcal{G}] \xrightarrow{h(\cdot)} [\boldsymbol{X}^{(t+1)}, …, \boldsymbol{X}^{(t+T)}]$$</p>
+<h2 id="2-2-Spatial-Dependency-Modeling"><a href="#2-2-Spatial-Dependency-Modeling" class="headerlink" title="2.2 Spatial Dependency Modeling"></a>2.2 Spatial Dependency Modeling</h2><p>扩散形式以 $\mathcal{G}$ 上的随机游走来刻画，重启概率 $\alpha \in [0, 1]$，状态转移矩阵 $\boldsymbol{D}^{-1}_O \boldsymbol{W}$。这里，$\boldsymbol{D}_{\boldsymbol{O}} = \mathrm{diag}(\boldsymbol{W1})$ 是出度的对角矩阵，$\mathbf{1} \in \mathbb{R}^N$ 表示所有都为1的向量。多个时间步之后，Markov process 会收敛到平稳分布 $\mathcal{P} \in \mathbb{R}^{N \times N}$上，第 $i$ 行 $\mathcal{P}_{i,:} \in \mathbb{R}^N$ 表示从顶点 $v_i \in \mathcal{V}$ 扩散的可能性，也就是对顶点 $v_i$ 的 proximity。下面的引理是平稳分布的闭式解。</p>
+<p><strong>Lemma 2.1</strong> (Teng et al., 2016) 扩散过程的平稳分布可以表示为图上的无限随机游走的带权组合，可以通过以下式子计算：<br>$$\tag{1}<br>\mathcal{P} = \sum^\infty_{k=0} \alpha(1 - \alpha)^k (\boldsymbol{D}^{-1}_O \boldsymbol{W})^k<br>$$<br>其中 $k$ 是diffusion step。实际上，我们使用有限的 $K$ 阶扩散过程，给每一步分配一个可训练的权重。我们也融入反向扩散过程，因为双向扩散可以让模型更灵活地去捕获上游和下游交通带来的影响。</p>
+<p><strong>Diffusion Convolution</strong> 图信号 $\boldsymbol{X} \in \mathbb{R}^{N \times P}$ 和滤波器 $f_\theta$ 的扩散卷积操作的结果是：<br>$$\tag{2}<br>\boldsymbol{X}_{:,p} \star_{\mathcal{G}} f_\theta = \sum^{K-1}_{k=0} (\theta_{k,1} (\boldsymbol{D}^{-1}_O \boldsymbol{W})^k + \theta_{k,2}(\boldsymbol{D}^{-1}_I \boldsymbol{W}^T)^k) \boldsymbol{X}_{:,p} \ \ \ \  \mathrm{for} \ \ p \in {1, …, P }<br>$$<br>其中 $\theta \in \mathbb{R}^{K \times 2}$ 表示卷积核参数，$\boldsymbol{D}^{-1}_O \boldsymbol{W}$ 和 $\boldsymbol{D}^{-1}_I \boldsymbol{W}^T$ 表示扩散过程和反向扩散的转移概率矩阵。一般，计算卷积是很耗时的。然而，如果 $\mathcal{G}$ 是稀疏的，式2可以通过递归的复杂度为 $O(K)$ 的sparse-dense矩阵乘法高效的计算，总时间复杂度为 $O(K \vert \mathcal{E} \vert) \ll O(N^2)$。附录B有详细的描述。</p>
+<p><strong>Diffusion Convolutional Layer</strong> 式2定义的卷积操作，我们可以构建一个扩散卷积层，将 $P$ 维特征映射到 $Q$ 维输出上。将参数表示为 $\mathbf{\Theta} \in \mathbb{R}^{Q \times P \times K \times 2} = [ \boldsymbol{\theta} ]_{q, p}$，其中 $\mathbf{\Theta}_{q,p,:,:} \in \mathbb{R}^{K \times 2}$ 是第 $p$ 个输入和 $q$ 个输出的参数。扩散卷积层为：<br>$$\tag{3}<br>\boldsymbol{H}_{:,q} = \boldsymbol{a}(\sum^P_{p=1} \boldsymbol{X}_{:,p} \star_{\mathcal{G}} f_{\mathbf{\Theta}_{q,p,:,:}}) \ \ \ \ \mathrm{for} \ q \in {1, …, Q }<br>$$<br>其中，$\boldsymbol{X} \in \mathbb{R}^{N \times P}$ 是输入，$\boldsymbol{H} \in \mathbb{R}^{N \times Q}$ 是输出，${ f_{\mathbf{\Theta}_{q,p,:,:}} }$ 是滤波器，$a$ 是激活函数。扩散卷积层学习图结构数据的表示，我们可以使用基于随机梯度的方法训练它。</p>
 <p><strong>Relation with Spectral Graph Convolution:</strong> 扩散卷积是定义在有向和无向图上的。当使用在无向图上时，我们发现很多现存的图结构卷积操作，包括流行的普图卷积，ChebNet，可以看作是一个扩散卷积的特例。令 $\boldsymbol{D}$ 表示度矩阵，$\boldsymbol{L} = \boldsymbol{D}^{-\frac{1}{2}}(\boldsymbol{D} - \boldsymbol{W}) \boldsymbol{D}^{-\frac{1}{2}}$ 是图归一化的拉普拉斯矩阵，接下来的Proposition解释了连接。</p>
-<p><strong>Proposition 2.2.</strong> 谱图卷积的定义：</p>
-<script type="math/tex; mode=display">
-\boldsymbol{X}_{:,p} \star_{\mathcal{G}} f_\boldsymbol{\theta} = \Phi F(\boldsymbol{\theta}) \Phi^T \boldsymbol{X}_{:,p}</script><p>特征值分解 $\boldsymbol{L} = \Phi \Lambda \Phi^T$，当图 $\mathcal{G}$是无向图时，$F(\boldsymbol{\theta}) = \sum^{K-1}_0 \theta_k \Lambda^k$，等价于图的扩散卷积。<br>证明见后记C。</p>
-<h2 id="2-3-Temporal-Dynamics-Modeling"><a href="#2-3-Temporal-Dynamics-Modeling" class="headerlink" title="2.3 Temporal Dynamics Modeling"></a>2.3 Temporal Dynamics Modeling</h2><p>我们利用 RNN 对时间依赖建模。我们使用 GRU，简单有效的 RNN 变体。我们将 GRU 中的矩阵乘法换成了扩散卷积，得到了我们的扩散卷积门控循环单元 <em>Diffusion Convolutional Gated Recurrent Unit(DCGRU)</em>.</p>
-<script type="math/tex; mode=display">
-\boldsymbol{r}^{(t)} = \sigma(\mathbf{\Theta}_r \star_\mathcal{G} [\boldsymbol{X}^{(t)}, \boldsymbol{H}^{(t-1)}] + \boldsymbol{b}_r) \\
-\boldsymbol{u}^{(t)} = \sigma( \mathbf{\Theta}_u \star_\mathcal{G} [\boldsymbol{X}, \boldsymbol{H}^{(t-1)}] + \boldsymbol{b}_u) \\
-\boldsymbol{C}^{(t)} = \mathrm{tanh}(\mathbf{\Theta}_C \star_\mathcal{G} [\boldsymbol{X}^{(t)}, (\boldsymbol{r}^{(t)} \odot \boldsymbol{H}^{(t-1)})] + \boldsymbol{b}_c) \\
-\boldsymbol{H}^{(t)} = \boldsymbol{u}^{(t)} \odot \boldsymbol{H}^{(t-1)} + (1 - \boldsymbol{u}^{(t)}) \odot \boldsymbol{C}^{(t)}</script><p>其中 $\boldsymbol{X}^{(t)}, \boldsymbol{H}^{(t)}$ 表示时间 $t$ 的输入和输出，$\boldsymbol{r}^{(t)}, \boldsymbol{u}^{(t)}$ 表示时间 $t$ 的reset gate和 update gate。$\star_\mathcal{G}$ 表示式2中定义的混合卷积，$\mathbf{\Theta}_r, \mathbf{\Theta}_u, \mathbf{\Theta}_C$ 表示对应的滤波器的参数。类似 GRU，DCGRU 可以用来构建循环神经网络层，使用 BPTT 训练。</p>
+<p><strong>Proposition 2.2.</strong> 谱图卷积的定义：<br>$$<br>\boldsymbol{X}_{:,p} \star_{\mathcal{G}} f_\boldsymbol{\theta} = \Phi F(\boldsymbol{\theta}) \Phi^T \boldsymbol{X}_{:,p}<br>$$<br>特征值分解 $\boldsymbol{L} = \Phi \Lambda \Phi^T$，当图 $\mathcal{G}$是无向图时，$F(\boldsymbol{\theta}) = \sum^{K-1}_0 \theta_k \Lambda^k$，等价于图的扩散卷积。<br>证明见后记C。</p>
+<h2 id="2-3-Temporal-Dynamics-Modeling"><a href="#2-3-Temporal-Dynamics-Modeling" class="headerlink" title="2.3 Temporal Dynamics Modeling"></a>2.3 Temporal Dynamics Modeling</h2><p>我们利用 RNN 对时间依赖建模。我们使用 GRU，简单有效的 RNN 变体。我们将 GRU 中的矩阵乘法换成了扩散卷积，得到了我们的扩散卷积门控循环单元 <em>Diffusion Convolutional Gated Recurrent Unit(DCGRU)</em>.<br>$$<br>\boldsymbol{r}^{(t)} = \sigma(\mathbf{\Theta}_r \star_\mathcal{G} [\boldsymbol{X}^{(t)}, \boldsymbol{H}^{(t-1)}] + \boldsymbol{b}_r) \\<br>\boldsymbol{u}^{(t)} = \sigma( \mathbf{\Theta}_u \star_\mathcal{G} [\boldsymbol{X}, \boldsymbol{H}^{(t-1)}] + \boldsymbol{b}_u) \\<br>\boldsymbol{C}^{(t)} = \mathrm{tanh}(\mathbf{\Theta}_C \star_\mathcal{G} [\boldsymbol{X}^{(t)}, (\boldsymbol{r}^{(t)} \odot \boldsymbol{H}^{(t-1)})] + \boldsymbol{b}_c) \\<br>\boldsymbol{H}^{(t)} = \boldsymbol{u}^{(t)} \odot \boldsymbol{H}^{(t-1)} + (1 - \boldsymbol{u}^{(t)}) \odot \boldsymbol{C}^{(t)}<br>$$<br>其中 $\boldsymbol{X}^{(t)}, \boldsymbol{H}^{(t)}$ 表示时间 $t$ 的输入和输出，$\boldsymbol{r}^{(t)}, \boldsymbol{u}^{(t)}$ 表示时间 $t$ 的reset gate和 update gate。$\star_\mathcal{G}$ 表示式2中定义的混合卷积，$\mathbf{\Theta}_r, \mathbf{\Theta}_u, \mathbf{\Theta}_C$ 表示对应的滤波器的参数。类似 GRU，DCGRU 可以用来构建循环神经网络层，使用 BPTT 训练。</p>
 <p><div align="center"><img src="/blog/2018/07/31/diffusion-convolutional-recurrent-neural-network-data-driven-traffic-forecasting/Fig2.JPG" alt="Figure2"></div></p>
 <p>在多步预测中，我们使用 <em>Sequence to Sequence</em> 架构。编码解码器都是 DCGRU。训练时，我们把历史的时间序列放到编码器，使用最终状态初始化解码器。解码器生成预测结果。测试时，ground truth 替换成模型本身生成的预测结果。训练和测试输入的分布的差异会导致性能的下降。为了减轻这个问题的影响，我们使用了 <em>scheduled sampling</em> (Bengio et al., 2015)，在训练的第 $i$ 轮时，模型的输入要么是概率为 $\epsilon_i$ 的 ground truth，要么是概率为 $1 - \epsilon_i$ 的预测结果。在训练阶段，$\epsilon_i$ 逐渐的减小为0，使得模型可以学习到测试集的分布。</p>
 <p>图2展示了 DCRNN 的架构。整个网络通过 BPTT 循环生成目标时间序列的最大似然得到。DCRNN 可以捕获时空依赖关系，应用到多种时空预测问题上。</p>
@@ -250,14 +237,8 @@
 <p><div align="center"><img src="/blog/2018/07/31/diffusion-convolutional-recurrent-neural-network-data-driven-traffic-forecasting/Fig7.JPG" alt="Figure7"></div></p>
 <h1 id="5-Conclusion"><a href="#5-Conclusion" class="headerlink" title="5 Conclusion"></a>5 Conclusion</h1><p>我们对路网上的交通预测做了时空上的建模，提出了 <em>diffusion convolutional recurrent neural network</em>，可以捕获时空依赖。特别地，我们使用双向随机游走，对空间依赖建模，使用循环神经网络捕获时间的动态性。还继承了编码解码架构和 scheduled sampling 技术来提升长期预测的性能。在两个真实的数据集上评估了性能，我们的方法比 baselines 好很多。未来的工作，1. 使用提出的网络解决其他的时空预测问题；2. 对不断演化的图结构的时空依赖关系建模。</p>
 <h1 id="Appendix"><a href="#Appendix" class="headerlink" title="Appendix"></a>Appendix</h1><h2 id="B-Efficient-Calculation-Of-Equation"><a href="#B-Efficient-Calculation-Of-Equation" class="headerlink" title="B Efficient Calculation Of Equation"></a>B Efficient Calculation Of Equation</h2><p>式2可以分解成两个有相同时间复杂度的部分，一部分是 $\boldsymbol{D}^{-1}_O \boldsymbol{W}$，另一部分是 $\boldsymbol{D}^{-1}_I \boldsymbol{W}^T$。因此我们只研究第一部分的时间复杂度。</p>
-<p>令 $T_k(x) = (\boldsymbol{D}^{-1}_O \boldsymbol{W})^k \boldsymbol{x}$，式2的第一部分可以重写为：</p>
-<script type="math/tex; mode=display">\tag{4}
-\sum^{K-1}_{k=0} \theta_k T_k (X_{:,p})</script><p>因为 $T_{k+1}(x) = \boldsymbol{D}^{-1}_O \boldsymbol{W} T_k(\boldsymbol{x})$ 和 $\boldsymbol{D}^{-1}_O \boldsymbol{W}$ 是稀疏的，可以很容易看出式4可以通过 $O(K)$ 的递归稀疏-稠密矩阵乘法，每次时间复杂度为 $O(\vert \varepsilon \vert)$ 得到。然后，式2和式4的时间复杂度都为 $O(K\vert \varepsilon \vert)$。对于稠密图，我们可以使用 spectral sparsification(Cheng et al., 2015) 使其稀疏。</p>
-<h2 id="C-Relation-With-Spectral-Graph-Convolution"><a href="#C-Relation-With-Spectral-Graph-Convolution" class="headerlink" title="C Relation With Spectral Graph Convolution"></a>C Relation With Spectral Graph Convolution</h2><p><em>Proof.</em> 谱图卷积利用归一化的拉普拉斯矩阵 $\boldsymbol{L = D^{-\frac{1}{2}}(D - W)D^{\frac{1}{2}}} = \mathbf{\Phi \Lambda \Phi^T}$。ChebNet 使 $f_\theta$ 参数化为一个 $\Lambda$ 的 $K$ 阶多项式，使用稳定的切比雪夫多项式基计算这个值。</p>
-<script type="math/tex; mode=display">\tag{5}
-\boldsymbol{X}_{:,p} \star_\mathcal{G} f_\theta = \mathbf{\Phi} (\sum^{K-1}_{k=0} \theta_k \mathbf{\Lambda}^k) \mathbf{\Phi^T X}_{:,p} = \sum^{K-1}_{k=0} \theta_k \boldsymbol{L}^k \boldsymbol{X}_{:,p} = \sum^{K-1}_{k=0} \tilde{\theta}_k T_k(\tilde{\boldsymbol{L}})\boldsymbol{X}_{:,p}</script><p>其中 $T_0(x)=1, T_1(x)=x, T_k(x) = xT_{k-1}(x) - T_{k-2}(x)$ 是切比雪夫多项式的基。令 $\lambda_{\mathrm{max}}$ 表示 $\boldsymbol{L}$ 最大的特征值，$\tilde{\boldsymbol{L}} = \frac{2}{\lambda_{\text{max}}} \boldsymbol{L - I}$ 表示将拉普拉斯矩阵的缩放，将特征值从 $[0, \lambda_{\text{max}}]$ 映射到 $[-1, 1]$，因为切比雪夫多项式生成了一个在 $[-1, 1]$ 内正交的基。式5可以看成一个关于 $\tilde{\boldsymbol{L}}$ 的多项式，我们一会儿可以看到，ChebNet 卷积的输出和扩散卷积到常数缩放因子的输出相似。假设 $\lambda_{\text{max}} = 2$，无向图 $\boldsymbol{D}_I = \boldsymbol{D}_O = \boldsymbol{D}$。</p>
-<script type="math/tex; mode=display">\tag{6}
-\tilde{\boldsymbol{L}} = \boldsymbol{D}^{-\frac{1}{2}}(\boldsymbol{D} - \boldsymbol{W}) \boldsymbol{D}^{-\frac{1}{2}} - \boldsymbol{I} = - \boldsymbol{D}^{-\frac{1}{2}} \boldsymbol{W} \boldsymbol{D}^{-\frac{1}{2}} \sim - \boldsymbol{D}^{-1} \boldsymbol{W}</script><p>$\tilde{\boldsymbol{L}}$ 和负的随机游走转移矩阵相似，因此式5的输出也和式2直到常数缩放因子的输出相似。</p>
+<p>令 $T_k(x) = (\boldsymbol{D}^{-1}_O \boldsymbol{W})^k \boldsymbol{x}$，式2的第一部分可以重写为：<br>$$\tag{4}<br>\sum^{K-1}_{k=0} \theta_k T_k (X_{:,p})<br>$$<br>因为 $T_{k+1}(x) = \boldsymbol{D}^{-1}_O \boldsymbol{W} T_k(\boldsymbol{x})$ 和 $\boldsymbol{D}^{-1}_O \boldsymbol{W}$ 是稀疏的，可以很容易看出式4可以通过 $O(K)$ 的递归稀疏-稠密矩阵乘法，每次时间复杂度为 $O(\vert \varepsilon \vert)$ 得到。然后，式2和式4的时间复杂度都为 $O(K\vert \varepsilon \vert)$。对于稠密图，我们可以使用 spectral sparsification(Cheng et al., 2015) 使其稀疏。</p>
+<h2 id="C-Relation-With-Spectral-Graph-Convolution"><a href="#C-Relation-With-Spectral-Graph-Convolution" class="headerlink" title="C Relation With Spectral Graph Convolution"></a>C Relation With Spectral Graph Convolution</h2><p><em>Proof.</em> 谱图卷积利用归一化的拉普拉斯矩阵 $\boldsymbol{L = D^{-\frac{1}{2}}(D - W)D^{\frac{1}{2}}} = \mathbf{\Phi \Lambda \Phi^T}$。ChebNet 使 $f_\theta$ 参数化为一个 $\Lambda$ 的 $K$ 阶多项式，使用稳定的切比雪夫多项式基计算这个值。<br>$$\tag{5}<br>\boldsymbol{X}_{:,p} \star_\mathcal{G} f_\theta = \mathbf{\Phi} (\sum^{K-1}_{k=0} \theta_k \mathbf{\Lambda}^k) \mathbf{\Phi^T X}_{:,p} = \sum^{K-1}_{k=0} \theta_k \boldsymbol{L}^k \boldsymbol{X}_{:,p} = \sum^{K-1}_{k=0} \tilde{\theta}_k T_k(\tilde{\boldsymbol{L}})\boldsymbol{X}_{:,p}<br>$$<br>其中 $T_0(x)=1, T_1(x)=x, T_k(x) = xT_{k-1}(x) - T_{k-2}(x)$ 是切比雪夫多项式的基。令 $\lambda_{\mathrm{max}}$ 表示 $\boldsymbol{L}$ 最大的特征值，$\tilde{\boldsymbol{L}} = \frac{2}{\lambda_{\text{max}}} \boldsymbol{L - I}$ 表示将拉普拉斯矩阵的缩放，将特征值从 $[0, \lambda_{\text{max}}]$ 映射到 $[-1, 1]$，因为切比雪夫多项式生成了一个在 $[-1, 1]$ 内正交的基。式5可以看成一个关于 $\tilde{\boldsymbol{L}}$ 的多项式，我们一会儿可以看到，ChebNet 卷积的输出和扩散卷积到常数缩放因子的输出相似。假设 $\lambda_{\text{max}} = 2$，无向图 $\boldsymbol{D}_I = \boldsymbol{D}_O = \boldsymbol{D}$。<br>$$\tag{6}<br>\tilde{\boldsymbol{L}} = \boldsymbol{D}^{-\frac{1}{2}}(\boldsymbol{D} - \boldsymbol{W}) \boldsymbol{D}^{-\frac{1}{2}} - \boldsymbol{I} = - \boldsymbol{D}^{-\frac{1}{2}} \boldsymbol{W} \boldsymbol{D}^{-\frac{1}{2}} \sim - \boldsymbol{D}^{-1} \boldsymbol{W}<br>$$<br>$\tilde{\boldsymbol{L}}$ 和负的随机游走转移矩阵相似，因此式5的输出也和式2直到常数缩放因子的输出相似。</p>
 
       
 
@@ -601,11 +582,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
+                <a href="javascript:void(0)" class="js-tag color1">graph</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -665,15 +646,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">large-scale learning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">natural language processing</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">NER</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">large-scale learning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -693,15 +674,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">seq2seq</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">machine translation</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">language modeling</a>
               </li>
             
             <div class="clearfix"></div>
