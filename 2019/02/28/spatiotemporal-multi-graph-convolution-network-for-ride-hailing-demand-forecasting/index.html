@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="AAAI 2019，滴滴的网约车需求预测。原文地址：Spatiotemporal Multi-Graph Convolution Network for Ride-hailing Demand Forecasting">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-04T14:43:18.838Z">
+<meta property="og:updated_time" content="2019-03-05T00:32:45.221Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spatiotemporal Multi-Graph Convolution Network for Ride-hailing Demand Forecasting">
 <meta name="twitter:description" content="AAAI 2019，滴滴的网约车需求预测。原文地址：Spatiotemporal Multi-Graph Convolution Network for Ride-hailing Demand Forecasting">
@@ -68,7 +68,7 @@
 		</nav>
 		<nav>
 			总文章数 58<br>
-			总字数 <span class="post-count">166.1k</span>
+			总字数 <span class="post-count">167.3k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -179,7 +179,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：4.4k字 | 预计阅读时长：17分钟
+        字数：5.6k字 | 预计阅读时长：22分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -250,7 +250,33 @@ z^{(t)} = F_{pool}(\hat{\boldsymbol{X}}^{(t)}) = \frac{1}{\vert V \vert} \sum^{\
 \tilde{\boldsymbol{X}^{(t)}} = \boldsymbol{X}^{(t)} \circ s^{(t)} \quad \text{for} \quad t=1,2,\dots,T</script><p>最后，$\boldsymbol{s}$ 用来对每个时间样本进行缩放：</p>
 <script type="math/tex; mode=display">tag{10}
 \boldsymbol{H}_{i,:} = \text{RNN}(\tilde{\boldsymbol{X}}^{(1)}_{i,:}, \dots, \tilde{\boldsymbol{X}}^{(T)}_{i,:}; \boldsymbol{W}_3) \quad \text{for} \quad i=1,\dots,\vert V \vert</script><p>在上下文门控之后，使用一个共享的 RNN 对所有的区域进行计算，将每个区域聚合成单独的向量 $\boldsymbol{H}_{i,:}$。使用共享 RNN 的原因是我们想找到一个对所有区域通用的聚合规则，这个规则鼓励模型泛化且减少模型的复杂度。</p>
-<h1 id="Experiments"><a href="#Experiments" class="headerlink" title="Experiments"></a>Experiments</h1>
+<h1 id="Experiments"><a href="#Experiments" class="headerlink" title="Experiments"></a>Experiments</h1><p><strong>Dataset</strong> 北京和上海。时间是从2017年5月1日到2017年12月31日。5月1日到7月31日训练、8月1日到9月30日验证，剩下的测试。POI 数据是2017年的，包含13个类别。每个区域和一个 POI 向量相关，分量是这个 POI 类型在这个区域的个数。用来评估运输可达性的路网使用的是 OpenStreetMap (Haklay and Weber 2008)。</p>
+<h2 id="Experimental-Settings"><a href="#Experimental-Settings" class="headerlink" title="Experimental Settings"></a>Experimental Settings</h2><p>学习任务是：$f: \mathbb{R}^{\vert V \vert \times T} \rightarrow \mathbb{R}^{\vert V \vert}$。实验中，我们将区域以 $1km \times 1km$ 的大小划分成网格。北京和上海分别 1296 和 896 个区域。就像 Zhang, Zheng, and Qi 2017 做的那样，网络的输入包含 5 个历史观测值，三个最近邻的部分，1个周期部分，一个最新的趋势部分。在构建运输可达性网络的时候，我们考虑了高速公路、公路、地铁。两个区域间只要有这样的路直接相连就认为是连通的。</p>
+<p>$f(\mathbf{A}; \theta_i)$ 选择的是 $K = 2$ 时的切比雪夫多项式，$\bigsqcup$ 是 sum 函数。隐藏层为3，每层 64 个隐藏单元，L2 正则，weight decay 是 $1e-4$。CGRNN 中的图卷积 $K’$ 是 1。</p>
+<p>我们使用 ReLU 作为图卷积的激活函数。ST-MGCN 的学习率是 $2e-3$，使用验证集上的早停。所有的算法都用 tf 实现，adam 优化 RMSE。ST-MGCN 训练时用了 10G 内存，9G GPU 显存。在 Tesla P40 单卡上训练了一个半小时。</p>
+<p><strong>Methods for evaluation</strong> HA, LASSO, Ridge, Auto-regressive model(VAR, STAR), Gradient boosted machine (GBM), ST-ResNet (Zhang, Zheng and Qi 2017), DMVST-Net (Yao et al. 2018b), DCRNN, ST-GCN。</p>
+<h2 id="Performance-comparison"><a href="#Performance-comparison" class="headerlink" title="Performance comparison"></a>Performance comparison</h2><p>我们在验证集上用网格搜索调整了所有模型的参数，在测试集上跑了多次得到的最后的结果。我们使用 RMSE 和 MAPE 作为评价指标。表 1 展示了不同方法在 10 次以上的预测中的对比结果。</p>
+<center>![Table1](Table1.JPG)</center>
+
+<p>我们在两个数据集上观测到了几个现象：（1）基于深度学习的方法能够对非线性的时空依赖关系建模，比其他的方法好；（2）ST-MGCN 在两个数据集上比其他的方法都好，比第二好的高出 10%；（3）对比其他的深度学习方法，ST-MGCN 的方差更小。</p>
+<h2 id="Effect-of-spatial-dependency-modeling"><a href="#Effect-of-spatial-dependency-modeling" class="headerlink" title="Effect of spatial dependency modeling"></a>Effect of spatial dependency modeling</h2><p>为了研究空间和时间依赖建模的效果，我们通过减少模型中的组成部分评估了 ST-MGCN 的几个变体，包括：（1）邻居图，（2）功能相似性图，（3）运输连通性图。结果如表 2 所示。移除任何一个图都会造成性能损失，证明了每种关系的重要性。这些图编码了重要的先验知识，也就是区域间的相关性。</p>
+<center>![Table2](Table2.JPG)</center>
+
+<p>为了评估集成多个区域关系的效果，我们扩展了基于单个图的模型，包括 DCRNN 和 STGCN，分别记为 DCRNN+ 和 ST-GCN+。结果如图 3，两个算法都得到了提升。</p>
+<center>![Table3](Table3.JPG)</center>
+
+<h2 id="Effect-of-temporal-dependency-modeling"><a href="#Effect-of-temporal-dependency-modeling" class="headerlink" title="Effect of temporal dependency modeling"></a>Effect of temporal dependency modeling</h2><p>我们使用不同的方法对时间建模，评估 ST-GCN 对时间关系建模的效果。（1）平均池化：通过平均池化对历史观测值进行聚合，（2）RNN：使用 RNN 对历史观测值聚合，（3）CG：使用上下文门对不同的历史观测值赋权，不适用 RNN，（4）GRNN：不用图卷积的 CGRNN。结果如表 4。我们观察到了以下现象：</p>
+<ul>
+<li>平均池化会盲目地平均不同的样本，导致性能下降，能做上下文依赖非线性时间聚合的 RNN 能显著地提升性能。</li>
+<li>CGRNN 增强了 RNN。移除 RNN 和 图卷积都导致性能下降，证明了每个部件的有效性。</li>
+</ul>
+<center>![Table4](Table4.JPG)</center>
+
+<h2 id="Effect-of-model-parameters"><a href="#Effect-of-model-parameters" class="headerlink" title="Effect of model parameters"></a>Effect of model parameters</h2><p>我们调整了两个最重要的参数来看不同参数对模型的影响，$K$ 和图卷积层数。图 5 展示了测试集上的结果。可以观察到随着层数的增加，错误先降后增。但是随着 $K$ 的增加，错误是先减小，后不变。越大的 $K$ 或层数使得模型能捕获全局关联性，代价是模型的复杂度会增加，更易过拟合。</p>
+<center>![Figure5](Fig5.JPG)</center>
+
+<h1 id="Conclusion-and-Future-work"><a href="#Conclusion-and-Future-work" class="headerlink" title="Conclusion and Future work"></a>Conclusion and Future work</h1><p>我们研究的是网约车需求预测，要找寻这个问题唯一的时空依赖关系。我们提出的深度学习模型使用多个图对区域间的非欧关系建模，使用多图卷积明显的捕获了这个关系。然后用上下文门控机制增强了 RNN，在时间建模上集成了全局背景信息。在两个大型真实数据集上评估了模型，比 state-of-the-art好。未来的工作是：（1）在其他的时空预测任务上评估模型；（2）将提出的模型扩展到多步预测上。</p>
+
       
 
       
