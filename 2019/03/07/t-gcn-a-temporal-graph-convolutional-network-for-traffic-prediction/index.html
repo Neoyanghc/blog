@@ -18,7 +18,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig2.JPG">
-<meta property="og:updated_time" content="2019-03-07T06:37:03.112Z">
+<meta property="og:updated_time" content="2019-03-07T07:35:02.571Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="T-GCN: A Temporal Graph Convolutional Network for Traffic Prediction">
 <meta name="twitter:description" content="T-GCN。原文地址：T-GCN: A Temporal Graph ConvolutionalNetwork for Traffic Prediction">
@@ -71,7 +71,7 @@
 		</nav>
 		<nav>
 			总文章数 59<br>
-			总字数 <span class="post-count">169.6k</span>
+			总字数 <span class="post-count">170.2k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -182,7 +182,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2k字 | 预计阅读时长：6分钟
+        字数：2.6k字 | 预计阅读时长：9分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -205,7 +205,10 @@
 <p>参数模型提前假设回归函数，参数通过对原始数据处理得到，基于回归函数对交通流预测。时间序列模型，线性回归模型，Kalman filtering model 是常用的方法。时间序列模型将观测到的时间序列拟合进一个模型，然后用来预测。早在 1976 年，Box and Jenkins 提出了 ARIMA，Hamed 等人使用 ARIMA 预测城市内的交通流量。为了提高模型的精度，不同的变体相继被提出，Kohonen ARIMA，subset ARIMA，seasonal ARIMA 等等。Lippi 等人对比支持向量回归和 seasonal ARIM，发现 SARIMA 模型在交通拥堵上的预测有更好的结果。线性回归模型基于历史数据构建模型来预测。2004 年，Sun 等人使用 local linear model 解决了区间预测，在真实数据集上获得了较好的效果。Kalman filtering model 基于前一时刻和当前时刻的交通状态预测未来的状态。1984 年，Okutani 等人使用 Kalman filtering 理论建立了交通流状态预测模型。后续，一些研究使用 Kalman filtering 模型解决交通预测任务。</p>
 <p>传统的参数模型算法简单，计算方便。然而，这些方法依赖平稳假设，不能反映交通数据的非线性和不确定性，也不能克服交通事件这种随机性事件。非参数模型很好地解决这些问题，只需要足够的历史信息能自动地从中学到统计规律即可。常见的非参数模型包括：k近邻，支持向量回归，Fuzzy Logic 模型等。</p>
 <p>近些年，随着深度学习的快速发展，深度神经网络可以捕获交通数据的动态特征，获得很好的效果。根据是否考虑空间依赖，模型可以划分成两类。一些方法只考虑时间依赖，如 Park 等人使用 FNN 预测交通流。Huang 等人使用深度置信网络 DBN 和回归模型在多个数据集上证明可以捕获交通数据中的随机特征，提升预测精度。此外，RNN 及其变体 LSTM, GRU 可以有效地使用自循环机制，他们可以很好地学习到时间依赖并获得更好的预测结果。</p>
-
+<p>这些模型考虑时间特征但是忽略空间依赖，所以交通数据的变化不受城市路网的限制，因此他们不能精确的预测路上的交通状态。解决交通预测问题的关键是充分利用空间和时间依赖。为了更好的刻画空间特征，很多研究已经在这个基础上进行了提升。Lv 等人提出了一个 SAE 模型从交通数据中捕获时空特征，实现短期交通流的预测。Zhang 等人提出了一个叫 ST-ResNet 的模型，基于人口流动的时间近邻、周期和趋势这些特征设计了残差卷积网络，然后三个网络和外部因素动态地聚合起来，预测城市内每个区域人口的流入和流出。Wu 等人设计了一个特征融合架构通过融合 CNN 和 LSTM 进行短期预测。一个一维的 CNN 用于捕获空间依赖，两个 LSTM 用来挖掘交通流的短期变化和周期性。Cao 等人提出一个叫 ITRCN 的端到端模型，将交互的网络交通转换为图像，使用 CNN 捕获交通的交互式功能，用 GRU 提取时间特征，预测误差比 GRU 和 CNN 分别高了 14.3% 和 13.0%。Ke 等人提出一个新的深度学习方法叫融合卷积长短时记忆网络（FCL-Net），考虑空间依赖、时间依赖，以及异质依赖，用于短期乘客需求预测。Yu 等人用深度卷积神经网络捕获空间依赖，用 LSTM 捕获时间动态性，在北京交通网络数据上展示出了 SRCN 的优越性。</p>
+<p>尽管上述方法引入了 CNN 对空间依赖建模，在交通预测任务上有很大的进步，但 CNN 本质上只适用于欧氏空间，在有着复杂拓扑结构的交通网络上不能刻画空间依赖。因此，这类方法有缺陷。近些年，图卷积网络的发展，可以用来捕获图网络的结构特征，提供更好的解决方案。Li 等人提出了 DCRNN 模型，通过图上的随机游走捕获空间特征，通过编码解码结构捕获时间特征。</p>
+<p>基于这个背景，我们提出了新的神经网络方法捕获复杂的时空特征，可以用于基于城市路网的交通预测任务上。</p>
+<h1 id="3-Methodology"><a href="#3-Methodology" class="headerlink" title="3 Methodology"></a>3 Methodology</h1><h2 id="3-1-Problem-Definition"><a href="#3-1-Problem-Definition" class="headerlink" title="3.1 Problem Definition"></a>3.1 Problem Definition</h2>
       
 
       
