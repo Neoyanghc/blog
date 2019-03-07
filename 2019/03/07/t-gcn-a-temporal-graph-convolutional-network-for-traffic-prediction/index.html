@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig4.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig5.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig6.JPG">
-<meta property="og:updated_time" content="2019-03-07T08:49:50.752Z">
+<meta property="og:updated_time" content="2019-03-07T09:05:45.094Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="T-GCN: A Temporal Graph Convolutional Network for Traffic Prediction">
 <meta name="twitter:description" content="T-GCN，arxiv上面的一篇文章，用 GCN 对空间建模，GRU 对时间建模，很简单的模型。原文地址：T-GCN: A Temporal Graph ConvolutionalNetwork for Traffic Prediction">
@@ -75,7 +75,7 @@
 		</nav>
 		<nav>
 			总文章数 59<br>
-			总字数 <span class="post-count">171.4k</span>
+			总字数 <span class="post-count">171.8k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -186,7 +186,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：3.8k字 | 预计阅读时长：13分钟
+        字数：4.2k字 | 预计阅读时长：15分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -239,7 +239,22 @@
 
 <h3 id="3-3-4-Loss-Function"><a href="#3-3-4-Loss-Function" class="headerlink" title="3.3.4 Loss Function"></a>3.3.4 Loss Function</h3><p>损失函数如式 7。第一项用来减小速度的误差。第二项 $L_{reg}$ 是一个 $L2$ 正则项，避免过拟合，$\lambda$ 是超参。</p>
 <p>$$\tag{7}<br>loss = \Vert Y_t - \hat{Y}_t \Vert + \lambda L_{reg}<br>$$</p>
-<h1 id="4-Experiments"><a href="#4-Experiments" class="headerlink" title="4 Experiments"></a>4 Experiments</h1><h2 id="4-1-Data-Description"><a href="#4-1-Data-Description" class="headerlink" title="4.1 Data Description"></a>4.1 Data Description</h2>
+<h1 id="4-Experiments"><a href="#4-Experiments" class="headerlink" title="4 Experiments"></a>4 Experiments</h1><h2 id="4-1-Data-Description"><a href="#4-1-Data-Description" class="headerlink" title="4.1 Data Description"></a>4.1 Data Description</h2><p>两个数据集，深圳出租车和洛杉矶线圈。两个数据集都和车速有关。</p>
+<p>（1）SZ-taxi。数据是2015年1月1日到1月31日的深圳出租车轨迹数据。我们选了罗湖区 156 个主要路段作为研究区域。实验数据主要有两部分。一个是 156 * 156 的邻接矩阵，另一个是特征矩阵，描述了速度随时间的变化。我们将速度以 15 分钟为单位聚合。</p>
+<p>（2）Los-loop。数据集是洛杉矶县高速公路线圈的实时数据。我们选了 207 个监测器，数据是 2012年5月1日到5月7日的数据。我们以5分钟为单位聚合车速。数据也是一个邻接矩阵和一个特征矩阵。我们用线性插值填补了缺失值。</p>
+<p>我们将输入数据归一化到 $[0, 1]$。此外，80% 的数据用来训练，20% 用来测试。我们预测未来15、30、45、60分钟的车速。</p>
+<h2 id="4-2-Evaluation-Metrics"><a href="#4-2-Evaluation-Metrics" class="headerlink" title="4.2 Evaluation Metrics"></a>4.2 Evaluation Metrics</h2><p>（1）RMSE:</p>
+<p>$$\tag{8}<br>RMSE = \sqrt{\frac{1}{n} \sum^n_{i=1} (Y_t - \hat{Y}_t)^2}<br>$$</p>
+<p>（2）MAE:</p>
+<p>$$\tag{9}<br>MAE = \frac{1}{n} \sum^n_{i=1} \vert Y_t - \hat{Y}_t \vert<br>$$</p>
+<p>（3）Accuracy:</p>
+<p>$$\tag{10}<br>Accuracy = 1 - \frac{\Vert Y - \hat{Y} \Vert}{\Vert Y \Vert_F}<br>$$</p>
+<p>（4）Coefficient of Determination (R2):</p>
+<p>$$\tag{11}<br>R^2 = 1 - \frac{\sum_{i=1} (Y_t - \hat{Y}_t)^2}{\sum_{i=1}(Y_t - \bar{Y})^2}<br>$$</p>
+<p>（5）Explained Variance Score(Var):</p>
+<p>$$<br>var = 1 - \frac{Var{Y - \hat{Y}}}{Var{Y}}<br>$$</p>
+<p>RMSE 和 MAE 用来评估预测误差：越小越好。精度衡量预测的精度：越大越好。$R^2$ 和 Var 计算相关系数，评估预测结果表达真实数据的能力，越大越好。</p>
+
       
 
       
