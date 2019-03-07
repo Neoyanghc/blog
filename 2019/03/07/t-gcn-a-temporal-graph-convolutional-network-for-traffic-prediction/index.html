@@ -18,7 +18,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig2.JPG">
-<meta property="og:updated_time" content="2019-03-07T07:35:02.571Z">
+<meta property="og:updated_time" content="2019-03-07T07:48:53.678Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="T-GCN: A Temporal Graph Convolutional Network for Traffic Prediction">
 <meta name="twitter:description" content="T-GCN。原文地址：T-GCN: A Temporal Graph ConvolutionalNetwork for Traffic Prediction">
@@ -71,7 +71,7 @@
 		</nav>
 		<nav>
 			总文章数 59<br>
-			总字数 <span class="post-count">170.2k</span>
+			总字数 <span class="post-count">170.6k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -182,7 +182,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2.6k字 | 预计阅读时长：9分钟
+        字数：3k字 | 预计阅读时长：10分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -208,7 +208,14 @@
 <p>这些模型考虑时间特征但是忽略空间依赖，所以交通数据的变化不受城市路网的限制，因此他们不能精确的预测路上的交通状态。解决交通预测问题的关键是充分利用空间和时间依赖。为了更好的刻画空间特征，很多研究已经在这个基础上进行了提升。Lv 等人提出了一个 SAE 模型从交通数据中捕获时空特征，实现短期交通流的预测。Zhang 等人提出了一个叫 ST-ResNet 的模型，基于人口流动的时间近邻、周期和趋势这些特征设计了残差卷积网络，然后三个网络和外部因素动态地聚合起来，预测城市内每个区域人口的流入和流出。Wu 等人设计了一个特征融合架构通过融合 CNN 和 LSTM 进行短期预测。一个一维的 CNN 用于捕获空间依赖，两个 LSTM 用来挖掘交通流的短期变化和周期性。Cao 等人提出一个叫 ITRCN 的端到端模型，将交互的网络交通转换为图像，使用 CNN 捕获交通的交互式功能，用 GRU 提取时间特征，预测误差比 GRU 和 CNN 分别高了 14.3% 和 13.0%。Ke 等人提出一个新的深度学习方法叫融合卷积长短时记忆网络（FCL-Net），考虑空间依赖、时间依赖，以及异质依赖，用于短期乘客需求预测。Yu 等人用深度卷积神经网络捕获空间依赖，用 LSTM 捕获时间动态性，在北京交通网络数据上展示出了 SRCN 的优越性。</p>
 <p>尽管上述方法引入了 CNN 对空间依赖建模，在交通预测任务上有很大的进步，但 CNN 本质上只适用于欧氏空间，在有着复杂拓扑结构的交通网络上不能刻画空间依赖。因此，这类方法有缺陷。近些年，图卷积网络的发展，可以用来捕获图网络的结构特征，提供更好的解决方案。Li 等人提出了 DCRNN 模型，通过图上的随机游走捕获空间特征，通过编码解码结构捕获时间特征。</p>
 <p>基于这个背景，我们提出了新的神经网络方法捕获复杂的时空特征，可以用于基于城市路网的交通预测任务上。</p>
-<h1 id="3-Methodology"><a href="#3-Methodology" class="headerlink" title="3 Methodology"></a>3 Methodology</h1><h2 id="3-1-Problem-Definition"><a href="#3-1-Problem-Definition" class="headerlink" title="3.1 Problem Definition"></a>3.1 Problem Definition</h2>
+<h1 id="3-Methodology"><a href="#3-Methodology" class="headerlink" title="3 Methodology"></a>3 Methodology</h1><h2 id="3-1-Problem-Definition"><a href="#3-1-Problem-Definition" class="headerlink" title="3.1 Problem Definition"></a>3.1 Problem Definition</h2><p>目标是基于历史信息预测未来。我们的方法中，交通信息是一个通用的概念，可以是速度、流量、密度。我们在实验的时候将交通信息看作是速度。</p>
+<p>定义1：路网 $G$。我们用图 $G = (V, E)$ 描述路网的拓扑结构，每条路是一个顶点，$V$ 顶点集，$V = {v_1, v_2, \dots, v_N }$，$N$ 是顶点数，$E$ 是边集。邻接矩阵 $A$ 表示路的关系，$A \in R^{N \times N}$。邻接矩阵只有 0 和 1。如果路之间有连接就为 1， 否则为 0。</p>
+<p>定义2：特征矩阵 $X^{N \times P}$。我们将交通信息看作是顶点的特征。$P$ 表示特征数，$X_t \in R^{N \times i}$ 用来表示时刻 $i$ 每条路上的速度。</p>
+<p>时空交通预测的问题可以看作学习一个映射函数：</p>
+<p>$$\tag{1}<br>[X_{t+1}, \dots, X_{t+T}] = f(G; (X_{t-n}, \dots, X_{t-1}, X_t))<br>$$</p>
+<p>$n$ 是历史时间序列的长度，$T$ 是需要预测的长度。</p>
+<h2 id="3-2-Overview"><a href="#3-2-Overview" class="headerlink" title="3.2 Overview"></a>3.2 Overview</h2><p>T-GCN 模型有两个部分：GCN 和 GRU。图 3 所示，我们使用历史 $n$ 个时刻的时间序列数据作为输入，图卷积网络捕获路网拓扑结构获取空间依赖。然后将带有空间特征的时间序列放入 GRU 中，通过信息在单元间的传递捕获动态变化，获得时间特征。最后，将结果送入全连接层。</p>
+<h2 id="3-3-Methodology"><a href="#3-3-Methodology" class="headerlink" title="3.3 Methodology"></a>3.3 Methodology</h2><h3 id="3-3-1-Spatial-Dependence-Modeling"><a href="#3-3-1-Spatial-Dependence-Modeling" class="headerlink" title="3.3.1 Spatial Dependence Modeling"></a>3.3.1 Spatial Dependence Modeling</h3>
       
 
       
