@@ -18,7 +18,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig2.JPG">
-<meta property="og:updated_time" content="2019-03-07T02:01:33.420Z">
+<meta property="og:updated_time" content="2019-03-07T05:45:22.629Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="T-GCN: A Temporal Graph Convolutional Network for Traffic Prediction">
 <meta name="twitter:description" content="T-GCN。原文地址：T-GCN: A Temporal Graph ConvolutionalNetwork for Traffic Prediction">
@@ -71,7 +71,7 @@
 		</nav>
 		<nav>
 			总文章数 59<br>
-			总字数 <span class="post-count">168.6k</span>
+			总字数 <span class="post-count">169.3k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -182,7 +182,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1k字 | 预计阅读时长：3分钟
+        字数：1.7k字 | 预计阅读时长：5分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -200,6 +200,9 @@
 <p>（1） 我们提出的模型结合了 GCN 和 GRU，图卷积捕获路网的拓扑结构做空间建模，GRU 捕获路网上交通数据的时间依赖。T-GCN 模型可以用于其他时空预测任务上。</p>
 <p>（2） T-GCN 的预测结果比其他的方法好，表明我们的 T-GCN 模型不仅可以做短期预测，也可以做长期预测。</p>
 <p>（3）我们使用深圳市罗湖区的出租车速度数据和洛杉矶线圈数据。结果表明我们的预测误差比所有的 baseline 小了 1.5%到57.8%，表明 T-GCN 在交通预测上的优越性。</p>
+<h1 id="2-Related-work"><a href="#2-Related-work" class="headerlink" title="2 Related work"></a>2 Related work</h1><p>智能交通系统交通预测是现在的一个重要研究问题。现存的方法分两类：模型驱动的方法和数据驱动的方法。首先，模型驱动的方法主要解释交通流量、速度、密度的瞬时性和平稳性。这样的方法需要基于先验知识的系统建模。代表方法包括排队论模型，细胞传递模型，交通速度模型，microscopic fundamental diagram model 等等。实际中，交通数据受多种因素影响，很难获得一个精准的交通模型。现存的模型不能精确地描述复杂的现实环境中的交通数据的变化。此外，这些模型的构建需要很强的计算能力，而且很容易收到交通扰乱和采样点空间等问题的影响。</p>
+<p>数据驱动的方法基于数据的规律性，从统计学推测变化局势，然后用于预测。这类方法不分析物理性质和交通系统的动态行为，有很高的灵活性。早期的方法包括历史均值模型，使用历史周期的交通流量均值作为预测值。这个方法不需要假设，计算简单而且还快，但是不能有效地拟合时间特征，预测的精准度低。随着研究的深入，很多高精度的方法涌现出来，主要分为参数模型和非参数模型。</p>
+<p>参数模型提前假设回归函数，参数通过对原始数据处理得到，基于回归函数对交通流预测。时间序列模型，线性回归模型，Kalman filtering model 是常用的方法。时间序列模型将观测到的时间序列拟合进一个模型，然后用来预测。早在 1976 年，Box and Jenkins 提出了 ARIMA，Hamed 等人使用 ARIMA 预测城市内的交通流量。为了提高模型的精度，不同的变体相继被提出，Kohonen ARIMA，subset ARIMA，seasonal ARIMA 等等。Lippi 等人对比支持向量回归和 seasonal ARIM，发现 SARIMA 模型在交通拥堵上的预测有更好的结果。线性回归模型基于历史数据构建模型来预测。2004 年，Sun 等人使用 local linear model 解决了区间预测，在真实数据集上获得了较好的效果。Kalman filtering model 基于前一时刻和当前时刻的交通状态预测未来的状态。1984 年，Okutani 等人使用 Kalman filtering 理论建立了交通流状态预测模型。后续，一些研究使用 Kalman filtering 模型解决交通预测任务。</p>
 
       
 
