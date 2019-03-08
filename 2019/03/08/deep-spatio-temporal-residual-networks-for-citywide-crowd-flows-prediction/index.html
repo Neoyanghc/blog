@@ -17,7 +17,9 @@
 <meta property="og:description" content="AAAI 2017, MSRA的城市人流预测，原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig1.JPG">
-<meta property="og:updated_time" content="2019-03-08T07:59:59.870Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig2.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig3.JPG">
+<meta property="og:updated_time" content="2019-03-08T09:19:03.022Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta name="twitter:description" content="AAAI 2017, MSRA的城市人流预测，原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
@@ -70,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 60<br>
-			总字数 <span class="post-count">173k</span>
+			总字数 <span class="post-count">173.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -181,7 +183,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.1k字 | 预计阅读时长：3分钟
+        字数：1.5k字 | 预计阅读时长：5分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -205,7 +207,21 @@
 <li>ST-ResNet 动态地聚合三个上述网络的输出，给不同的分支和区域分配权重。聚合还融合了外部因素。</li>
 <li>我们使用北京出租车的轨迹数据和气象数据，纽约自行车轨迹数据。结果表示我们的方法比 6 个 baseline 都好。</li>
 </ul>
-<h1 id="Preliminaries"><a href="#Preliminaries" class="headerlink" title="Preliminaries"></a>Preliminaries</h1>
+<h1 id="Preliminaries"><a href="#Preliminaries" class="headerlink" title="Preliminaries"></a>Preliminaries</h1><p>简要回顾人流预测问题（Zhang el al. 2016; Hoang, Zheng, and Singh 2016），介绍残差学习（He et al. 2016）。</p>
+<h2 id="Formulation-of-Crowd-Flows-Problem"><a href="#Formulation-of-Crowd-Flows-Problem" class="headerlink" title="Formulation of Crowd Flows Problem"></a>Formulation of Crowd Flows Problem</h2><p><strong>Definition 1(Region (Zhang et al. 2016))</strong> 根据不同粒度级和语义，一个地点的定义有很多。我们根据经纬度将城市划分成 $I \times J$ 个网格，一个网格表示一个区域，如图 2(a)。</p>
+<center><img src="/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig2.JPG" alt="Figure2"></center>
+
+<p>**Definition 2(Inflow/outflow (Zhang et al. 2016)) $\mathbb{P}$ 是第 t 时段的轨迹集合。对于第 $i$ 行第 $j$ 列的网格，时段 $t$ 流入和流出的人流分别定义为：</p>
+<p>$$<br>x^{in,i,j}_t = \sum_{T_r \in \mathbb{P}} \vert { k &gt; 1 \mid g_{k-1} \not \in (i, j) \wedge g_k \in (i,j) } \vert<br>\\<br>x^{out,i,j}_t = \sum_{T_r \in \mathbb{P}} \vert { k \geq 1 \mid g_k \in (i,j) \wedge g_{k+1} \not \in (i,j) } \vert<br>$$</p>
+<p>其中 $T_r: g_1 \rightarrow g_2 \rightarrow \cdots \rightarrow g_{\vert T_r \vert}$ 是 $\mathbb{P}$ 中的轨迹，$g_k$ 是地理坐标；$g_k \in (i,j)$ 表示点 $g_k$ 落在 $(i, j)$ 内；$\vert · \vert$ 表示集合基数。</p>
+<p>时段 $t$ ，所有区域的流入和流出可以表示成 $\mathbf{X}_t \in \mathbb{R}^{2 \times I \times J}$，$(\mathbf{X}_t)_{0,i,j}=x^{in,i,j}_t, (\mathbf{X}_t)_{1,i,j} = x^{out,i,j}_t$。流入矩阵如图2(b)。</p>
+<p>空间区域可以表达成一个 $I \times J$ 的区域，有两类流动，所以观测值可以表示为 $\mathbf{X} \in \mathbb{R}^{2 \times I \times J}$。</p>
+<p><strong>Problem 1</strong> 给定历史观测值 ${ \mathbf{X}_t \mid t = 0,\dots,n-1 }$，预测 $\mathbf{X}_n$。</p>
+<h2 id="Deep-Residual-Learning"><a href="#Deep-Residual-Learning" class="headerlink" title="Deep Residual Learning"></a>Deep Residual Learning</h2><p>$$\tag{1}<br>\mathbf{X}^{(l+1)} = \mathbf{X}^{(l)} + \mathcal{F}(\mathbf{X}^{(l)})<br>$$</p>
+<h1 id="Deep-Spatio-Temporal-Residual-Networks"><a href="#Deep-Spatio-Temporal-Residual-Networks" class="headerlink" title="Deep Spatio-Temporal Residual Networks"></a>Deep Spatio-Temporal Residual Networks</h1><center><img src="/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig3.JPG" alt="Figure3"></center>
+
+<p>图 3 展示了 ST-ResNet的架构，4 个部分分别对时间近邻、周期、远期、外部因素建模。</p>
+
       
 
       
