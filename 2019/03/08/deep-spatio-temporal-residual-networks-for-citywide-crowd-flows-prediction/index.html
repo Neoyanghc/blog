@@ -17,7 +17,7 @@
 <meta property="og:description" content="AAAI 2017, MSRA的城市人流预测，原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig1.JPG">
-<meta property="og:updated_time" content="2019-03-08T06:54:18.683Z">
+<meta property="og:updated_time" content="2019-03-08T07:47:08.794Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta name="twitter:description" content="AAAI 2017, MSRA的城市人流预测，原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
@@ -70,7 +70,7 @@
 		</nav>
 		<nav>
 			总文章数 60<br>
-			总字数 <span class="post-count">172.6k</span>
+			总字数 <span class="post-count">172.8k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -181,7 +181,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：702字 | 预计阅读时长：2分钟
+        字数：851字 | 预计阅读时长：2分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -195,6 +195,8 @@
 <p>然而，同时预测城市每个区域人口的流入和流出是很有难度的，有 3 个复杂的因素：</p>
 <ol>
 <li>空间依赖。区域 $r_2$ 的流入（图1（a））受邻近区域（像 $r_1$）和遥远区域流出的影响。$r_2$ 的流出也受其他区域（$r_3$）流入的影响。$r_2$ 的流入也影响其自身。</li>
+<li>时间依赖。一个区域的人流受到近期和远期时间影响。举个例子，早上8点发生的交通拥堵可能会影响到 9 点。此外，早高峰的交通状况可能在接连的几天都是相似的，每 24 小时一次。而且随着冬天的到来，早高峰时间可能越来越晚。温度下降，日初变晚会使人们起床时间变晚。</li>
+<li>外部影响。一些像天气和事件的外部因素可能会显著地改变城市内不同区域的人口流动。</li>
 </ol>
 
       
