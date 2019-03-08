@@ -6,24 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://davidham3.github.io">
-  <title>Lattice LSTM 中文NER | Davidham&#39;s blog</title>
+  <title>Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="ACL 2018，基于LSTM+CRF，用word2vec对字符进行表示，然后用大规模自动分词的预料，将词进行表示，扔进LSTM获得细胞状态，与基于字符的LSTM的细胞状态相结合，得到序列的隐藏状态，然后套一个CRF。原文链接：Chinese NER Using Lattice LSTM">
-<meta name="keywords" content="machine learning,deep learning,natural language processing,NER">
+  <meta name="description" content="AAAI 2017, MSRA的城市人流预测，原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
+<meta name="keywords" content="deep learning,STDM,graph convolutional network,Graph,Time Series">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Lattice LSTM 中文NER">
-<meta property="og:url" content="https://davidham3.github.io/2018/05/23/lattice-lstm-中文ner/index.html">
+<meta property="og:title" content="Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
+<meta property="og:url" content="https://davidham3.github.io/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="ACL 2018，基于LSTM+CRF，用word2vec对字符进行表示，然后用大规模自动分词的预料，将词进行表示，扔进LSTM获得细胞状态，与基于字符的LSTM的细胞状态相结合，得到序列的隐藏状态，然后套一个CRF。原文链接：Chinese NER Using Lattice LSTM">
+<meta property="og:description" content="AAAI 2017, MSRA的城市人流预测，原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://davidham3.github.io/blog/2018/05/23/lattice-lstm-中文ner/Fig1.PNG">
-<meta property="og:image" content="https://davidham3.github.io/blog/2018/05/23/lattice-lstm-中文ner/Fig2.PNG">
-<meta property="og:image" content="https://davidham3.github.io/blog/2018/05/23/lattice-lstm-中文ner/Fig3.PNG">
-<meta property="og:updated_time" content="2018-07-19T09:01:57.210Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig1.JPG">
+<meta property="og:updated_time" content="2019-03-08T05:37:53.318Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Lattice LSTM 中文NER">
-<meta name="twitter:description" content="ACL 2018，基于LSTM+CRF，用word2vec对字符进行表示，然后用大规模自动分词的预料，将词进行表示，扔进LSTM获得细胞状态，与基于字符的LSTM的细胞状态相结合，得到序列的隐藏状态，然后套一个CRF。原文链接：Chinese NER Using Lattice LSTM">
-<meta name="twitter:image" content="https://davidham3.github.io/blog/2018/05/23/lattice-lstm-中文ner/Fig1.PNG">
+<meta name="twitter:title" content="Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
+<meta name="twitter:description" content="AAAI 2017, MSRA的城市人流预测，原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
+<meta name="twitter:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig1.JPG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
   
@@ -165,48 +163,34 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="posts-lattice-lstm-中文ner" class="article article-type-posts " itemscope="" itemprop="blogPost">
+            <article id="post-deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction" class="article article-type-post " itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Lattice LSTM 中文NER
+      Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction
     </h1>
   
 
         
-        <a href="/blog/2018/05/23/lattice-lstm-中文ner/" class="archive-article-date">
-  	<time datetime="2018-05-23T08:54:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-23</time>
+        <a href="/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/" class="archive-article-date">
+  	<time datetime="2019-03-08T02:26:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-08</time>
 </a>
         
       </header>
       <div align="center" class="post-count">
-        字数：4.3k字 | 预计阅读时长：17分钟
+        字数：612字 | 预计阅读时长：2分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>ACL 2018，基于LSTM+CRF，用word2vec对字符进行表示，然后用大规模自动分词的预料，将词进行表示，扔进LSTM获得细胞状态，与基于字符的LSTM的细胞状态相结合，得到序列的隐藏状态，然后套一个CRF。原文链接：<a href="https://arxiv.org/abs/1805.02023" target="_blank" rel="noopener">Chinese NER Using Lattice LSTM</a><br><a id="more"></a></p>
-<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>我们调查了lattice-structured LSTM模型在中文分词上的表现，这个模型将输入的字符序列和所有可能匹配到词典中的词进行编码。对比基于字符的方法，我们的模型明显的利用了词与词序列的信息。对于基于词的方法，lattice LSTM不会受到错误分词的影响。门控循环细胞可以使模型从序列中选取最相关的字符和单词获得更好的NER结果。实验在各种数据集上都显示出lattice LSTM比基于词和基于字的LSTM要好，获得了最好的效果。</p>
-<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>信息抽取中最基础的任务，NER近些年受到了广泛的关注。NER以往被当作一个序列标注问题来解决，实体的边界和类别标签是同时进行预测的。当前最先进的英文命名实体识别的方法是使用集成进单词表示的字符信息的LSTM-CRF模型（Lample et al., 2016; Ma and Hovy, 2016; Chiu and Nichols, 2016; Liu et al., 2018）。<br>中文NER与分词联系的很紧密。尤其是命名实体的边界也是词的边界。一个直观的想法是先分词，再标注词。然而这个pipeline会受到错误分词的影响，因为命名实体是分词中OOV中的很重要的一部分，而且不正确的实体边界划分会导致错误的NER。这个问题在open domain中很严重，因为跨领域的分词还是为解决的问题（Liu and Zhang, 2012; Jiang et al., 2013; Liu et al., 2014; Qiu and Zhang, 2015; Chen et al., 2017; Huang et al., 2017）。基于字符的方法比基于词的方法在中文NER中表现的好（He and Wang, 2008; Liu et al., 2010; Li et al., 2014）。<br>然而，基于字符的NER的一个缺点是，词与词的序列信息不能被完全利用到，然而这部分信息可能很有用。为了解决这个问题，我们通过使用一个lattice LSTM表示句子中的lexicon words，在基于字符的LSTM-CRF模型中集成了latent word information。如图1所示，我们通过使用一个大型的自动获取的词典来匹配一个句子，构建了一个词-字lattice。结果是，词序列，像“长江大桥”，“长江”，“大桥”可以用来在上下文中区分潜在的相关的命名实体，比如人名“江大桥”。<br><img src="/blog/2018/05/23/lattice-lstm-中文ner/Fig1.PNG" alt="Fig1"><br><img src="/blog/2018/05/23/lattice-lstm-中文ner/Fig2.PNG" alt="Fig2"><br>因为在lattice中有很多潜在的词-字路径，我们利用了一个lattice-LSTM结构来自动地控制句子的开始到结尾的信息流。如图2所示，门控细胞被用于动态规划信息从不同的路径到每个字符上。在NER数据上训练的lattice LSTM可以学习到如何从上下文中找到有用的单词，自动地提高NER的精度。对比基于字符的和基于单词的NER方法，我们的模型的优势在于利用在字符序列标签上的单词信息，且不会受到错误分词的影响。<br>结果显示我们的模型比字符序列标注模型和使用LSTM-CRF的单词序列标注模型都要好很多，在很多中文跨领域的NER数据集上都获得了很好的结果。我们的模型和数据在<a href="https://github.com/jiesutd/LatticeLSTM。" target="_blank" rel="noopener">https://github.com/jiesutd/LatticeLSTM。</a></p>
-<h2 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h2><p>我们的工作与当前处理NER的神经网络一致。Hammerton(2003)尝试解决使用一个单向的LSTM解决这个问题，这个第一个处理NER的神经网络。Collobert et al. (2011)使用了一个CNN-CRF的结构，获得了和最好的统计模型相当的结果。dos Santos et al. (2015)使用了字符CNN来增强CNN-CRF模型。大部分最近的工作利用了LSTM-CRF架构。Huang et al. (2015)使用手工的拼写特征；Ma和Hovy（2016）以及Chiu and Nichols（2016）使用了一个字符CNN来表示拼写的字符；Lample et al.（2016）使用一个字符LSTM，没有使用CNN。我们的baseline基于词的系统使用了与这些相似的架构。<br>字符序列标注是处理中文NER的主要方法（Chen et al., 2006b; Lu et al., 2016; Dong et al., 2016）。已经有讨论基于词的和基于字符的方法的统计的方法对比，表明了后者一般有更好的表现（He and Wang, 2008; Liu et al., 2010; Li et al., 2014）。我们发现有着恰当的表示设定，结论同样适用于神经NER。另一方面，lattice LSTM相比于词LSTM和字符LSTM是更好的一个选择。<br>如何更好的利用词的信息在中文NER任务中受到了持续的关注（Gao et al., 2015），分词信息在NER任务中作为soft features（Zhao and Kit, 2008; Peng and Dredze, 2015; He and Sun, 2017a），使用对偶分解的分词与NER联合学习也被人研究了（Xu et al., 2014），多任务学习（Peng and Dredze, 2016）等等。我们的工作也是，聚焦于神经表示学习。尽管上述的方法可能会被分词训练数据和分词的错误影响，我们的方法不需要一个分词器。这个模型不需要考虑多任务设定，因此从概念上来看就更简单。<br>NER可以利用外部信息。特别地，词典特征已经被广泛地使用了（Collobert et al., 2011; Passos et al., 2014; Huang et al., 2015; Luo et al., 2015）。Rei(2017)使用了一个词级别的语言模型目的是增强NER的训练，在大量原始语料上实现多任务学习。Peters et al.(2017)预训练了一个字符语言模型来增强词的表示。Yang et al.(2017b)通过多任务学习探索了跨领域和跨语言的知识。我们通过在大量自动分词的文本上预训练文本嵌入词典利用了外部信息，尽管半监督技术如语言模型are orthogonal to而且也可以在我们的lattice LSTM模型中使用。<br>Lattice结构的RNN可以被看作是一个树状结构的RNN（Tai et al., 2015）对DAG的自然扩展。他们已经有被用来建模运动力学（Sun et al., 2017），dependency-discourse DAGs(Peng et al., 2017)，还有speech tokenization lattice（Sperber et al., 2017）以及对NMT（neural machine translation）编码器的多粒度分词输出。对比现在的工作，我们的lattice LSTM在动机和结构上都是不同的。比如，对于以字符为中心的lattice-LSTM-CRF序列标注设计的模型，它有循环细胞但是没有针对词的隐藏向量。据我们所知，我们第一个设计了一个新型的lattice LSTM对字母和词进行混合的表示，也是第一个使用一个基于词的lattice处理不分词的中文NER任务的。</p>
-<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>我们跟从最好的英语NER模型（Huang et al., 2015; Ma and Hovy, 2016; Lample et al., 2016），使用LSTM-CRF作为主要的网络结构。使用$s=c_1, c_2, …, c_m$表示输入的句子，其中$c_j$表示第$j$个字符。$s$可以被看作一个单词序列$s=w_1, w_2, …, w_n$，其中$w_i$表示序列中的第$i$个单词，由一个中文分词器获得。我们使用$t(i, k)$表示句子中第$i$个单词的第$k$个字符表示下标$j$。取图1的句子作为例子。如果分词结果是“南京市 长江大桥”，下标从1开始，那么$t(2, 1)=4$（长），$t(1, 3)=3$（市）。我们使用BIOES标记（Ratinov and Roth, 2009）对基于词和基于字的NER进行标记。<br><img src="/blog/2018/05/23/lattice-lstm-中文ner/Fig3.PNG" alt="Fig3"></p>
-<h3 id="基于字符的模型"><a href="#基于字符的模型" class="headerlink" title="基于字符的模型"></a>基于字符的模型</h3><p>基于字符的模型如图3(a)所示。它在$c_1, c_2, …, c_m$上使用了LSTM-CRF模型。每个字符$c_j$表示为<br>$$x^c_j = e^c(c_j)$$<br>其中$e^c$表示一个字符嵌入到了lookup table中。<br>一个双向LSTM（与式11同结构）被使用在$x_1, x_2, …, x_m$来获取从左到右的$\overrightarrow{h}^c_1, \overrightarrow{h}^c_2, …, \overrightarrow{h}^c_m$和从右到左的$\overleftarrow{h}^c_1, \overleftarrow{h}^c_2, …, \overleftarrow{h}^c_m$隐藏状态，这两个隐藏状态有两组不同的参数。每个字符的隐藏向量表示为<br>$$h^c_j = [\overrightarrow{h}^c_j, \overleftarrow{h}^c_j]$$<br>一个标准的CRF模型被用在$h^c_1, h^c_2, …, h^c_m$上来进行序列标注。</p>
-<ol>
-<li>字符+双字符<br>Character bigrams在分词中用来表示字符已经很有用了（Chen et al., 2015; Yang et al., 2017a）。我们提出了通过拼接双元字符嵌入和字符嵌入的基于字符的模型：<br>$$x^c_j = [e^c(c_j); e^b(c_j, c_{j+1})]$$<br>其中$e^b$表示一个character bigram lookup table。</li>
-<li>字符+softword<br>已经有实验表明使用分词作为soft features对于基于字符的NER模型可以提升性能（Zhao and Kit, 2008; Peng and Dredze, 2016）。我们提出的通过拼接分词标记嵌入和字符嵌入的带有分词信息的字符表示：<br>$$x^c_j = [e^c(c_j); e^s(seg(c_j))]$$<br>其中$e^s$表示一个分词标签嵌入查询表。$seg(c_j)$表示一个分词器在字符$c_j$上给出的分词标签。我们使用了BMES策略来表示分词（Xue, 2003）<br>$$h^w_i = [\overrightarrow{h^w_i}, \overleftarrow{h^w_i}]$$<br>与基于字符的情况类似，一个标准的CRF模型在序列标记中被用在了$h^w_1, h^w_2, …, h^w_m$上。</li>
-</ol>
-<h3 id="基于词的模型"><a href="#基于词的模型" class="headerlink" title="基于词的模型"></a>基于词的模型</h3><p>基于词的模型如图3（b）所示，它将word embedding $e^w(w_i)$作为每个词$w_i$的表示：<br>$$x^w_i = e^w(w_i)$$<br>其中$e^w$表示一个词嵌入查找表。一个双向LSTM被用来获取词序列$w_1, w_2, …, w_n$上一个从左到右的隐藏状态$\overrightarrow{h}^w_1, \overrightarrow{h}^w_2, …, \overrightarrow{h}^w_n$和一个从右到左的隐藏状态序列$\overleftarrow{h}^w_1, \overleftarrow{h}^w_2, …, \overleftarrow{h}^w_n$。最后，对于每个词$w_i$，$\overrightarrow{h^w_i}$和$\overleftarrow{h^w_i}$会被拼在一起成为它的表示：<br><strong>集成字符表示</strong><br>字符CNN（Ma and Hovy, 2016）和LSTM（Lample et al., 2016）两种方法都被用于过表示一个单词中的字符序列。我们在中文NER中对两个方法都进行了实验。我们使用$x^c_i$表示$w_i$中的字符，通过拼接$e^w(w_i)$和$x^c_i$可以获得一个新词的表示：<br>$$x^w_i = [e^w(w_i; x^c_i)]$$</p>
-<ol>
-<li>词+字符LSTM<br>将每个输入字符的嵌入记作$e^c(c_j)$，我们使用一个双向LSTM来学习词$w_i$的字符$c_{t(i, 1)}, …, c_{t(i, len(i))}$的隐藏状态$\overrightarrow{h}^c_{t(i, 1)}, …, \overrightarrow{h}^c_{t(i, len(i))}$和$\overleftarrow{h}^c_{t(i, 1)}, …, \overleftarrow{h}^c_{t(i, len(i))}$，其中$len(i)$表示词$w_i$的字符个数。最后$w_i$的字符表示为：<br>$$x^c_i = [\overrightarrow{h}^c_{t(i, len(i))};\overleftarrow{h}^c_{t(i, 1)}]$$</li>
-<li>词+字符LSTM’<br>我们调查了一种词+字符LSTM的变形，这个模型使用单向的LSTM对每个字符获取$\overrightarrow{h}^c_j$和$\overleftarrow{h}^c_j$。与Liu et al. (2018)的结构相似但是没有使用highway layer。使用了相同的LSTM结构和相同的方法集成字符隐藏状态进词嵌入中。</li>
-<li>词+字符CNN<br>我们使用标准的CNN（LeCun et al., 1989）应用在词的字符序列上获得字符表示$x^c_i$。将字符$c_j$的嵌入记为$e^c(c_j)$，向量$x^c_i$通过以下式子得到：<br>$$x^c_i = \max_{t(i,1) \leq j \leq t(i, len(i))}(W^T_{CNN} \begin{bmatrix}<br>e^c(c_{j-\frac{ke-1}{2}}) \\<br>… \\<br>e^c(c_{j+\frac{ke-1}{2}})<br>\end{bmatrix}+ b_{CNN})$$<br>其中，$W_{CNN}$和$b_{CNN}$和参数，$ke=3$是核的大小，$max$表示最大池化。</li>
-</ol>
-<h3 id="Lattice模型"><a href="#Lattice模型" class="headerlink" title="Lattice模型"></a>Lattice模型</h3><p>图2中展示了词-字lattice模型的整个结构，可以看作是基于字的模型的扩展，集成了基于词的细胞和用来控制信息流的额外的门。<br>图3（c）展示了模型的输入是一个字符序列$c_1, c_2, …, c_m$，与之一起的还有所有字符序列，字符都能在词典$\mathbb{D}$中匹配到。如部分2中指示的，我们使用自动分词的大型原始语料来构建$\mathbb{D}$。使用$w^d_{b,e}$来表示一个起始字符下标为$b$，结尾字符下标为$e$，图1中的$w^d_{1,2}$是“南京（Nanjing）”，$w^d_{7,8}$是“大桥（Bridge）”。<br>模型涉及到了四种类型的向量，分别是输入向量、输出隐藏向量、细胞向量、门向量。作为基本的组成部分，一个字符输入向量被用来表示每个字符$c_j$，就像在基于字符的模型中：<br>$x^c_j = e^c(c_j)$<br>基本的循环结构是通过一个在每个字符$c_j$上的字符细胞向量$\mathbf{c}^c_j$和一个隐藏向量$\mathbf{h}^c_j$构造的，其中$\mathbf{c}^c_j$提供句子的开始到$c_j$的信息流，$\mathbf{h}^c_j$用于CRF序列标注。<br>基础的循环LSTM函数如下：<br>$$<br>\begin{bmatrix}<br>i^c_j \\<br>o^c_j \\<br>f^c_j \\<br>\widetilde{c}^c_j<br>\end{bmatrix} =<br>\begin{bmatrix}<br>\sigma \\<br>\sigma \\<br>\sigma \\<br>tanh<br>\end{bmatrix}({W^c}^T<br>\begin{bmatrix}<br>x^c_j \\<br>h^c_{j-1}<br>\end{bmatrix}+b^c)<br>$$<br>$$c^c_j = f^c_j \odot c^c_{j-1} + i^c_j \odot \hat{c}^c_j$$<br>$$h^c_j = o^c_j \odot tanh(c^c_j)$$<br>其中，$i^c_j$，$f^c_j$和$o^c_j$表示一组输入、遗忘和输出门。${w^c}^T$和$b^c$是模型参数。$\sigma()$表示sigmoid function。<br>不同于基于字符的模型，现在计算$c^c_j$的时候需要考虑句子中词典序列$w^d_{b,e}$。特别地，每个序列$w^d_{b,e}$被表示为：<br>$$x^w_{b,e} = e^w(w^d_{b,e})$$<br>其中$e^w$表示3.2节相同的词嵌入查询表。<br>此外，一个词细胞$c^w_{b,e}$用来表示$x^w_{b,e}$从句子开始的循环状态。$c^w_{b,e}$通过以下式子计算得到：<br>$$<br>\begin{bmatrix}<br>i^w_{b,e} \\<br>f^w_{b,e} \\<br>\widetilde{c}^w_{b,e}<br>\end{bmatrix} = \begin{bmatrix}<br>\sigma \\<br>\sigma \\<br>tanh<br>\end{bmatrix}({w^w}^T \begin{bmatrix}<br>x^w_{b,e} \\<br>h^c_b<br>\end{bmatrix} + b^w)<br>$$<br>$$c^w_{b,e} = f^w_{b,e} \odot c^c_b + i^w_{b,e} \odot \widetilde{c}^w_{b,e}$$<br>其中$i^w_{b,e}$和$f^w_{b,e}$是一组输入和遗忘门。对于词细v胞来说没有输出门因为标记只在字符层面上做。<br>有了$c^w_{b,e}$，会有很多路径可以使信息流向每个$c^c_j$。比如，在图2中，对于$c^c_7$的输入包含$x^c_7$（桥Bridge），$c^w_{6,7}$（大桥Bridge）和$c^w_{4,7}$（长江大桥Yangtze River Bridge）。我们将$c^w_{b,e}$和$b \in {b’ \mid w^d_{b’,e} \in \mathbb{D}}$连接到细胞$c^c_e$。我们使用额外的门$i^c_{b,e}$对每个序列细胞$c^w_{b,e}$来控制它对$c^c_{b,e}$的贡献：<br>$$i^c_{b,e} = \sigma({w^l}^T \begin{bmatrix}<br>x^c_e \\<br>c^w_{b,e}<br>\end{bmatrix} + b^l)$$<br>因此，$c^c_j$的计算变为：<br>$$c^c_j = \sum_{b \in {b’ \mid w^d_{b’,j} \in \mathbb{D}} } \alpha^c_{b,j} \odot c^w_{b,j} + \alpha^c_j \odot \widetilde{c}^c_j$$<br>在上式中，门$i^c_{b,j}$和$i^c_{j}$的值被归一化到$\alpha^c_{b,j}$和$\alpha^c_j$，和为1。<br>$$<br>\alpha^c_{b,j} = \frac{exp(i^c_{b,j})}{exp(i^c_j)+\sum_{b’ \in {b’’ \mid w^d_{b’’,j} \in \mathbb{D}}}exp(i^c_{b’,j})}<br>$$<br>$$<br>\alpha^c_{j} = \frac{exp(i^c_{j})}{exp(i^c_j)+\sum_{b’ \in {b’’ \mid w^d_{b’’,j} \in \mathbb{D}}}exp(i^c_{b’,j})}<br>$$<br>最后的隐藏向量$h^c_j$仍然由之前的LSTM计算公式得到。在NER训练过程中，损失值反向传播到参数$w^c, b^c, w^w, b^w, w^l$和$b^l$使得模型可以动态地在NER标注过程中关注更相关的词。</p>
-<h3 id="解码和训练"><a href="#解码和训练" class="headerlink" title="解码和训练"></a>解码和训练</h3><p>一个标准的CRF层被用在$h_1, h_2, …, h_{\tau}$上面，其中$\tau$对于基于字符的模型来说是$n$，对于基于词的模型来说是$m$。一个标签序列$y = l_1, l_2, …, l_{\tau}$的概率是<br>$$<br>p(y \mid s) = \frac{exp(\sum_i(w^{l_i}_{CRF} h_i + b^{(l_{i-1}, l_i)}_{CRF}))}{\sum_{y’}exp(\sum_i(w^{l’_i}_{CRF} h_i + b^{(l’_{i-1}, l’_i)}_{CRF}))}<br>$$<br>这里$y’$表示一个任意标签序列，$W^{l_i}_{CRF}$是针对于$l_i$的模型参数，$b^{(l_{i-1},l_i)}_{CRF}$是针对$l_{i-1}$和$l_i$的偏置。<br>我们使用一阶维特比算法来寻找一个基于词或基于字符的输入序列中得分最高的标签序列。给定一组手动标注的训练数据${(s_i, y_i)} \mid^N_{i=1}$，带有L2正则项的句子层面的log-likelihood作为loss，训练模型：<br>$$L = \sum^N_{i=1} log(P(y_i \mid s_i)) + \frac{\lambda}{2}\Vert \Theta \Vert^2$$<br>其中，$\lambda$是L2正则项系数，$\Theta$表示了参数集合。</p>
-
+        <p>AAAI 2017, MSRA的城市人流预测，原文地址：<a href="https://arxiv.org/abs/1610.00081" target="_blank" rel="noopener">Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction</a><br><a id="more"></a></p>
+<h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>对于交通管理和公共安全来说，预测人流很重要，但这个问题也很有挑战性，因为收到很多复杂的因素影响，如区域内的交通、事件、天气。我们提出了一个基于深度学习的模型 ST-ResNet，对城市内的每个区域的人流的进出一起预测。我们基于时空数据独一的属性，设计了一个端到端的结构。我们使用残差神经网络框架对时间近邻、周期、趋势属性建模。对每个属性，我们设计了残差卷积的一个分支，每个分支对人流的空间属性建模。ST-ResNet 基于数据动态地聚合三个残差神经网络的输出，给不同的分支和区域分配权重。聚合结果还融合了外部因素，像天气或日期。实验在北京和纽约两个数据集上开展。</p>
+<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>对于交通管理和公共安全来说，预测人流很重要（Zheng et al. 2014）。举个例子，2015年新年夜，上海有大量人群涌入一个区域，导致 36 人死亡。2016年六月中旬，数百名 Pokemon Go 玩家冲入纽约中央公园，为了抓一只特别稀有的怪，导致严重的踩踏事故。如果可以预测一个区域的人流，这样的悲剧可以通过应急措施避免，像提前做交通管控，发布预警，疏散人群等。</p>
+<p>我们在这篇文章中预测两类人流（Zhang et al. 2016)：如图 1（a）所示，流入和流出。流入是在给定时间段，从其他区域进入到一个区域的交通运载量。流出表示给定时段内，从一个区域向其他区域的交通运载量。两个流量都是区域间的人口流动。了解这个对风险评估和交通管理有很大帮助。流入/流出可以通过行人数量、邻近道路车辆数、公共运输系统的人数、或是所有的都加起来。图 1（b）展示了一个例子。我们可以使用手机信号测量行人数，$r_2$ 的流入和流出分别为 3 和 1。类似地，使用车辆 GPS 轨迹，分别是 0 和 3。</p>
+<center><img src="/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig1.JPG" alt="Figure1"></center>
       
 
       
@@ -250,19 +234,23 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">machine learning</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">deep learning</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">natural language processing</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">STDM</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">NER</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">graph convolutional network</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Graph</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Time Series</a>
         		</li>
       		
 		</ul>
@@ -329,8 +317,8 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-        <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://davidham3.github.io/2018/05/23/lattice-lstm-中文ner/" alt="微信分享二维码">
-      <!-- <img src="//pan.baidu.com/share/qrcode?url=https://davidham3.github.io/2018/05/23/lattice-lstm-中文ner/" alt="微信分享二维码"> -->
+        <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://davidham3.github.io/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/" alt="微信分享二维码">
+      <!-- <img src="//pan.baidu.com/share/qrcode?url=https://davidham3.github.io/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/" alt="微信分享二维码"> -->
     </div>
 </div>
 
@@ -345,18 +333,9 @@
   
 <nav id="article-nav">
   
-    <a href="/blog/2018/06/12/迁移centos7虚拟机mac和网卡名变换导致网络不同的问题/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          迁移CentOS7虚拟机mac和网卡名变换导致网络不通的问题
-        
-      </div>
-    </a>
   
-  
-    <a href="/blog/2018/05/23/门控卷积网络语言建模/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">门控卷积网络语言建模</div>
+    <a href="/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">T-GCN: A Temporal Graph Convolutional Network for Traffic Prediction</div>
       <i class="icon-circle-right"></i>
     </a>
   
