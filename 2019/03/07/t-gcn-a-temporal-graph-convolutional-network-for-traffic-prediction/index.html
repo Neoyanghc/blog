@@ -8,13 +8,13 @@
   <link rel="dns-prefetch" href="https://davidham3.github.io">
   <title>T-GCN: A Temporal Graph Convolutional Network for Traffic Prediction | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="T-GCN，arxiv上面的一篇文章，用 GCN 对空间建模，GRU 对时间建模，很简单的模型。原文地址：T-GCN: A Temporal Graph ConvolutionalNetwork for Traffic Prediction">
+  <meta name="description" content="T-GCN，arxiv上面的一篇文章，用 GCN 对空间建模，GRU 对时间建模，很简单的模型。没有对比近几年的图卷积在时空数据挖掘中的模型。原文地址：T-GCN: A Temporal Graph ConvolutionalNetwork for Traffic Prediction">
 <meta name="keywords" content="deep learning,Graph,graph convolutional network,STDM,Time Series">
 <meta property="og:type" content="article">
 <meta property="og:title" content="T-GCN: A Temporal Graph Convolutional Network for Traffic Prediction">
 <meta property="og:url" content="https://davidham3.github.io/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="T-GCN，arxiv上面的一篇文章，用 GCN 对空间建模，GRU 对时间建模，很简单的模型。原文地址：T-GCN: A Temporal Graph ConvolutionalNetwork for Traffic Prediction">
+<meta property="og:description" content="T-GCN，arxiv上面的一篇文章，用 GCN 对空间建模，GRU 对时间建模，很简单的模型。没有对比近几年的图卷积在时空数据挖掘中的模型。原文地址：T-GCN: A Temporal Graph ConvolutionalNetwork for Traffic Prediction">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig2.JPG">
@@ -22,10 +22,12 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig4.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig5.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig6.JPG">
-<meta property="og:updated_time" content="2019-03-07T09:05:45.094Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig7.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Table1.JPG">
+<meta property="og:updated_time" content="2019-03-08T02:22:58.796Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="T-GCN: A Temporal Graph Convolutional Network for Traffic Prediction">
-<meta name="twitter:description" content="T-GCN，arxiv上面的一篇文章，用 GCN 对空间建模，GRU 对时间建模，很简单的模型。原文地址：T-GCN: A Temporal Graph ConvolutionalNetwork for Traffic Prediction">
+<meta name="twitter:description" content="T-GCN，arxiv上面的一篇文章，用 GCN 对空间建模，GRU 对时间建模，很简单的模型。没有对比近几年的图卷积在时空数据挖掘中的模型。原文地址：T-GCN: A Temporal Graph ConvolutionalNetwork for Traffic Prediction">
 <meta name="twitter:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig1.JPG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
@@ -75,7 +77,7 @@
 		</nav>
 		<nav>
 			总文章数 59<br>
-			总字数 <span class="post-count">171.8k</span>
+			总字数 <span class="post-count">171.9k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -186,12 +188,12 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：4.2k字 | 预计阅读时长：15分钟
+        字数：4.3k字 | 预计阅读时长：15分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>T-GCN，arxiv上面的一篇文章，用 GCN 对空间建模，GRU 对时间建模，很简单的模型。原文地址：<a href="https://arxiv.org/abs/1811.05320" target="_blank" rel="noopener">T-GCN: A Temporal Graph ConvolutionalNetwork for Traffic Prediction</a></p>
+        <p>T-GCN，arxiv上面的一篇文章，用 GCN 对空间建模，GRU 对时间建模，很简单的模型。没有对比近几年的图卷积在时空数据挖掘中的模型。原文地址：<a href="https://arxiv.org/abs/1811.05320" target="_blank" rel="noopener">T-GCN: A Temporal Graph ConvolutionalNetwork for Traffic Prediction</a></p>
 <a id="more"></a>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>精确和实时的交通预测在智能交通系统中扮演着重要的角色，对城市交通规划、交通管理、交通控制起着重要的作用。然而，交通预测由于其受限于城市路网且随时间动态变化，即有着空间依赖与时间依赖，早已成为一个公开的科学研究问题。为了同时捕获空间和时间依赖，我们提出了一个新的神经网络方法，时间图卷积网络模型 （T-GCN），将图卷积和门控循环单元融合起来。GCN 用来学习复杂的拓扑结构来捕获空间依赖，门控循环单元学习交通数据的动态变化来捕获时间依赖。实验表明我们的 T-GCN 模型比之前的方法要好。我们的 tf 实现：<a href="https://github.com/lehaifeng/T-GCN" target="_blank" rel="noopener">代码仓库地址</a>。</p>
 <h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h1><p>随着智能交通系统的发展，交通预测受到了越来越多的关注。交通预测是高级交通管理系统中的关键部分，是实现交通规划、交通管理、交通控制的重要部分。交通预测是分析城市路网上交通状况、包括流量、车速、密度，挖掘交通模式，对路网上交通进行预测的一个过程。交通预测不仅能给管理者提供科学依据来预测交通拥挤并提前限制出行，还可以给旅客提供适当的出行路线并提高交通效率。然而，交通由于其空间和时间的依赖至今还是一个有难度的挑战：</p>
@@ -254,7 +256,13 @@
 <p>（5）Explained Variance Score(Var):</p>
 <p>$$<br>var = 1 - \frac{Var{Y - \hat{Y}}}{Var{Y}}<br>$$</p>
 <p>RMSE 和 MAE 用来评估预测误差：越小越好。精度衡量预测的精度：越大越好。$R^2$ 和 Var 计算相关系数，评估预测结果表达真实数据的能力，越大越好。</p>
+<h2 id="4-3-Model-Parameters-Designing"><a href="#4-3-Model-Parameters-Designing" class="headerlink" title="4.3 Model Parameters Designing"></a>4.3 Model Parameters Designing</h2><p>(1) Hyperparameter</p>
+<p>学习率、batch size、训练论述，隐藏层数。我们设定的是学习率0.001，batch size 64，轮数 3000 轮。</p>
+<p>隐层单元数对 T-GCN 来说是个重要的参数，因为不同的单元数可能会影响预测精度。我们通过实验选取了最优的隐藏单元数。</p>
+<p>看不下去了。。。</p>
+<center><img src="/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig7.JPG" alt="Figure7"></center>
 
+<center><img src="/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Table1.JPG" alt="Table1"></center>
       
 
       
