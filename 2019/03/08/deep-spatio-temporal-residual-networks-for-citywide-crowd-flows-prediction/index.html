@@ -19,7 +19,8 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig3.JPG">
-<meta property="og:updated_time" content="2019-03-08T09:28:06.725Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig4.JPG">
+<meta property="og:updated_time" content="2019-03-08T09:31:21.296Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta name="twitter:description" content="AAAI 2017, MSRA的城市人流预测，原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
@@ -72,7 +73,7 @@
 		</nav>
 		<nav>
 			总文章数 60<br>
-			总字数 <span class="post-count">173.7k</span>
+			总字数 <span class="post-count">173.8k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -183,7 +184,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.8k字 | 预计阅读时长：6分钟
+        字数：1.8k字 | 预计阅读时长：7分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -221,6 +222,10 @@
 <h1 id="Deep-Spatio-Temporal-Residual-Networks"><a href="#Deep-Spatio-Temporal-Residual-Networks" class="headerlink" title="Deep Spatio-Temporal Residual Networks"></a>Deep Spatio-Temporal Residual Networks</h1><center><img src="/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig3.JPG" alt="Figure3"></center>
 
 <p>图 3 展示了 ST-ResNet的架构，4 个部分分别对时间近邻、周期、远期、外部因素建模。如图 3 所示，首先将流入和流出作为两个通道放到矩阵中，使用定义 1 和 2 引入的方法。我们将时间轴分为三个部分，表示近期时间、邻近历史、远期历史。三个时段的两通道的流动矩阵分别输入上述模型，对三种时间属性建模。这三个组件结构相同，都是残差网络。这样的结构捕获邻近和遥远区域间的空间依赖。外部组件中，我们手动的从数据集中提取了特征，如天气、事件等，放入两层全连接神经网络中。前三个组件的输出基于参数矩阵融合为 $\mathbf{X}_{Res}$，参数矩阵给不同的区域不同的组件分配权重。$\mathbf{X}_{Res}$ 然后与外部组件 $\mathbf{X}_{Ext}$ 集成。最后，聚合结果通过 Tanh 映射到 $[-1, 1]$，在反向传播会比 logistic function 收敛的更快 (LeCun et al. 2012)。</p>
+<h2 id="Structures-of-the-First-Three-Components"><a href="#Structures-of-the-First-Three-Components" class="headerlink" title="Structures of the First Three Components"></a>Structures of the First Three Components</h2><p>如图 4。</p>
+<center><img src="/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig4.JPG" alt="Figure4"></center>
+
+<p><strong><em>Convolution</em></strong> 一个城市通常很大，包含很多距离不同的区域。直观上来说，邻近区域的人流会影响其他区域，可以通过 CNN 有效地处理，CNN 也被证明在层级地捕获空间信息方面很强 (LeCun et al. 1998)。</p>
 
       
 
