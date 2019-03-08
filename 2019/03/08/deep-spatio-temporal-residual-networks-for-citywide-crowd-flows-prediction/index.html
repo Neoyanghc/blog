@@ -17,7 +17,7 @@
 <meta property="og:description" content="AAAI 2017, MSRA的城市人流预测，原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig1.JPG">
-<meta property="og:updated_time" content="2019-03-08T07:47:08.794Z">
+<meta property="og:updated_time" content="2019-03-08T07:59:59.870Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta name="twitter:description" content="AAAI 2017, MSRA的城市人流预测，原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
@@ -70,7 +70,7 @@
 		</nav>
 		<nav>
 			总文章数 60<br>
-			总字数 <span class="post-count">172.8k</span>
+			总字数 <span class="post-count">173k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -181,7 +181,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：851字 | 预计阅读时长：2分钟
+        字数：1.1k字 | 预计阅读时长：3分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -198,7 +198,14 @@
 <li>时间依赖。一个区域的人流受到近期和远期时间影响。举个例子，早上8点发生的交通拥堵可能会影响到 9 点。此外，早高峰的交通状况可能在接连的几天都是相似的，每 24 小时一次。而且随着冬天的到来，早高峰时间可能越来越晚。温度下降，日初变晚会使人们起床时间变晚。</li>
 <li>外部影响。一些像天气和事件的外部因素可能会显著地改变城市内不同区域的人口流动。</li>
 </ol>
-
+<p>为了解决这些问题，我们提出了一个深度深空残差网络 (ST-ResNet) 对每个区域的流入和流出同时预测。我们的贡献有 4 点：</p>
+<ul>
+<li>ST-ResNet 使用基于卷积的残差神经网络对城市内两个邻近的和遥远的区域的空间依赖建模，同时还确信了模型的预测精度不会因为模型的深度增加而降低。</li>
+<li>我们将人口流动的时间属性分为三种，时间近邻、周期、趋势。ST-ResNet 使用三个残差网络对这些属性建模。</li>
+<li>ST-ResNet 动态地聚合三个上述网络的输出，给不同的分支和区域分配权重。聚合还融合了外部因素。</li>
+<li>我们使用北京出租车的轨迹数据和气象数据，纽约自行车轨迹数据。结果表示我们的方法比 6 个 baseline 都好。</li>
+</ul>
+<h1 id="Preliminaries"><a href="#Preliminaries" class="headerlink" title="Preliminaries"></a>Preliminaries</h1>
       
 
       
