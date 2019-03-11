@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig3.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig4.JPG">
-<meta property="og:updated_time" content="2019-03-11T12:35:59.554Z">
+<meta property="og:updated_time" content="2019-03-11T13:09:15.121Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta name="twitter:description" content="AAAI 2017, MSRA的城市人流预测，原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
@@ -73,7 +73,7 @@
 		</nav>
 		<nav>
 			总文章数 60<br>
-			总字数 <span class="post-count">174.2k</span>
+			总字数 <span class="post-count">174.5k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -184,7 +184,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2.3k字 | 预计阅读时长：8分钟
+        字数：2.6k字 | 预计阅读时长：9分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -229,7 +229,10 @@
 <p>图 3 的近邻组件使用了一些 2 通道流动矩阵对近邻时间依赖建模。令最近的部分为 $[\mathbf{X}_{t-l_c}, \mathbf{X}_{t-(l_c-1)}, \dots, \mathbf{X}_{t-1}]$，也称为近邻依赖序列。我们将他们沿第一个轴（时间）拼接，得到一个张量 $\mathbf{X}^{(0)}_c \in \mathbb{R}^{2l_c \times I \times J}$，然后使用卷积（图 3 中的 Conv1）：</p>
 <p>$$\tag{2}<br>\mathbf{X}^{(1)}_c = f(W^{(1)}_c \ast \mathbf{X}^{(0)}_c + b^{(1)}_c)<br>$$</p>
 <p>其中 $\ast$ 表示卷积；$f$ 是激活函数；$W^{(1)}_c, b^{(1)}_c$ 是参数。</p>
-<p><strong><em>Residual Unit.</em></strong> </p>
+<p><strong><em>Residual Unit.</em></strong> 尽管有 ReLU 职业那个的激活函数和正则化技巧，深度卷积网络在训练上还是很难。但我们仍然需要深度神经网络捕获非常大范围的依赖。对于典型的流量数据，假设输入大小是 $32 \times 32$，卷积核大小是 $3 \times 3$，如果我们想对城市范围的依赖建模，至少需要连续 15 个卷积层。为了解决这个问题，我们使用残差学习(He et al. 2015)，在训练超过 1000 层的网络时很有效。</p>
+<p>在我们的 ST-ResNet(如图 3)，我们在 Conv1 上堆叠 $L$ 个残差单元如下：</p>
+<p>$$\tag{3}<br>\mathbf{X}^{(l+1)}_c = \mathbf{X}^{(l)}_c + \mathcal{F}(\mathbf{X}^{(l)}_c; \theta^{(l)}_c), l = 1, \dots, L<br>$$</p>
+<p>$\mathcal{F}$ 是残差函数，即 ReLU + Convolution，如图 4(b)。我们还在 ReLU 之前加了 <em>Batch Normalization</em>。在第 $L$ 个残差单元前，我们使用了一个卷积层，图 3 中的 Conv2。2 个卷积和 $L$ 个残差单元，图 3 中的近邻组件的输出是 $\mathbf{X}^{(l+2)}_c$。</p>
 
       
 
