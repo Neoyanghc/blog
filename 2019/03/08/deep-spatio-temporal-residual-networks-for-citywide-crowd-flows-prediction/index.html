@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig3.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig4.JPG">
-<meta property="og:updated_time" content="2019-03-08T09:31:21.296Z">
+<meta property="og:updated_time" content="2019-03-11T12:35:59.554Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta name="twitter:description" content="AAAI 2017, MSRA的城市人流预测，原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
@@ -73,7 +73,7 @@
 		</nav>
 		<nav>
 			总文章数 60<br>
-			总字数 <span class="post-count">173.8k</span>
+			总字数 <span class="post-count">174.2k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -184,7 +184,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.8k字 | 预计阅读时长：7分钟
+        字数：2.3k字 | 预计阅读时长：8分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -225,7 +225,11 @@
 <h2 id="Structures-of-the-First-Three-Components"><a href="#Structures-of-the-First-Three-Components" class="headerlink" title="Structures of the First Three Components"></a>Structures of the First Three Components</h2><p>如图 4。</p>
 <center><img src="/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig4.JPG" alt="Figure4"></center>
 
-<p><strong><em>Convolution</em></strong> 一个城市通常很大，包含很多距离不同的区域。直观上来说，邻近区域的人流会影响其他区域，可以通过 CNN 有效地处理，CNN 也被证明在层级地捕获空间信息方面很强 (LeCun et al. 1998)。</p>
+<p><strong><em>Convolution</em></strong> 一个城市通常很大，包含很多距离不同的区域。直观上来说，邻近区域的人流会影响其他区域，可以通过 CNN 有效地处理，CNN 也被证明在层级地捕获空间信息方面很强 (LeCun et al. 1998)。而且，如果两个遥远地方通过地铁或高速公路连接，那么这两个区域间就有依赖关系。为了捕获任何区域的空间依赖，我们需要设计一个很多层的 CNN 模型，因为一个卷积层只考虑空间近邻，受限于它卷积核的大小。同样的问题在视频序列生成任务中也有，当输入和输出有同样的分辨率的时候(Mathieu, Couprie, and LeCun 2015)。为了避免下采样导致的分辨率损失引入了几种方法，同时还保持遥远的依赖关系(Long, Shelhamer, and Darrell 2015)。与传统的 CNN 不同的是，我们没有使用下采样，而是只使用卷积 (Jain et al. 2007)。如图 4(a)，图中有 3 个多级的 feature map，通过一些卷积操作相连。一个高层次的结点依赖于 9 个中间层次的结点，这些又依赖于低层次的所有结点。这意味着一个卷积可以很自然地捕获空间近邻依赖，堆叠卷积可以更多地捕获遥远的空间依赖。</p>
+<p>图 3 的近邻组件使用了一些 2 通道流动矩阵对近邻时间依赖建模。令最近的部分为 $[\mathbf{X}_{t-l_c}, \mathbf{X}_{t-(l_c-1)}, \dots, \mathbf{X}_{t-1}]$，也称为近邻依赖序列。我们将他们沿第一个轴（时间）拼接，得到一个张量 $\mathbf{X}^{(0)}_c \in \mathbb{R}^{2l_c \times I \times J}$，然后使用卷积（图 3 中的 Conv1）：</p>
+<p>$$\tag{2}<br>\mathbf{X}^{(1)}_c = f(W^{(1)}_c \ast \mathbf{X}^{(0)}_c + b^{(1)}_c)<br>$$</p>
+<p>其中 $\ast$ 表示卷积；$f$ 是激活函数；$W^{(1)}_c, b^{(1)}_c$ 是参数。</p>
+<p><strong><em>Residual Unit.</em></strong> </p>
 
       
 
