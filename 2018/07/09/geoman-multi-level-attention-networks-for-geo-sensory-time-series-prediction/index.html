@@ -18,7 +18,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig1.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig2.PNG">
-<meta property="og:updated_time" content="2019-03-14T09:25:37.432Z">
+<meta property="og:updated_time" content="2019-03-14T11:35:40.675Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction">
 <meta name="twitter:description" content="IJCAI 2018，看了一部分，还没看完。原文链接：GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction">
@@ -71,7 +71,7 @@
 		</nav>
 		<nav>
 			总文章数 60<br>
-			总字数 <span class="post-count">176.6k</span>
+			总字数 <span class="post-count">176.9k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -182,7 +182,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2.6k字 | 预计阅读时长：9分钟
+        字数：2.9k字 | 预计阅读时长：11分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -225,7 +225,11 @@
 <h3 id="Global-Spatial-Attention"><a href="#Global-Spatial-Attention" class="headerlink" title="Global Spatial Attention"></a>Global Spatial Attention</h3><p>对于一个监测器记录的目标时间序列，其他监测器是时间序列对其有直接影响。然而，影响权重是高度动态地，随时间变化。因为可能有很多不相关的序列，直接使用各种时间序列作为编码器的输入来捕获不同监测器之间的关系会导致很高的计算开销并且降低模型的能力。而且这样的影响权重受其他监测器的局部条件影响。举个例子，当强风从一个遥远地地方吹过来，这个区域的空气质量回比之前受影响的多。受这个现象的启发，我们开发了一个新的注意力机制捕获不同监测器间的动态关系。给定第 $i$ 个监测器作为我们的预测目标，另一个监测器 $l$，我们计算他们之间的注意力分数如下：</p>
 <p>$$<br>g^l_t = \mathbf{v}^{\rm T}_g \text{tanh} (\mathbf{W}_g [\mathbf{h}_{t-1}; \mathbf{s}_{t-1}] + \mathbf{U}_g \mathbf{y}^l + \mathbf{W}’_g \mathbf{X}^l \mathbf{u}_g + \mathbf{b}_g),<br>$$</p>
 <p>其中 $\mathbf{v}_g, \mathbf{u}_g, \mathbf{b}_g \in \mathbb{R}^T, \mathbf{W}_g \in \mathbb{R}^{T \times 2m}, \mathbf{U}_g \in \mathbb{R}^{T \times T}, \mathbf{W}’_g \in \mathbb{R}^{T \times N_l}$ 是参数。通过考虑目标序列和其他检测器的局部特征，这个注意力机制可以自适应地选择相关的监测器来做预测。同时，通过考虑编码器内前一隐藏状态和细胞状态，历史信息会跨时间流动。</p>
-
+<p>注意，空间因素也会对不同监测器之间的关系做出贡献。一般来说，geo-sensors 通过一个明确的或隐含的网络连接起来。这里，我们使用一个矩阵 $\mathbf{P} \in \mathbb{R}^{N_g \times N_g}$ 来衡量地理空间相似度（如地理距离的倒数），$P_{i,j}$ 表示监测器 $i$ 和 $j$ 之间的相似度。不同于注意力权重，地理相似度可以看作是先验知识。特别的说，如果 $N_g$ 很大，一个方法是使用最近邻或最相近的一组而不是所有的监测器。之后，我们使用一个 softmax 函数，确定所有的注意力权重之和为1，两个方法共同考虑地理相似度如下：</p>
+<p>$$\tag{4}<br>\beta^l_t = \frac{\text{exp}((1-\lambda)g^l_t + \lambda P_{i,l})}{\sum^{N_g}_{j=1} \text{exp}((1-\lambda)g^j_t + \lambda P_{i,j})},<br>$$</p>
+<p>其中，$\lambda$ 是一个可调的超惨。如果 $\lambda$ 大，这项会强制注意力权重等于地理相似度。全局注意力的输出向量计算如下：</p>
+<p>$$\tag{5}<br>\tilde{\mathbf{x}}^{global}_t = (\beta^1_t y^1_t, \beta^2_t y^2_t, \dots, \beta^{N_g}_t y^{N_g}_t)^{\rm T}.<br>$$</p>
+<h2 id="3-2-Temporal-Attention"><a href="#3-2-Temporal-Attention" class="headerlink" title="3.2 Temporal Attention"></a>3.2 Temporal Attention</h2>
       
 
       
