@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig3.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig4.JPG">
-<meta property="og:updated_time" content="2019-03-11T13:09:15.121Z">
+<meta property="og:updated_time" content="2019-03-14T06:02:15.712Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta name="twitter:description" content="AAAI 2017, MSRA的城市人流预测，原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
@@ -73,7 +73,7 @@
 		</nav>
 		<nav>
 			总文章数 60<br>
-			总字数 <span class="post-count">174.5k</span>
+			总字数 <span class="post-count">174.9k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -184,7 +184,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2.6k字 | 预计阅读时长：9分钟
+        字数：3k字 | 预计阅读时长：11分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -233,7 +233,9 @@
 <p>在我们的 ST-ResNet(如图 3)，我们在 Conv1 上堆叠 $L$ 个残差单元如下：</p>
 <p>$$\tag{3}<br>\mathbf{X}^{(l+1)}_c = \mathbf{X}^{(l)}_c + \mathcal{F}(\mathbf{X}^{(l)}_c; \theta^{(l)}_c), l = 1, \dots, L<br>$$</p>
 <p>$\mathcal{F}$ 是残差函数，即 ReLU + Convolution，如图 4(b)。我们还在 ReLU 之前加了 <em>Batch Normalization</em>。在第 $L$ 个残差单元前，我们使用了一个卷积层，图 3 中的 Conv2。2 个卷积和 $L$ 个残差单元，图 3 中的近邻组件的输出是 $\mathbf{X}^{(l+2)}_c$。</p>
-
+<p>同样的，使用上面的操作，我们可以构建 <em>周期</em> 和 <em>趋势</em> 组件，如图 3。假设时段 $p$ 有 $l_p$ 个时间间隔。那么 <em>时段</em> 依赖序列是 $[\mathbf{X}_{t-l_p \cdot p}, \mathbf{X}_{t-(l_p - 1) \cdot p}, \dots, \mathbf{X}_{t-p}]$。使用式 2 和 式 3 那样的卷积和 $L$ 个残差单元，<em>周期</em> 组件的输出是 $\mathbf{X}^{(L + 2)}_p$。同时，<em>趋势</em> 组件的输出是 $\mathbf{X}^{(L+2)}_q$，输入是 $[\mathbf{X}_{t-l_q \cdot q}, \mathbf{X}_{t-(l_q - 1) \cdot q}, \dots, \mathbf{X}_{t-q}]$，$l_q$ 是<em>趋势</em>依赖序列的长度，$q$ 是趋势跨度。需要注意的是 $p$ 和 $q$ 是两个不同类型的周期。在实际的实现中，$p$ 等于一天，描述的是日周期，$q$ 是一周，表示周级别的趋势。</p>
+<h2 id="The-Structure-of-the-External-Component"><a href="#The-Structure-of-the-External-Component" class="headerlink" title="The Structure of the External Component"></a>The Structure of the External Component</h2><p>交通流会被很多复杂的外部因素所影响，如天气或事件。图 5(a) 表示假期（春节）时的人流和平时的人流很不一样。图 5(b) 表示相比上周的同一天，突然而来的大雨会减少此时办公区域的人流。令 $E_t$ 为特征向量，表示预测的时段 $t$ 的外部因素。我们的实现中，我们主要考虑天气、假期事件、元数据（工作日、周末）。详细情况见表 1。为了预测时段 $t$ 的交通流，假期事件和元数据可以直接获得。然而，未来时段 $t$ 的天气预报不知道。可以使用时段 $t$ 的天气预报，或是 $t-1$ 时段的天气来近似。我们在 $E_t$ 上堆叠两个全连接层，第一层可以看作是每个子因素的嵌入层。第二层用来从低维映射到和 $\mathbf{X}_t$ 一样的高维上。图 3 中外部组件的输出表示为 $\mathbf{X}_{Ext}$，参数是$\theta_{Ext}$。</p>
+<h2 id="Fusion"><a href="#Fusion" class="headerlink" title="Fusion"></a>Fusion</h2>
       
 
       
