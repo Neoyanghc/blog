@@ -22,7 +22,9 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig4.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig5.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig6.JPG">
-<meta property="og:updated_time" content="2019-03-14T06:18:47.665Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Alg1.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Table1.JPG">
+<meta property="og:updated_time" content="2019-03-14T07:06:21.192Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta name="twitter:description" content="AAAI 2017, MSRA的城市人流预测，原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
@@ -75,7 +77,7 @@
 		</nav>
 		<nav>
 			总文章数 60<br>
-			总字数 <span class="post-count">175.4k</span>
+			总字数 <span class="post-count">175.8k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -186,7 +188,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：3.5k字 | 预计阅读时长：13分钟
+        字数：3.8k字 | 预计阅读时长：14分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -247,6 +249,21 @@
 <p><strong><em>Parametric-matrix-based fusion.</em></strong> 我们融合图 3 中前三个组件：</p>
 <p>$$\tag{4}<br>\mathbf{X}_{Res} = \mathbf{W}_c \odot \mathbf{X}^{(L+2)}_c + \mathbf{W}_p \odot \mathbf{X}^{(L+2)}_p + \mathbf{W}_q \odot \mathbf{X}^{(L+2)}_q<br>$$</p>
 <p>$\odot$ 是哈达玛乘积，$\mathbf{W}$ 是参数，分别调整三个组件的影响程度。</p>
+<p><strong><em>Fusing the external component.</em></strong> 我们直接地将前三个组件的输出和外部组件融合，如图3。最后，时段 $t$ 的预测值，表示为 $\hat{\mathbf{X}}_t$ 定义为：</p>
+<p>$$\tag{5}<br>\hat{\mathbf{X}}_t = \mathrm{tanh}(\mathbf{X}_{Res} + \mathbf{X}_{Ext})<br>$$</p>
+<p>我们的 ST-ResNet 可以从三个流动与朕和外部因素特征通过最下滑 MSE 来训练：</p>
+<p>$$\tag{6}<br>\mathcal{L}(\theta) = \Vert \mathbf{X}_t - \hat{\mathbf{X}}_t \Vert^2_2<br>$$</p>
+<h2 id="Algorithm-and-Optimization"><a href="#Algorithm-and-Optimization" class="headerlink" title="Algorithm and Optimization"></a>Algorithm and Optimization</h2><p>算法1描述了 ST-ResNet 的训练过程。首先从原始序列构造训练实例。然后通过反向传播，用 Adam 算法训练。</p>
+<center><img src="/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Alg1.JPG" alt="Algorithm1"></center>
+
+<h1 id="Experiments"><a href="#Experiments" class="headerlink" title="Experiments"></a>Experiments</h1><h2 id="Settings"><a href="#Settings" class="headerlink" title="Settings"></a>Settings</h2><p><strong>Datasets.</strong> 我们使用表 1 中展示的两个数据集。每个数据集都包含两个子集，轨迹和天气。</p>
+<ul>
+<li>TaxiBJ: 轨迹数据是出租车 GPS 数据和北京的气象数据，2013年7月1日到10月30日，2014年5月1日到6月30日，2015年5月1日到6月30日，2015年11月1日到2016年4月1日。使用定义2，我们获得两类人流。我们选择最后四周作为测试集，之前的都为训练集。</li>
+<li>BikeNYC: 轨迹数据是2014年NYC Bike系统中取的，从4月1日到9月30日。旅行数据包含：持续时间、起点终点站点ID，起始终止时间。在数据中，最后10天选做测试集，其他选做训练集。</li>
+</ul>
+<center><img src="/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Table1.JPG" alt="Table1"></center>
+
+<p><strong>Baselines.</strong> 我们对比了6个baselines：HA, ARIMA, SARIMA, VAR, ST-ANN, DeepST.</p>
 
       
 
