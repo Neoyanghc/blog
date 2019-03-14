@@ -18,7 +18,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig1.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig2.PNG">
-<meta property="og:updated_time" content="2018-07-16T08:44:40.777Z">
+<meta property="og:updated_time" content="2019-03-14T08:06:28.545Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction">
 <meta name="twitter:description" content="IJCAI 2018，看了一部分，还没看完。原文链接：GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction">
@@ -182,18 +182,22 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.8k字 | 预计阅读时长：6分钟
+        字数：1.7k字 | 预计阅读时长：6分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
       
         <p>IJCAI 2018，看了一部分，还没看完。原文链接：<a href="https://www.ijcai.org/proceedings/2018/476" target="_blank" rel="noopener">GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction</a><br><a id="more"></a></p>
-<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>大量的监测器被部署在各个地方连续地、协同地监测周围的环境，如空气质量。这些检测器生成很多时空序列数据，之间有着空间相关性。预测这些时空数据很有挑战，因为预测受很多因素影响，比如动态的时空关联和其他因素。我们在这篇论文中使用多级基于注意力机制的RNN模型，结合空间、气象和检测器数据来预测未来的监测数值。我们的模型由两部分组成：</p>
+<h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>大量的监测器被部署在各个地方，连续协同地监测周围的环境，如空气质量。这些检测器生成很多时空序列数据，之间有着空间相关性。预测这些时空数据很有挑战，因为预测受很多因素影响，比如动态的时空关联和其他因素。我们在这篇论文中使用多级基于注意力机制的 RNN 模型，结合空间、气象和检测器数据来预测未来的监测数值。我们的模型由两部分组成：</p>
 <ol>
 <li>多级注意力机制对时空依赖关系建模</li>
-<li>一个通用的融合模块对多领域的外部信息进行融合<br>实验用了两个真实的数据集，空气质量数据和水质监测数据，结果显示我们的模型比9个baseline都要好。</li>
+<li>一个通用的融合模块对多领域的外部信息进行融合</li>
 </ol>
-<h1 id="1-引言"><a href="#1-引言" class="headerlink" title="1 引言"></a>1 引言</h1><p>现实世界中有大量的检测器，如空气监测站。每个监测站都有一个地理位置，不断地生成时间序列数据。一组检测器不断的监测一个区域的环境，数据间有空间依赖关系。我们成这样的监测数据为<em>geosensory time series</em>。此外，一个检测器生成多种geo-sensory时间序列是很常见的，因为这个检测器同时监测不同的目标。举个例子，图1a，路上的循环检测器实时记录车辆通行情况，也记录他们的速度。图1b展示了检测器每五分钟生成的关于水质的三个不同的气候指标。除了监测，对于geo-sensory时间序列预测还有一个重要的需求就是交通预测。<br><img src="/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig1.PNG" alt="Fig1"><br>然而，预测geo-sensory时间序列是很有挑战性的，主要受两个因素影响：</p>
+<p>实验用了两个真实的数据集，空气质量数据和水质监测数据，结果显示我们的模型比9个baselines都要好。</p>
+<h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h1><p>现实世界中有大量的检测器，如空气监测站。每个监测站都有一个地理位置，不断地生成时间序列数据。一组检测器不断的监测一个区域的环境，数据间有空间依赖关系。我们成这样的监测数据为 <em>geosensory time series</em>。此外，一个检测器生成多种 geo-sensory 时间序列是很常见的，因为这个检测器同时监测不同的目标。举个例子，图1a，路上的循环检测器实时记录车辆通行情况，也记录他们的速度。图1b 展示了检测器每五分钟生成的关于水质的三个不同的气候指标。除了监测，对于 geo-sensory 时间序列预测还有一个重要的需求就是交通预测。</p>
+<center><img src="/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig1.PNG" alt="Fig1"></center>
+
+<p>然而，预测 geo-sensory 时间序列很有挑战性，主要受两个因素影响：</p>
 <ol>
 <li>动态时空关系<br>·检测器间复杂的关系。图1c展示了不同检测器的时间序列间的空间关系是高度动态的，随着时间不断改变。除此以外，geo-sensory时间序列根据地区有非线性的变化。当对动态关系建模时，传统方法（如概率图模型）的计算量会很大，因为他们有很多参数。<br>·检测器内部的动态关系。首先，一个geo-sensory时间序列通常由一种周期模式（如，图1c中的$S_1$），这种模式一直变化，并且地理上也有改变。其次，检测器记录经常有很大的振动，很快地减少前一个数值的影响。因此，如何选择一个时间间隔来预测也是一个问题。</li>
 <li>外部因素。<br>检测器数据也被周围的环境影响，比如气象（例如强风），几点（比如早晚高峰）还有土地使用情况等。</li>
@@ -204,12 +208,14 @@
 <li><em>外部因素融合模型</em>。我们设计了一个通用融合模型融合不同领域的外部因素。学习到的隐含表示会输入至多级注意力网络中来提升这些外部因素的重要性。</li>
 <li><em>真实的评价</em>。我们基于两个真实的数据集评估我们的方法。大量的实验证明了我们的方法相比于baseline的优越性。</li>
 </ol>
-<h1 id="2-Preliminary"><a href="#2-Preliminary" class="headerlink" title="2 Preliminary"></a>2 Preliminary</h1><h2 id="2-1-notations"><a href="#2-1-notations" class="headerlink" title="2.1 notations"></a>2.1 notations</h2><p>假设，有$N_g$个检测器，每个都生成$N_l$种时间序列。我们指定其中的一个为<em>target series</em>来预测，其它序列作为特征。时间窗为$T$，我们使用$\rm Y = (y^1, y^2, …, y^{N_g}) \in \mathbb{R}^{N_g \times T} $来表示所有目标序列在过去$T$个小时的监测值，其中$y^i \in \mathbb{R}^T$属于监测器$i$。我们使用$X^i = (x^{i, 1}, x^{i, 2}, …, x^{i, N_l})^{\rm T} = (x^i_1, x^i_2, …, x^i_T) \in \mathbb{R}^{N_l \times T} \in \mathbb{R}^{N_l \times T}$作为检测器$i$的局部特征，其中$x^{i,k} \in \mathbb{R}^T$是这个检测器的第$k$个时间序列，$x^i_t = (x^{i,1}_t, x^{i,2}_t, …, x^{i,N_l}_t)^{\rm T} \in \mathbb{R}^{N_l}$表示检测器$i$在时间$t$的所有时间序列的值。除了检测器$i$的局部特征，由于不同检测器间的空间关系，其他的检测器会共享对于预测有用的大量的信息。为了这个目的，我们融合每个检测器的局部特征到集合$\mathcal{X}^i = {X^1, X^2, …, X^{N_g}}$中作为检测器$i$的全局特征。</p>
-<h2 id="2-2-问题陈述"><a href="#2-2-问题陈述" class="headerlink" title="2.2 问题陈述"></a>2.2 问题陈述</h2><p>给定每个检测器之前的值和外部因素，预测检测器$i$在未来$\tau$个小时的值，表示为$\hat{y}^i = (\hat{y}^i_{T+1}, \hat{y}^i_{T+2}, …, \hat{y}^i_{T+\tau})^{\rm T} \in \mathbb{R}^{\tau}$</p>
-<h1 id="3-多级注意力网络"><a href="#3-多级注意力网络" class="headerlink" title="3 多级注意力网络"></a>3 多级注意力网络</h1><p><img src="/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig2.PNG" alt="Fig2"><br>图2展示了我们方法的框架。基于编码解码架构[Cho et al., 2014b]，我们用两个分开的LSTM，一个对输入序列编码，也就是对历史的geo-sensory时间序列，另一个来预测输出的序列$\hat{y}^i$。更具体的来说，我们的模型GeoMAN有两个主要部分：</p>
+<h1 id="2-Preliminary"><a href="#2-Preliminary" class="headerlink" title="2 Preliminary"></a>2 Preliminary</h1><h2 id="2-1-Notations"><a href="#2-1-Notations" class="headerlink" title="2.1 Notations"></a>2.1 Notations</h2><p>假设，有 $N_g$ 个检测器，每个都生成 $N_l$ 种时间序列。我们指定其中的一个为 <em>target series</em> 来预测，其它序列作为特征。时间窗为 $T$，我们使用 $\rm Y = (y^1, y^2, …, y^{N_g}) \in \mathbb{R}^{N_g \times T} $ 来表示所有目标序列在过去 $T$ 个小时的监测值，其中 $y^i \in \mathbb{R}^T$ 属于监测器 $i$。我们使用 $X^i = (x^{i, 1}, x^{i, 2}, …, x^{i, N_l})^{\rm T} = (x^i_1, x^i_2, …, x^i_T) \in \mathbb{R}^{N_l \times T} \in \mathbb{R}^{N_l \times T}$ 作为检测器 $i$ 的局部特征，其中 $x^{i,k} \in \mathbb{R}^T$ 是这个检测器的第 $k$ 个时间序列，$x^i_t = (x^{i,1}_t, x^{i,2}_t, …, x^{i,N_l}_t)^{\rm T} \in \mathbb{R}^{N_l}$ 表示检测器 $i$ 在时间 $t$ 的所有时间序列的值。除了检测器 $i$ 的局部特征，由于不同检测器间的空间关系，其他的检测器会共享对于预测有用的大量的信息。为了这个目的，我们融合每个检测器的局部特征到集合 $\mathcal{X}^i = {X^1, X^2, …, X^{N_g}}$ 中作为检测器 $i$ 的全局特征。</p>
+<h2 id="2-2-Problem-Statement"><a href="#2-2-Problem-Statement" class="headerlink" title="2.2 Problem Statement"></a>2.2 Problem Statement</h2><p>给定每个检测器之前的值和外部因素，预测检测器$i$在未来$\tau$个小时的值，表示为$\hat{y}^i = (\hat{y}^i_{T+1}, \hat{y}^i_{T+2}, …, \hat{y}^i_{T+\tau})^{\rm T} \in \mathbb{R}^{\tau}$</p>
+<h1 id="3-Multi-level-Attention-Networks"><a href="#3-Multi-level-Attention-Networks" class="headerlink" title="3 Multi-level Attention Networks"></a>3 Multi-level Attention Networks</h1><center><img src="/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig2.PNG" alt="Fig2"></center>
+
+<p>图 2 展示了我们方法的框架。基于编码解码架构[Cho et al., 2014b]，我们用两个分开的 LSTM，一个对输入序列编码，也就是对历史的 geo-sensory 时间序列，另一个来预测输出的序列 $\hat{y}^i$。更具体的来说，我们的模型 GeoMAN 有两个主要部分：</p>
 <ol>
-<li>多级注意力机制。包含一个带有两类空间注意力机制的编码器和一个带有时间注意力的解码器。在编码器，我们开发了两种不同的注意力机制，局部空间注意力和全局空间注意力，如图2所示，这两种注意力机制通过前几步编码器的隐藏状态、前几步检测器的值和空间信息（检测器网络），可以在每个时间步上捕获检测器间的复杂关系。在解码器，我们使用了一个时间注意力机制来适应地选择之前的时间段来做预测。</li>
-<li>外部因素融合。这个模块用来处理外部因素的影响，输出会作为解码器的一部分输入。这里，我们使用$h_t \in \mathbb{R}^m$和$s_t \in \mathbb{R}^m$来表示编码器在时间$t$的隐藏状态和细胞状态。$d_t \in \mathbb{R}^n$和$s’ \in \mathbb{R}^n$表示解码器的隐藏状态和细胞状态。</li>
+<li>多级注意力机制。包含一个带有两类空间注意力机制的编码器和一个带有时间注意力的解码器。在编码器，我们开发了两种不同的注意力机制，局部空间注意力和全局空间注意力，如图 2 所示，这两种注意力机制通过前几步编码器的隐藏状态、前几步检测器的值和空间信息（检测器网络），可以在每个时间步上捕获检测器间的复杂关系。在解码器，我们使用了一个时间注意力机制来适应地选择之前的时间段来做预测。</li>
+<li>外部因素融合。这个模块用来处理外部因素的影响，输出会作为解码器的一部分输入。这里，我们使用 $h_t \in \mathbb{R}^m$ 和 $s_t \in \mathbb{R}^m$ 来表示编码器在时间 $t$ 的隐藏状态和细胞状态。$d_t \in \mathbb{R}^n$ 和 $s’ \in \mathbb{R}^n$ 表示解码器的隐藏状态和细胞状态。</li>
 </ol>
 
       
