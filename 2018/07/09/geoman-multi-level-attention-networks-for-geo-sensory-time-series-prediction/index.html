@@ -18,7 +18,8 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig1.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig2.PNG">
-<meta property="og:updated_time" content="2019-03-17T07:35:00.023Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Table1.JPG">
+<meta property="og:updated_time" content="2019-03-17T08:06:21.596Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction">
 <meta name="twitter:description" content="IJCAI 2018，看了一部分，还没看完。原文链接：GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction">
@@ -71,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 60<br>
-			总字数 <span class="post-count">177.9k</span>
+			总字数 <span class="post-count">178.1k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -182,7 +183,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：3.8k字 | 预计阅读时长：15分钟
+        字数：4.1k字 | 预计阅读时长：15分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -244,7 +245,13 @@
 <p>因为我们的方法是平滑且可微的，可以通过反向传播训练。在训练时，我们使用 Adam，最小化 MSE。</p>
 <p>$$\tag{11}<br>\mathcal{L}(\theta) = \Vert \hat{\mathbf{y}}^i - \mathbf{y}^i \Vert^2_2,<br>$$</p>
 <h1 id="4-Experiments"><a href="#4-Experiments" class="headerlink" title="4 Experiments"></a>4 Experiments</h1><h2 id="4-1-Settings"><a href="#4-1-Settings" class="headerlink" title="4.1 Settings"></a>4.1 Settings</h2><p>我们在两个数据集中开展了实验，每个数据集包含三个子集：气象数据、POI、监测器网络数据。</p>
-
+<ul>
+<li><p>水质数据集：中国东南的一个城市的供水系统中的监测器提供了长达三年的每5分钟一个记录的数据，包含了残余氯(RC)、浑浊度和PH值等。我们将 RC 作为目标时间序列，因为它在环境科学中作为常用的水质指标。一共有 14 个监测器，监测 10 个指标，它们之间通过管道网络相连。我们使用 Liu et al., 2016a 提出的指标作为这个数据集的相似度矩阵。</p>
+</li>
+<li><p>空气质量：从一个公开数据集抓取的，这个数据集包含不同污染物的浓度，还有气象数据，北京地区一共 35 个监测器。主要污染物是 PM2.5，因此我们将它作为目标。我们只使用空间距离的倒数表示两个监测器之间的相似度。</p>
+</li>
+</ul>
+<center><img src="/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Table1.JPG" alt="Table1"></center>
       
 
       
