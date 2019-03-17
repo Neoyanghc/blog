@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig1.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig2.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Table1.JPG">
-<meta property="og:updated_time" content="2019-03-17T08:23:05.473Z">
+<meta property="og:updated_time" content="2019-03-17T10:08:13.322Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction">
 <meta name="twitter:description" content="IJCAI 2018，看了一部分，还没看完。原文链接：GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction">
@@ -72,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 60<br>
-			总字数 <span class="post-count">178.7k</span>
+			总字数 <span class="post-count">178.8k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -183,7 +183,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：4.6k字 | 预计阅读时长：18分钟
+        字数：4.7k字 | 预计阅读时长：18分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -260,6 +260,7 @@
 <p>对于 ARIMA，我们用前六个小时的数据作为输入。stMTMVL 和 FFA，我们使用和作者一样的设置。和 GeoMAN 类似，我们使用前 $T \in {6, 12, 24, 36, 48}$ 个小时的数据作为其他模型的输入。最后，我们测试了不同的超参数，得到了每个模型的最好效果。</p>
 <h2 id="4-3-Model-Comparsion"><a href="#4-3-Model-Comparsion" class="headerlink" title="4.3 Model Comparsion"></a>4.3 Model Comparsion</h2><p>我们在两个数据集上比较了模型和 baselines。为了公平，我们在表 2 展示了每个方法的最好性能。</p>
 <p>我们的方法在水质预测上得到了最好的性能。比 state-of-the-art 的 DA-RNN 在两个指标上分别提升了 14.2% 和 13.5%。因为 RC 浓度有一个确定的周期模式，stDNN 和 基于 RNN 的模型比 stMTMVL 和 FFA 获得了更好的效果，因为他们能捕获更长的时间依赖。对比 LSTM 智能预测一个未来的时间步，GeoMAN 和 Seq2seq 由于解码器的存在有很大的提升。GBRT 比大部分方法也要好，体现了集成学习的优势。</p>
+<p>对比数据相对稳定的水质数据集，PM2.5 的浓度有些时候震荡得很厉害，使得很难预测。表 2 展示了北京的空气质量数据集上一个全面的对比。可以看到我们的模型有最好的效果。我们主要讨论下 MAE。我们的方法比这些方法的 MAE 相对低 7.2% 和 63.5%。</p>
 
       
 
