@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig1.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig2.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Table1.JPG">
-<meta property="og:updated_time" content="2019-03-17T08:06:21.596Z">
+<meta property="og:updated_time" content="2019-03-17T08:18:21.899Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction">
 <meta name="twitter:description" content="IJCAI 2018，看了一部分，还没看完。原文链接：GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction">
@@ -72,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 60<br>
-			总字数 <span class="post-count">178.1k</span>
+			总字数 <span class="post-count">178.5k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -183,7 +183,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：4.1k字 | 预计阅读时长：15分钟
+        字数：4.4k字 | 预计阅读时长：17分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -244,7 +244,7 @@
 <p>其中，$\mathbf{W}_m \in \mathbb{R}^{n \times (m + n))}$ 和 $\mathbf{b}_m \in \mathbb{R}^n$ 将 $[\mathbf{c}_{t’}; \mathbf{d}_{t’}] \in \mathbb{R}^{m + n}$ 映射到解码器隐藏状态的空间。最后，我们用一个线性变换生成最终结果。</p>
 <p>因为我们的方法是平滑且可微的，可以通过反向传播训练。在训练时，我们使用 Adam，最小化 MSE。</p>
 <p>$$\tag{11}<br>\mathcal{L}(\theta) = \Vert \hat{\mathbf{y}}^i - \mathbf{y}^i \Vert^2_2,<br>$$</p>
-<h1 id="4-Experiments"><a href="#4-Experiments" class="headerlink" title="4 Experiments"></a>4 Experiments</h1><h2 id="4-1-Settings"><a href="#4-1-Settings" class="headerlink" title="4.1 Settings"></a>4.1 Settings</h2><p>我们在两个数据集中开展了实验，每个数据集包含三个子集：气象数据、POI、监测器网络数据。</p>
+<h1 id="4-Experiments"><a href="#4-Experiments" class="headerlink" title="4 Experiments"></a>4 Experiments</h1><h2 id="4-1-Settings"><a href="#4-1-Settings" class="headerlink" title="4.1 Settings"></a>4.1 Settings</h2><h3 id="Datasets"><a href="#Datasets" class="headerlink" title="Datasets"></a>Datasets</h3><p>我们在两个数据集中开展了实验，每个数据集包含三个子集：气象数据、POI、监测器网络数据。</p>
 <ul>
 <li><p>水质数据集：中国东南的一个城市的供水系统中的监测器提供了长达三年的每5分钟一个记录的数据，包含了残余氯(RC)、浑浊度和PH值等。我们将 RC 作为目标时间序列，因为它在环境科学中作为常用的水质指标。一共有 14 个监测器，监测 10 个指标，它们之间通过管道网络相连。我们使用 Liu et al., 2016a 提出的指标作为这个数据集的相似度矩阵。</p>
 </li>
@@ -252,6 +252,13 @@
 </li>
 </ul>
 <center><img src="/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Table1.JPG" alt="Table1"></center>
+
+<p>对于水质数据集，我们将数据分成了不重叠的训练集、验证集和测试集，去年的前一半作为验证机，去年的后半段作为测试集。可惜的是，我们在第二个数据集上没能获得很多的数据，因此我们使用了8：1：1的比例划分。</p>
+<h3 id="Evaluation-Metrics"><a href="#Evaluation-Metrics" class="headerlink" title="Evaluation Metrics"></a>Evaluation Metrics</h3><p>我们使用多个标准评价模型，RMSE 和 MAE。</p>
+<h3 id="Hyperparameters"><a href="#Hyperparameters" class="headerlink" title="Hyperparameters"></a>Hyperparameters</h3><p>我们令 $\tau = 6$，做短期预测。在训练阶段，batch size 256，学习率 0.001。外部因素融合模块，我使用 $\mathbb{R}^6$ 嵌入监测器 ID，时间特征 $\mathbb{R}^10$。我们的模型一共 4 个超参数，$\lambda$ 根据经验设置，从 0.1 到 0.5。对于窗口长度 $T$，我们设为 $T \in {6, 12, 24, 36, 48 }$。为了简单，我们将编码器和解码器采用同样的隐藏维数，网格搜索 ${32, 64, 128, 256}$。我们堆叠 LSTM 来提高性能，层数记为 $q$。验证集上得到的最好参数是 $q = 2, m = n = 64, \lambda = 2$。</p>
+<h2 id="4-2-Baselines"><a href="#4-2-Baselines" class="headerlink" title="4.2 Baselines"></a>4.2 Baselines</h2><p>ARIMA, VAR, GBRT, FFA, stMTMVL, stDNN, LSTM, Seq2seq, DA-RNN。</p>
+<p>对于 ARIMA，我们用前六个小时的数据作为输入。stMTMVL 和 FFA，我们使用和作者一样的设置。和 GeoMAN 类似，我们使用前 $T \in {6, 12, 24, 36, 48}$ 个小时的数据作为其他模型的输入。最后，我们测试了不同的超参数，得到了每个模型的最好效果。</p>
+
       
 
       
