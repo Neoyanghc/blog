@@ -18,7 +18,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig1.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig2.PNG">
-<meta property="og:updated_time" content="2019-03-15T11:15:21.928Z">
+<meta property="og:updated_time" content="2019-03-17T07:35:00.023Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction">
 <meta name="twitter:description" content="IJCAI 2018，看了一部分，还没看完。原文链接：GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction">
@@ -71,7 +71,7 @@
 		</nav>
 		<nav>
 			总文章数 60<br>
-			总字数 <span class="post-count">177.6k</span>
+			总字数 <span class="post-count">177.9k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -182,7 +182,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：3.5k字 | 预计阅读时长：13分钟
+        字数：3.8k字 | 预计阅读时长：15分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -238,6 +238,12 @@
 <h2 id="3-4-Encoder-decoder-amp-Model-Training"><a href="#3-4-Encoder-decoder-amp-Model-Training" class="headerlink" title="3.4 Encoder-decoder &amp; Model Training"></a>3.4 Encoder-decoder &amp; Model Training</h2><p>编码器中，我们简单地从局部空间注意力和全局空间注意力聚合输出：</p>
 <p>$$\tag{9}<br>\tilde{\mathbf{x}}_t = [\tilde{\mathbf{x}}^{local}_t; \tilde{\mathbf{x}}^{global}_t],<br>$$</p>
 <p>其中 $\tilde{\mathbf{x}}_t \in \mathbb{R}^{N_l + N_g}$。我们将拼接 $\tilde{\mathbf{x}}_t$ 作为编码器的新输入，使用 $\mathbf{h}_t = f_e(\mathbf{h}_{t-1}, \tilde{\mathbf{x}}_t)$ 更新时间 $t$ 的隐藏状态，$f_e$ 是一个 LSTM 单元。</p>
+<p>解码器中，一旦我们获得了时间 $t’$ 的上下文向量 $\mathbf{c}_{t’}$ 的带权和，我们将他与外部因素融合模块的输出 $\mathbf{ex}_{t’}$ 还有解码器的最后一个输出 $\hat{y}^i_{t’-1}$ 融合，用 $\mathbf{d}_{t’} = f_d (\mathbf{d}_{t’-1}, [\hat{y}^i_{t’-1}; \mathbf{ex}_{t’}; \mathbf{c}_{t’}])$ 更新解码器的隐藏状态，$f_d$ 是解码器中使用的 LSTM 单元。然后，我们讲上下文向量 $\mathbf{c}_{t’}$ 和隐藏状态 $\mathbf{d}_{t’}$ 拼接，得到新的隐藏状态，然后做最后的预测：</p>
+<p>$$\tag{10}<br>\hat{y}^i_{t’} = \mathbf{v}^{\rm T}_y (\mathbf{W}_m [\mathbf{c}_{t’}; \mathbf{b}_{t’}] + \mathbf{b}_m) + b_y,<br>$$</p>
+<p>其中，$\mathbf{W}_m \in \mathbb{R}^{n \times (m + n))}$ 和 $\mathbf{b}_m \in \mathbb{R}^n$ 将 $[\mathbf{c}_{t’}; \mathbf{d}_{t’}] \in \mathbb{R}^{m + n}$ 映射到解码器隐藏状态的空间。最后，我们用一个线性变换生成最终结果。</p>
+<p>因为我们的方法是平滑且可微的，可以通过反向传播训练。在训练时，我们使用 Adam，最小化 MSE。</p>
+<p>$$\tag{11}<br>\mathcal{L}(\theta) = \Vert \hat{\mathbf{y}}^i - \mathbf{y}^i \Vert^2_2,<br>$$</p>
+<h1 id="4-Experiments"><a href="#4-Experiments" class="headerlink" title="4 Experiments"></a>4 Experiments</h1><h2 id="4-1-Settings"><a href="#4-1-Settings" class="headerlink" title="4.1 Settings"></a>4.1 Settings</h2><p>我们在两个数据集中开展了实验，每个数据集包含三个子集：气象数据、POI、监测器网络数据。</p>
 
       
 
