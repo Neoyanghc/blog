@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig1.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig2.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Table1.JPG">
-<meta property="og:updated_time" content="2019-03-17T10:08:13.322Z">
+<meta property="og:updated_time" content="2019-03-18T00:53:22.585Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction">
 <meta name="twitter:description" content="IJCAI 2018，看了一部分，还没看完。原文链接：GeoMAN: Multi-level Attention Networks for Geo-sensory Time Series Prediction">
@@ -183,7 +183,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：4.7k字 | 预计阅读时长：18分钟
+        字数：4.8k字 | 预计阅读时长：18分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -209,7 +209,7 @@
 <li><em>外部因素融合模型</em>。我们设计了一个通用融合模型融合不同领域的外部因素。学习到的隐含表示会输入至多级注意力网络中来提升这些外部因素的重要性。</li>
 <li><em>真实的评价</em>。我们基于两个真实的数据集评估我们的方法。大量的实验证明了我们的方法相比于baseline的优越性。</li>
 </ol>
-<h1 id="2-Preliminary"><a href="#2-Preliminary" class="headerlink" title="2 Preliminary"></a>2 Preliminary</h1><h2 id="2-1-Notations"><a href="#2-1-Notations" class="headerlink" title="2.1 Notations"></a>2.1 Notations</h2><p>假设，有 $N_g$ 个检测器，每个都生成 $N_l$ 种时间序列。我们指定其中的一个为 <em>target series</em> 来预测，其它序列作为特征。时间窗为 $T$，我们使用 $\mathbf{Y} = (\mathbf{y}^1, \mathbf{y}^2, …, \mathbf{y}^{N_g}) \in \mathbb{R}^{N_g \times T}$ 来表示所有目标序列在过去 $T$ 个小时的监测值，其中 $\mathbf{y}^i \in \mathbb{R}^T$ 属于监测器 $i$。我们使用 $\mathbf{X}^i = (\mathbf{x}^{i, 1}, \mathbf{x}^{i, 2}, …, \mathbf{x}^{i, N_l})^{\rm T} = (\mathbf{x}^i_1, \mathbf{x}^i_2, …, \mathbf{x}^i_T) \in \mathbb{R}^{N_l \times T} \in \mathbb{R}^{N_l \times T}$ 作为检测器 $i$ 的局部特征，其中 $\mathbf{x}^{i,k} \in \mathbb{R}^T$ 是这个检测器的第 $k$ 个时间序列，$\mathbf{x}^i_t = (x^{i,1}_t, x^{i,2}_t, …, x^{i,N_l}_t)^{\rm T} \in \mathbb{R}^{N_l}$ 表示检测器 $i$ 在时间 $t$ 的所有时间序列的值。除了检测器 $i$ 的局部特征，由于不同检测器间的空间关系，其他的检测器会共享对于预测有用的大量的信息。为了这个目的，我们融合每个检测器的局部特征到集合 $\mathcal{X}^i = {\mathbf{X}^1, \mathbf{X}^2, …, \mathbf{X}^{N_g}}$ 中作为检测器 $i$ 的全局特征。</p>
+<h1 id="2-Preliminary"><a href="#2-Preliminary" class="headerlink" title="2 Preliminary"></a>2 Preliminary</h1><h2 id="2-1-Notations"><a href="#2-1-Notations" class="headerlink" title="2.1 Notations"></a>2.1 Notations</h2><p>假设，有 $N_g$ 个检测器，每个都生成 $N_l$ 种时间序列。我们指定其中的一个为 <em>target series</em> 来预测，其它序列作为特征。时间窗为 $T$，我们使用 $\mathbf{Y} = (\mathbf{y}^1, \mathbf{y}^2, …, \mathbf{y}^{N_g}) \in \mathbb{R}^{N_g \times T}$ 来表示所有目标序列在过去 $T$ 个小时的监测值，其中 $\mathbf{y}^i \in \mathbb{R}^T$ 属于监测器 $i$。我们使用 $\mathbf{X}^i = (\mathbf{x}^{i, 1}, \mathbf{x}^{i, 2}, …, \mathbf{x}^{i, N_l})^{\rm T} = (\mathbf{x}^i_1, \mathbf{x}^i_2, …, \mathbf{x}^i_T) \in \mathbb{R}^{N_l \times T}$ 作为检测器 $i$ 的局部特征，其中 $\mathbf{x}^{i,k} \in \mathbb{R}^T$ 是这个检测器的第 $k$ 个时间序列，$\mathbf{x}^i_t = (x^{i,1}_t, x^{i,2}_t, …, x^{i,N_l}_t)^{\rm T} \in \mathbb{R}^{N_l}$ 表示检测器 $i$ 在时间 $t$ 的所有时间序列的值。除了检测器 $i$ 的局部特征，由于不同检测器间的空间关系，其他的检测器会共享对于预测有用的大量的信息。为了这个目的，我们融合每个检测器的局部特征到集合 $\mathcal{X}^i = {\mathbf{X}^1, \mathbf{X}^2, …, \mathbf{X}^{N_g}}$ 中作为检测器 $i$ 的全局特征。</p>
 <h2 id="2-2-Problem-Statement"><a href="#2-2-Problem-Statement" class="headerlink" title="2.2 Problem Statement"></a>2.2 Problem Statement</h2><p>给定每个检测器之前的值和外部因素，预测检测器$i$在未来$\tau$个小时的值，表示为$\hat{\mathbf{y}}^i = (\hat{y}^i_{T+1}, \hat{y}^i_{T+2}, …, \hat{y}^i_{T+\tau})^{\rm T} \in \mathbb{R}^{\tau}$.</p>
 <h1 id="3-Multi-level-Attention-Networks"><a href="#3-Multi-level-Attention-Networks" class="headerlink" title="3 Multi-level Attention Networks"></a>3 Multi-level Attention Networks</h1><center><img src="/blog/2018/07/09/geoman-multi-level-attention-networks-for-geo-sensory-time-series-prediction/Fig2.PNG" alt="Fig2"></center>
 
@@ -260,7 +260,7 @@
 <p>对于 ARIMA，我们用前六个小时的数据作为输入。stMTMVL 和 FFA，我们使用和作者一样的设置。和 GeoMAN 类似，我们使用前 $T \in {6, 12, 24, 36, 48}$ 个小时的数据作为其他模型的输入。最后，我们测试了不同的超参数，得到了每个模型的最好效果。</p>
 <h2 id="4-3-Model-Comparsion"><a href="#4-3-Model-Comparsion" class="headerlink" title="4.3 Model Comparsion"></a>4.3 Model Comparsion</h2><p>我们在两个数据集上比较了模型和 baselines。为了公平，我们在表 2 展示了每个方法的最好性能。</p>
 <p>我们的方法在水质预测上得到了最好的性能。比 state-of-the-art 的 DA-RNN 在两个指标上分别提升了 14.2% 和 13.5%。因为 RC 浓度有一个确定的周期模式，stDNN 和 基于 RNN 的模型比 stMTMVL 和 FFA 获得了更好的效果，因为他们能捕获更长的时间依赖。对比 LSTM 智能预测一个未来的时间步，GeoMAN 和 Seq2seq 由于解码器的存在有很大的提升。GBRT 比大部分方法也要好，体现了集成学习的优势。</p>
-<p>对比数据相对稳定的水质数据集，PM2.5 的浓度有些时候震荡得很厉害，使得很难预测。表 2 展示了北京的空气质量数据集上一个全面的对比。可以看到我们的模型有最好的效果。我们主要讨论下 MAE。我们的方法比这些方法的 MAE 相对低 7.2% 和 63.5%。</p>
+<p>对比数据相对稳定的水质数据集，PM2.5 的浓度有些时候震荡得很厉害，使得很难预测。表 2 展示了北京的空气质量数据集上一个全面的对比。可以看到我们的模型有最好的效果。我们主要讨论下 MAE。我们的方法比这些方法的 MAE 相对低 7.2% 和 63.5%，展示出了比其他方法更好的泛化效果。另一个有趣的现象是 stMTMVL 在水质预测上表现很好，在空气质量上</p>
 
       
 
