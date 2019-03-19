@@ -24,7 +24,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/Table3.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/Table4.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/Fig5.JPG">
-<meta property="og:updated_time" content="2019-03-05T00:59:50.148Z">
+<meta property="og:updated_time" content="2019-03-19T08:50:32.008Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spatiotemporal Multi-Graph Convolution Network for Ride-hailing Demand Forecasting">
 <meta name="twitter:description" content="AAAI 2019，滴滴的网约车需求预测，5个点预测1个点。空间依赖建模上：以图的形式表示数据，从空间地理关系、区域功能相似度、区域交通连通性三个角度构造了三个不同的图，提出了多图卷积，分别用 k 阶 ChebNet 对每个图做图卷积，然后将多个图的卷积结果进行聚合(sum, average 等)成一个图；时间依赖建模上：提出了融合背景信息的 Contextual Gated RNN (CGRNN">
@@ -223,7 +223,7 @@
 
 <h2 id="Spatial-dependency-modeling"><a href="#Spatial-dependency-modeling" class="headerlink" title="Spatial dependency modeling"></a>Spatial dependency modeling</h2><p>我们用图将区域间关系建模成三种类型，（1）邻居图 $\mathcal{G}_N = (V, \boldsymbol{A}_N)$，编码了空间相近程度，（2）功能相似度图 $\mathcal{G}_F = (V, \boldsymbol{A}_F)$，编码了区域的 POI 的相似度，（3）连接图 $\mathcal{G}_T = (V, \boldsymbol{A}_T)$，编码了距离较远的区域的连通性。我们的方法可以轻易地扩展到其他的图上。</p>
 <p><strong>Neighborhood</strong> 区域的邻居基于空间近邻程度定义。我们将 $3 \times 3$ 区域中的最中间的那个区域与他邻接的 8 个区域相连。</p>
-<p>$$\tag{3}<br>A_{N, ij} = \begin{cases}<br>1, \quad v_i \quad \text{and} \quad v_j \quad \text{are} \quad \text{adjacent}\\<br>0, \text{otherwise}<br>\end{cases}<br>$$</p>
+<p>$$\tag{3}<br>A_{N, ij} = \begin{cases}<br>1, \quad v_i \quad \text{and} \quad v_j \quad \text{are} \quad \text{adjacent}\\<br>0, \quad \text{otherwise}<br>\end{cases}<br>$$</p>
 <p><strong>Functional similarity</strong> 对一个区域做预测的时候，很自然的会想到和这个区域在功能上相似的区域会有帮助。区域功能可以由 POI 刻画，两个顶点间的边定义为 POI 的相似度：</p>
 <p>$$\tag{3}<br>A_{S,i,j} = \text{sim}(P_{v_i}, P_{v_j}) \in [0, 1]<br>$$</p>
 <p>其中 $P_{v_i}, P_{v_j}$ 是区域 $v_i$ 和 $v_j$ 的 POI 向量，维度等于 POI 种类的个数，每个分量表示这个区域内这个 POI 类型的数量。</p>
