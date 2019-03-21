@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="https://davidham3.github.io">
   <title>Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Abstract由于大规模的交通数据越来越多，而且交通预测在实际中很重要，交通预测在 AI 领域引起越来越多的关注。举个例子，一个精确的出租车需求预测可以协助出租车公司预分配出租车。交通预测的关键在于如何对复杂的空间依赖和时间动态性建模。尽管两个因素在建模的时候都会考虑，当前的方法仍会做很强的假设，即空间依赖在时间上是平稳的，时间依赖是严格周期的。然而，实际中的空间依赖可能是动态的（即随时间的变">
+  <meta name="description" content="AAAI 2019。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta name="keywords" content="deep learning,Graph,graph convolutional network,STDM,Time Series">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta property="og:url" content="https://davidham3.github.io/2019/03/21/revisiting-spatial-temporal-similarity-a-deep-learning-framework-for-traffic-prediction/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="Abstract由于大规模的交通数据越来越多，而且交通预测在实际中很重要，交通预测在 AI 领域引起越来越多的关注。举个例子，一个精确的出租车需求预测可以协助出租车公司预分配出租车。交通预测的关键在于如何对复杂的空间依赖和时间动态性建模。尽管两个因素在建模的时候都会考虑，当前的方法仍会做很强的假设，即空间依赖在时间上是平稳的，时间依赖是严格周期的。然而，实际中的空间依赖可能是动态的（即随时间的变">
+<meta property="og:description" content="AAAI 2019。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-21T06:48:52.281Z">
+<meta property="og:updated_time" content="2019-03-21T06:50:28.676Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
-<meta name="twitter:description" content="Abstract由于大规模的交通数据越来越多，而且交通预测在实际中很重要，交通预测在 AI 领域引起越来越多的关注。举个例子，一个精确的出租车需求预测可以协助出租车公司预分配出租车。交通预测的关键在于如何对复杂的空间依赖和时间动态性建模。尽管两个因素在建模的时候都会考虑，当前的方法仍会做很强的假设，即空间依赖在时间上是平稳的，时间依赖是严格周期的。然而，实际中的空间依赖可能是动态的（即随时间的变">
+<meta name="twitter:description" content="AAAI 2019。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
   
@@ -184,7 +184,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <a id="more"></a>
+        <p>AAAI 2019。原文链接：<a href="http://export.arxiv.org/abs/1803.01254" target="_blank" rel="noopener">Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction</a><br><a id="more"></a></p>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>由于大规模的交通数据越来越多，而且交通预测在实际中很重要，交通预测在 AI 领域引起越来越多的关注。举个例子，一个精确的出租车需求预测可以协助出租车公司预分配出租车。交通预测的关键在于如何对复杂的空间依赖和时间动态性建模。尽管两个因素在建模的时候都会考虑，当前的方法仍会做很强的假设，即空间依赖在时间上是平稳的，时间依赖是严格周期的。然而，实际中的空间依赖可能是动态的（即随时间的变化而变化），而且时间动态性可能从一个时段到另一个时段有波动。在这篇文章中，我们有两个重要发现：（1）区域间的空间依赖是动态的；（2）时间依赖虽说有天和周的模式，但因为有动态时间平移，它不是严格周期的。为了解决这两个问题，我们提出了一个新的时空动态网络（STDN），我们用一个门控机制学习区域间的动态相似性，用一个周期性平移的注意力机制来处理长期周期时间平移现象。据我们所知，这是第一个在一个统一的框架中解决这两个问题的工作。我们的实验结果证明了提出的方法是有效的。</p>
 <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>交通预测是一个时空预测问题。精确的预测模型对很多应用都很重要。在传统交通预测问题中，给定历史数据（比如一个区域的流量，或一个交叉卡前几个月每小时的流量），预测未来一段时间的数据。这方面的研究已经有几十年了。在时间序列社区，ARIMA 和 Kalman filtering被广泛地应用到这一领域。然而这些早期方法是针对每个区域分别预测，最近的方法考虑了空间信息（比如针对近邻区域增加正则项）和外部因素（如地点信息，天气状况，地区活动）。然而，这些方法仍基于机器学习中的传统时间序列模型，不能很好的捕获复杂的非线性时空依赖）。</p>
 <p>最近，深度学习方法在很多任务上取得了成功。比如，一些研究将城市交通看作是热力图的图片，使用 CNN 对非线性空间关系建模。为了对非线性时间关系建模，人们提出了基于 RNN 的框架。Yao et al。 更是提出了用 CNN 和 LSTM 同时处理时间和空间依赖的框架。</p>
