@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="AAAI 2019。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-21T06:50:28.676Z">
+<meta property="og:updated_time" content="2019-03-21T07:15:06.436Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta name="twitter:description" content="AAAI 2019。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
@@ -68,7 +68,7 @@
 		</nav>
 		<nav>
 			总文章数 61<br>
-			总字数 <span class="post-count">180.1k</span>
+			总字数 <span class="post-count">180.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -179,7 +179,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.3k字 | 预计阅读时长：4分钟
+        字数：1.6k字 | 预计阅读时长：5分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -197,7 +197,9 @@
 <li>我们提出了一个周期平移注意力机制，通过同时时可用长期周期信息和时间平移。</li>
 <li>我们在几个真实数据集上开展了实验，效果好。</li>
 </ul>
-<h1 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h1>
+<h1 id="Notations-and-Problem-Formulation"><a href="#Notations-and-Problem-Formulation" class="headerlink" title="Notations and Problem Formulation"></a>Notations and Problem Formulation</h1><p>我们将整个城市分为 $a \times b$ 个网格，一共 $n$ 个区域（$n = a \times b$），使用 ${1,2,\dots,n }$ 表示他们。我们将整个时间周期分为 $m$ 个登场的连续时段。任何一个个体的移动，其本质上是整个城市交通的一部分，总是从一个区域出发，过一段时间到达目的地。我们在一个时段内给每个区域定义一个开始/结束流量作为区域出发/到达的移动发生次数。$y^s_{i,t}$ 和 $y^e_{i,t}$ 表示开区域 $i$ 在时段 $t$ 的开始/结束流量。此外，对个体旅行的聚合形成交通流，描述了区域对之间的考虑时间的移动。时段 $t$ 从区域 $i$ 开始的交通流在时段 $\tau$ 于区域 $j$ 结束，表示为 $f^{j,\tau}_{i,t}$。显然，交通流反映了区域间的连通性，也反映了个体的移动。图1（c）给出了流量和流动的展示。</p>
+<p><strong>Problem(Traffic Volume Prediction)</strong> 给定知道时段 $t$ 的数据，交通流预测问题目标是预测时段 $t+1$ 的起始和结束流量。</p>
+<h1 id="Spatial-Temporal-Dynamic-Network"><a href="#Spatial-Temporal-Dynamic-Network" class="headerlink" title="Spatial-Temporal Dynamic Network*"></a>Spatial-Temporal Dynamic Network*</h1>
       
 
       
