@@ -16,10 +16,12 @@
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="AAAI 2019。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-21T07:15:06.436Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/03/21/revisiting-spatial-temporal-similarity-a-deep-learning-framework-for-traffic-prediction/Fig1.JPG">
+<meta property="og:updated_time" content="2019-03-21T08:35:31.717Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta name="twitter:description" content="AAAI 2019。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
+<meta name="twitter:image" content="https://davidham3.github.io/blog/2019/03/21/revisiting-spatial-temporal-similarity-a-deep-learning-framework-for-traffic-prediction/Fig1.JPG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
   
@@ -68,7 +70,7 @@
 		</nav>
 		<nav>
 			总文章数 61<br>
-			总字数 <span class="post-count">180.4k</span>
+			总字数 <span class="post-count">180.8k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -179,7 +181,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.6k字 | 预计阅读时长：5分钟
+        字数：2k字 | 预计阅读时长：7分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -199,7 +201,15 @@
 </ul>
 <h1 id="Notations-and-Problem-Formulation"><a href="#Notations-and-Problem-Formulation" class="headerlink" title="Notations and Problem Formulation"></a>Notations and Problem Formulation</h1><p>我们将整个城市分为 $a \times b$ 个网格，一共 $n$ 个区域（$n = a \times b$），使用 ${1,2,\dots,n }$ 表示他们。我们将整个时间周期分为 $m$ 个登场的连续时段。任何一个个体的移动，其本质上是整个城市交通的一部分，总是从一个区域出发，过一段时间到达目的地。我们在一个时段内给每个区域定义一个开始/结束流量作为区域出发/到达的移动发生次数。$y^s_{i,t}$ 和 $y^e_{i,t}$ 表示开区域 $i$ 在时段 $t$ 的开始/结束流量。此外，对个体旅行的聚合形成交通流，描述了区域对之间的考虑时间的移动。时段 $t$ 从区域 $i$ 开始的交通流在时段 $\tau$ 于区域 $j$ 结束，表示为 $f^{j,\tau}_{i,t}$。显然，交通流反映了区域间的连通性，也反映了个体的移动。图1（c）给出了流量和流动的展示。</p>
 <p><strong>Problem(Traffic Volume Prediction)</strong> 给定知道时段 $t$ 的数据，交通流预测问题目标是预测时段 $t+1$ 的起始和结束流量。</p>
-<h1 id="Spatial-Temporal-Dynamic-Network"><a href="#Spatial-Temporal-Dynamic-Network" class="headerlink" title="Spatial-Temporal Dynamic Network*"></a>Spatial-Temporal Dynamic Network*</h1>
+<h1 id="Spatial-Temporal-Dynamic-Network"><a href="#Spatial-Temporal-Dynamic-Network" class="headerlink" title="Spatial-Temporal Dynamic Network*"></a>Spatial-Temporal Dynamic Network*</h1><p>这部分，我们讲一下细节。图1是我们模型的架构。</p>
+<center><img src="/blog/2019/03/21/revisiting-spatial-temporal-similarity-a-deep-learning-framework-for-traffic-prediction/Fig1.JPG" alt="Figure1"></center>
+
+<h2 id="Local-Spatial-Temporal-Network"><a href="#Local-Spatial-Temporal-Network" class="headerlink" title="Local Spatial-Temporal Network"></a>Local Spatial-Temporal Network</h2><p>为了捕获时空序列依赖，在出租车需求预测上，融合局部 CNN 和 LSTM 展示出了非常好的表现。我们这里使用局部 CNN 和 LSTM 处理空间和短期时间依赖。为了手动地提升两种流量的预测（起始和结束），我们将他们集成起来。这部分称为 Local Spatial-Temporal Network (LSTN)。</p>
+<p><strong>Local spatial dependency</strong> 卷积神经网络用来捕获空间关系。将整个城市看作一张图片，简单地使用 CNN 不能获得最好的性能。包含了弱关系的区域会导致预测性能下降。因此，我们使用局部 CNN 对空间依赖建模。</p>
+<p>对于每个时段 $t$，我们将目标区域 $i$ 和它周围的邻居看作是 $S \times S$ 大小的图片，两个通道 $\mathbf{Y}_{i,t} \in \mathbb{R}^{S \times S \times 2}$。一个通道包含起始流量信息，另一个是结束流量信息。目标区域在图像的中间。局部 CNN 使用 $\mathbf{Y}_{i,t}$ 作为输入 $\mathbf{Y}^{(0)}_{i,t}$，每个卷积层的定义如下：</p>
+<p>$$\tag{1}<br>\mathbf{Y}^{(k)}_{i,t} = \text{ReLU}(\mathbf{W}^{(k)} \ast \mathbf{Y}^{(k-1)}_{i,t} + \mathbf{b}^{(k)}),<br>$$</p>
+<p>其中 $\mathbf{W}^{(k)}$ 和 $\mathbf{b}^{(k)}$ 是参数。堆叠 $K$ 层卷积后，用一个全连接来推测区域 $i$ 的空间表示，记为 $\mathbf{y}_{i,t}$。</p>
+
       
 
       
