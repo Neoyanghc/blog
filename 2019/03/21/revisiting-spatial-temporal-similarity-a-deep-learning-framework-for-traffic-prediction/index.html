@@ -17,7 +17,7 @@
 <meta property="og:description" content="AAAI 2019。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/21/revisiting-spatial-temporal-similarity-a-deep-learning-framework-for-traffic-prediction/Fig1.JPG">
-<meta property="og:updated_time" content="2019-03-21T10:59:50.483Z">
+<meta property="og:updated_time" content="2019-03-22T08:33:35.009Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta name="twitter:description" content="AAAI 2019。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
@@ -70,7 +70,7 @@
 		</nav>
 		<nav>
 			总文章数 61<br>
-			总字数 <span class="post-count">180.8k</span>
+			总字数 <span class="post-count">181.5k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -181,7 +181,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2k字 | 预计阅读时长：7分钟
+        字数：2.7k字 | 预计阅读时长：9分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -209,6 +209,18 @@
 <p>对于每个时段 $t$，我们将目标区域 $i$ 和它周围的邻居看作是 $S \times S$ 大小的图片，两个通道 $\mathbf{Y}_{i,t} \in \mathbb{R}^{S \times S \times 2}$。一个通道包含起始流量信息，另一个是结束流量信息。目标区域在图像的中间。局部 CNN 使用 $\mathbf{Y}_{i,t}$ 作为输入 $\mathbf{Y}^{(0)}_{i,t}$，每个卷积层的定义如下：</p>
 <p>$$\tag{1}<br>\mathbf{Y}^{(k)}_{i,t} = \text{ReLU}(\mathbf{W}^{(k)} \ast \mathbf{Y}^{(k-1)}_{i,t} + \mathbf{b}^{(k)}),<br>$$</p>
 <p>其中 $\mathbf{W}^{(k)}$ 和 $\mathbf{b}^{(k)}$ 是参数。堆叠 $K$ 层卷积后，用一个全连接来推测区域 $i$ 的空间表示，记为 $\mathbf{y}_{i,t}$。</p>
+<p><strong>Short-term Temporal Dependency</strong> 我们使用 LSTM 捕获空间序列依赖。我们使用原始版本的 LSTM：</p>
+<p>$$\tag{2}<br>\mathbf{h}_{i,t} = \text{LSTM}([\mathbf{y}_{i,t};\mathbf{e}_{i,t}], \mathbf{h}_{i,t-1}),<br>$$</p>
+<p>其中，$\mathbf{h}_{i,t}$ 是区域 $i$ 在时段 $t$ 的输出表示。$\mathbf{e}_{i,t}$ 表示外部因素。因此，$\mathbf{h}_{i,t}$ 包含空间和短期时间信息。</p>
+<h2 id="Spatial-Dynamic-Similarity-Flow-Gating-Mechanism"><a href="#Spatial-Dynamic-Similarity-Flow-Gating-Mechanism" class="headerlink" title="Spatial Dynamic Similarity: Flow Gating Mechanism"></a>Spatial Dynamic Similarity: Flow Gating Mechanism</h2><p>局部 CNN 用于捕获空间依赖。CNN 通过局部连接和权重共享处理局部结构相似性。在局部 CNN 中，局部空间依赖依靠历史交通流量的相似度。然而，流量的空间依赖是平稳的，不能完全地反映目标区域和其邻居间的关系。一个直接的表示区域间关系的方式是交通流。如果两个区域间有很多流量，那么他们之间的关系强烈（也就是他们更相似）。交通流可以用于控制流量信息在区域间的转移。因此，我们设计了一个 Flow Gating Mechanism (FGM)，以层次的方式对动态空间依赖建模。</p>
+<p>类似局部 CNN，我们构建了局部空间流量图来保护流量的空间依赖。一个时段和一个区域相关的流量分两种，流入和流出，两个流量矩阵可以如上构建，每个元素表示对应区域的流入流出流量。图1(c) 给了一个流出矩阵。</p>
+<p>给定一个区域 $i$，我们获得过去 $l$ 个时段的相关的流量（即从 $t-l+1$ 到 $t$）。需要的流量矩阵拼接起来，表示为 $\mathbf{F}_{i,t} \in \mathbb{R}^{S \times S \times 2l}$，$2l$ 是流量矩阵的数量。因为堆叠的流量矩阵包含了过去与区域 $i$ 相关的矩阵，我们使用 CNN 对区域间的空间流量关系建模，将 $\mathbf{F}_{i,t}$ 作为输入 $\mathbf{F}^{(0)}_{i,t}$。对于每层 $k$，公式如下：</p>
+<p>$$\tag{3}<br>\mathbf{F}^{(k)}_{i,t} = \text{ReLU}(\mathbf{W}^{(k)}_f \ast \mathbf{F}^{(k-1)}_{i,t} + \mathbf{b}^{(k)}_f),<br>$$</p>
+<p>其中 $\mathbf{W}^{(k)}_f$ 和 $\mathbf{b}^{(k)}_f$ 是参数。</p>
+<p>每层，我们使用流量信息对区域间的动态相似性进行捕获，通过一个流量门限制空间信息。特别地，空间表示 $\mathbf{Y}^{i,k}_t$ 作为每层的输出，受流量门调整。我们重写式1为：</p>
+<p>$$\tag{4}<br>\mathbf{Y}^{(k)}_{i,t} = \text{ReLU}(\mathbf{W}^{(k)} \ast \mathbf{Y}^{(k-1)}_{i,t} + \mathbf{b}^{(k)}) \otimes (\mathbf{F}^{i,k-1}_t),<br>$$</p>
+<p>$\otimes$ 是element-wise product。</p>
+<p>$K$ 个门控卷积层后，我们用一个全连接得到流量门控空间表示 $\mathbf{y}_{i,t}$。</p>
 
       
 
@@ -539,10 +551,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">deep learning</a>
               </li>
              
@@ -552,6 +560,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">graph convolutional network</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -579,14 +591,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">STDM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">vscode</a>
               </li>
              
@@ -599,15 +603,23 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">STDM</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ResNet</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">已复现</a>
+                <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">reinforcement learning</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">已复现</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -623,15 +635,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Sequence</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">computer vision</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">image style transfer</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Sequence</a>
               </li>
              
               <li class="article-tag-list-item">
