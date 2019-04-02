@@ -17,7 +17,7 @@
 <meta property="og:description" content="AAAI 2019。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/21/revisiting-spatial-temporal-similarity-a-deep-learning-framework-for-traffic-prediction/Fig1.JPG">
-<meta property="og:updated_time" content="2019-03-22T09:18:55.445Z">
+<meta property="og:updated_time" content="2019-03-25T08:03:17.232Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta name="twitter:description" content="AAAI 2019。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
@@ -70,7 +70,7 @@
 		</nav>
 		<nav>
 			总文章数 61<br>
-			总字数 <span class="post-count">182k</span>
+			总字数 <span class="post-count">182.3k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -181,7 +181,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：3.1k字 | 预计阅读时长：11分钟
+        字数：3.5k字 | 预计阅读时长：13分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -224,7 +224,13 @@
 <p>我们将式2中的空间表示 $\mathbf{y}_{i,t}$ 替换为 $\hat{\mathbf{y}}_{i,t}$。</p>
 <h2 id="Temporal-Dynamic-Similarity-Periodically-Shifted-Attention-Mechanism"><a href="#Temporal-Dynamic-Similarity-Periodically-Shifted-Attention-Mechanism" class="headerlink" title="Temporal Dynamic Similarity: Periodically Shifted Attention Mechanism"></a>Temporal Dynamic Similarity: Periodically Shifted Attention Mechanism</h2><p>在上面的局部时空网络中，只有前几个时段用于预测。然而，这会忽略长期依赖（周期），但周期在时空预测问题中又很重要。这部分我们考虑长期依赖。</p>
 <p>训练 LSTM 来处理长期信息不是一个简单的任务，因为序列长度的增加导致梯度消失，因此会减弱周期性的影响。为了解决这个问题，预测目标的相对时段（即昨天的这个时候，前天这个时候）应该被建模。然而，单纯地融入相对时段是不充分的，会忽略周期的平移，即交通数据不是严格周期的。举个例子，周末的高峰通常发生在下午的后半段，不同的日子时间不一致，从4:30pm到6:00pm变化。周期的平移在交通序列中很普遍，因为事故或堵塞的发生。图 2a 和 2b 分别是不同的天和周的时间平移的例子。这两个时间序列是从 NYC 的出租车数据中算的从 Javits Center出发的流量。显然，交通序列是周期性的，但是这些序列的峰值（通过红圈标记）在不同的日子里时间不一样。此外，对比两张图，周期性不是严格按日或按周的。因此，我们设计了一个 Periodically Shifted Attention Mechanism (PSAM) 来解决问题。详细的方法如下。</p>
-<p>我们专注于解决日周期的平移问题。如图 1(a) 所示，从前 $P$ 天获得的相对时段用来处理周期依赖。对于每天，为了解决时间平移问题，我们从每天中额外的选择 $Q$ 个时段。</p>
+<p>我们专注于解决日周期的平移问题。如图 1(a) 所示，从前 $P$ 天获得的相对时段用来处理周期依赖。对于每天，为了解决时间平移问题，我们从每天中额外的选择 $Q$ 个时段。举个例子，如果预测的时间是9:00-9:30pm，我们选之前的一个小时和之后的一个小时，即8:00-19:30pm，$\vert Q \vert = 5$。这些时段 $q \in Q$ 用来解决潜在的时间平移问题。此外，我们使用对每天 $p \in P$ 保护每天的序列信息，公式如下：</p>
+<p>$$\tag{5}<br>\mathbf{h}^{p,q}_{i,t} = \text{LSTM}([\mathbf{y}^{p,q}_{i,t}; \mathbf{e}^{p,q}_{i,t}], \mathbf{h}^{p,q-1}_{i,t}),<br>$$</p>
+<p>其中，$\mathbf{h}^{p,q}_{i,t}$ 是对于区域 $i$ 的预测时间 $t$，时段 $q$ 在前一天 $p$ 的表示。</p>
+<p>我们用了一个注意力机制捕获时间平移并且获得了前几天的每一天的一个表示。前几天每一天的表示 $\mathbf{h}^p_{i,t}$ 是时段 $q$ 每一个选中时间的带权加和，定义为：</p>
+<p>$$\tag{6}<br>\mathbf{h}^p_{i,t} = \sum_{q \in Q} \alpha^{p,q}_{i,t} \mathbf{h}^{p,q}_{i,t},<br>$$</p>
+<p>权重 $\alpha^{p,q}_{i,t}$ 衡量了在 $p \in P$ 这天时段 $q$ 的重要性。重要值 $\alpha^{p,q}_{i,t}$ 通过对比从短期记忆（式2）得到的时空表示和前一个隐藏状态 $\mathbf{h}^{p,q}_{i,t}$ 得到。权重定义为：</p>
+<p>$$\tag{7}<br>\alpha^{p,q}<br>$$</p>
 
       
 

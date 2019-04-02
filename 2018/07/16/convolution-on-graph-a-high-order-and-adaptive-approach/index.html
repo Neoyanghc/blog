@@ -8,21 +8,21 @@
   <link rel="dns-prefetch" href="https://davidham3.github.io">
   <title>Convolution on Graph: A High-Order and Adaptive Approach | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="NIPS 2016。重新定义了卷积的定义，利用$k$阶邻接矩阵，定义考虑$k$阶邻居的卷积，利用邻接矩阵和特征矩阵构建能同时考虑顶点特征和图结构信息的卷积核。在预测顶点、预测图、生成图三个任务上验证了模型的效果。原文链接：Graph Convolution: A High-Order and Adaptive Approach">
+  <meta name="description" content="重新定义了卷积的定义，利用$k$阶邻接矩阵，定义考虑$k$阶邻居的卷积，利用邻接矩阵和特征矩阵构建能同时考虑顶点特征和图结构信息的卷积核。在预测顶点、预测图、生成图三个任务上验证了模型的效果。原文链接：Graph Convolution: A High-Order and Adaptive Approach">
 <meta name="keywords" content="deep learning,Graph,graph convolutional network">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Convolution on Graph: A High-Order and Adaptive Approach">
 <meta property="og:url" content="https://davidham3.github.io/2018/07/16/convolution-on-graph-a-high-order-and-adaptive-approach/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="NIPS 2016。重新定义了卷积的定义，利用$k$阶邻接矩阵，定义考虑$k$阶邻居的卷积，利用邻接矩阵和特征矩阵构建能同时考虑顶点特征和图结构信息的卷积核。在预测顶点、预测图、生成图三个任务上验证了模型的效果。原文链接：Graph Convolution: A High-Order and Adaptive Approach">
+<meta property="og:description" content="重新定义了卷积的定义，利用$k$阶邻接矩阵，定义考虑$k$阶邻居的卷积，利用邻接矩阵和特征矩阵构建能同时考虑顶点特征和图结构信息的卷积核。在预测顶点、预测图、生成图三个任务上验证了模型的效果。原文链接：Graph Convolution: A High-Order and Adaptive Approach">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/16/convolution-on-graph-a-high-order-and-adaptive-approach/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/16/convolution-on-graph-a-high-order-and-adaptive-approach/Table1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/16/convolution-on-graph-a-high-order-and-adaptive-approach/Table2.JPG">
-<meta property="og:updated_time" content="2018-07-23T01:43:55.747Z">
+<meta property="og:updated_time" content="2019-04-02T01:52:40.931Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Convolution on Graph: A High-Order and Adaptive Approach">
-<meta name="twitter:description" content="NIPS 2016。重新定义了卷积的定义，利用$k$阶邻接矩阵，定义考虑$k$阶邻居的卷积，利用邻接矩阵和特征矩阵构建能同时考虑顶点特征和图结构信息的卷积核。在预测顶点、预测图、生成图三个任务上验证了模型的效果。原文链接：Graph Convolution: A High-Order and Adaptive Approach">
+<meta name="twitter:description" content="重新定义了卷积的定义，利用$k$阶邻接矩阵，定义考虑$k$阶邻居的卷积，利用邻接矩阵和特征矩阵构建能同时考虑顶点特征和图结构信息的卷积核。在预测顶点、预测图、生成图三个任务上验证了模型的效果。原文链接：Graph Convolution: A High-Order and Adaptive Approach">
 <meta name="twitter:image" content="https://davidham3.github.io/blog/2018/07/16/convolution-on-graph-a-high-order-and-adaptive-approach/Fig1.JPG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
@@ -72,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 61<br>
-			总字数 <span class="post-count">182k</span>
+			总字数 <span class="post-count">182.3k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -188,7 +188,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>NIPS 2016。重新定义了卷积的定义，利用$k$阶邻接矩阵，定义考虑$k$阶邻居的卷积，利用邻接矩阵和特征矩阵构建能同时考虑顶点特征和图结构信息的卷积核。在预测顶点、预测图、生成图三个任务上验证了模型的效果。原文链接：<a href="https://arxiv.org/abs/1706.09916" target="_blank" rel="noopener">Graph Convolution: A High-Order and Adaptive Approach</a><br><a id="more"></a></p>
+        <p>重新定义了卷积的定义，利用$k$阶邻接矩阵，定义考虑$k$阶邻居的卷积，利用邻接矩阵和特征矩阵构建能同时考虑顶点特征和图结构信息的卷积核。在预测顶点、预测图、生成图三个任务上验证了模型的效果。原文链接：<a href="https://arxiv.org/abs/1706.09916" target="_blank" rel="noopener">Graph Convolution: A High-Order and Adaptive Approach</a><br><a id="more"></a></p>
 <h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>我们提出了两个新的模块为图结构数据而设计：k阶卷积器和自适应滤波模块。重要的是，我们的框架(HA-GCN)是一种通用框架，可以在顶点和图上适应多种应用，还有图生成模型。我们的实验效果很好。在顶点分类和分子属性预测上超越了state-of-the-art。生成了超过32%的真实分子，在材料设计和药物筛选上很有效。</p>
 <h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>图卷积网络通常应用在两个学习任务上：<br>·以顶点为中心：预测任务与顶点相关。GCN对图中的每个顶点输出一个特征向量，有效地反映顶点属性和邻居结构。举个例子，社交网络中，向量用于顶点分类和链路预测。有时也和顶点表示学习有关。<br>·以图为中心：预测任务和图相关。举个例子，化学领域中，分子可以被看作是一个图，原子作顶点，化学键是边。根据分子的物理和化学性质，构建图卷积网络对分子进行有意义地编码。这些任务对很多生活中的应用如材料设计、药物筛选很重要。在这种情况下，图卷积通常对图进行编码，使用编码进行图的预测。</p>
 <p>和我们的工作最相关的是Kipf &amp; Welling 2016a，他们的卷积只考虑了一阶邻居。我们的高阶操作器有着到达k阶邻居的高效设计。此外，我们还引入了自适应模块动态地基于局部图的连接和顶点属性调整权重。对比Li et al., 2015，他们将LSTM引入图中，我们的自适应模块可以解释成Xu et al., 2015提出的注意力机制。不像前人设计的模型要么是以顶点为重，要么是以图为中心，我们的HA-GCN框架是个通用的模型。除此以外，我们用HA-GCN构建了针对分子生成的图生成模型，比state-of-the-art的效果提高了很多。</p>
