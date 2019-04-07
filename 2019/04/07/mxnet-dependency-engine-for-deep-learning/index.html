@@ -17,7 +17,10 @@
 <meta property="og:description" content="MXNet: Dependency Engine for Deep Learning">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/Fig1.png">
-<meta property="og:updated_time" content="2019-04-07T04:37:23.707Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/Fig2.png">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/Fig3.png">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/Fig4.png">
+<meta property="og:updated_time" content="2019-04-07T04:48:45.208Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MXNet: Dependency Engine for Deep Learning">
 <meta name="twitter:description" content="MXNet: Dependency Engine for Deep Learning">
@@ -70,7 +73,7 @@
 		</nav>
 		<nav>
 			总文章数 63<br>
-			总字数 <span class="post-count">183.6k</span>
+			总字数 <span class="post-count">184.1k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -181,7 +184,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：505字 | 预计阅读时长：1分钟
+        字数：935字 | 预计阅读时长：3分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -198,7 +201,20 @@
 <center><img src="/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/Fig1.png" alt="Figure1"></center>
 
 <p>一个依赖引擎可以获取一个操作序列并且根据依赖关系调度他们，更可能以并行的方式。所以在这个例子中，一个依赖库可以并行运算 <code>B = A + 1</code> 和 <code>C = A + 2</code>，然后在这两个操作完成后运行 <code>D = B * C</code>。</p>
-<h1 id="Problems-in-Dependency-Scheduling"><a href="#Problems-in-Dependency-Scheduling" class="headerlink" title="Problems in Dependency Scheduling"></a>Problems in Dependency Scheduling</h1>
+<h1 id="Problems-in-Dependency-Scheduling"><a href="#Problems-in-Dependency-Scheduling" class="headerlink" title="Problems in Dependency Scheduling"></a>Problems in Dependency Scheduling</h1><p>一个依赖引擎减轻了编写并发程序的负担。但是，由于操作可以并行化，新的依赖追踪问题产生了，这节我们讨论这些问题。</p>
+<h2 id="Data-Flow-Dependency"><a href="#Data-Flow-Dependency" class="headerlink" title="Data Flow Dependency"></a>Data Flow Dependency</h2><p>数据流依赖表述了一个计算的输出如何用于其他的计算。每个依赖引擎必须解决数据流依赖问题。</p>
+<center><img src="/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/Fig2.png" alt="Figure2"></center>
+
+<p>因为我们在前面的部分讨论过这个问题，我们这里使用同一张图。包含数据流追踪引擎的框架包括 Minerva 和 Purine2。</p>
+<h2 id="Memory-Recycling"><a href="#Memory-Recycling" class="headerlink" title="Memory Recycling"></a>Memory Recycling</h2><p>我们什么时候回收分配给 array 的内存？在串行程序中这个问题很简单。我们在变量在作用域中消失后回收即可。但是，下面的图展示了并行程序中这有多麻烦。</p>
+<center><img src="/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/Fig3.png" alt="Figure3"></center>
+
+<p>在这个例子中，两个操作都需要 <code>A</code> 的值，我们需要等两个操作都完成才能回收。引擎必须根据依赖来调度回收器，确保在 <code>B = A + 1</code> 和 <code>C = A + 2</code> 都完成后再执行。</p>
+<h2 id="Random-Number-Generation"><a href="#Random-Number-Generation" class="headerlink" title="Random Number Generation"></a>Random Number Generation</h2><p>随机数生成器是机器学习中常用的，给依赖引擎提出了有趣的挑战。考虑下面的问题：</p>
+<center><img src="/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/Fig4.png" alt="Figure4"></center>
+
+<p>再这个例子中，我们以序列形式生成了随机数。尽管看起来两个随机数生成过程是并行的，但实际上不是。一个伪随机数生成器 (PRNG) 不是线程安全的，因为在生成新的随机数时，可能会导致一些内部状态的变化。即使 PRNG 是线程安全的，我们也希望数字的生成是串行的，因为我们可以得到可重现的随机数序列。</p>
+
       
 
       
