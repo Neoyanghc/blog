@@ -6,18 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://davidham3.github.io">
-  <title>Tag: dataset | Davidham&#39;s blog</title>
+  <title>MXNet: Dependency Engine for Deep Learning | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Davidham的博客，写点学习笔记啥的，邮箱chaosong@bjtu.edu.cn">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Davidham&#39;s blog">
-<meta property="og:url" content="https://davidham3.github.io/tags/dataset/index.html">
+  <meta name="description" content="MXNet: Dependency Engine for Deep Learning">
+<meta name="keywords" content="software">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MXNet: Dependency Engine for Deep Learning">
+<meta property="og:url" content="https://davidham3.github.io/2019/04/07/mxnet-dependency-engine-for-deep-learning/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="Davidham的博客，写点学习笔记啥的，邮箱chaosong@bjtu.edu.cn">
+<meta property="og:description" content="MXNet: Dependency Engine for Deep Learning">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/Fig1.png">
+<meta property="og:updated_time" content="2019-04-07T04:37:23.707Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Davidham&#39;s blog">
-<meta name="twitter:description" content="Davidham的博客，写点学习笔记啥的，邮箱chaosong@bjtu.edu.cn">
+<meta name="twitter:title" content="MXNet: Dependency Engine for Deep Learning">
+<meta name="twitter:description" content="MXNet: Dependency Engine for Deep Learning">
+<meta name="twitter:image" content="https://davidham3.github.io/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/Fig1.png">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
   
@@ -159,120 +163,226 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-mxnet-dependency-engine-for-deep-learning" class="article article-type-post " itemscope="" itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/blog/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/blog/2018/07/12/fhwa数据/" class="archive-article-date">
-  	<time datetime="2018-07-12T06:05:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-12</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/blog/2018/07/12/fhwa数据/">FHWA数据</a>
+    <h1 class="article-title" itemprop="name">
+      MXNet: Dependency Engine for Deep Learning
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/" class="archive-article-date">
+  	<time datetime="2019-04-07T04:18:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-07</time>
+</a>
+        
+      </header>
+      <div align="center" class="post-count">
+        字数：505字 | 预计阅读时长：1分钟
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>MXNet: Dependency Engine for Deep Learning<br><a id="more"></a></p>
+<p>我们总是想让深度学习框架跑的更快，能适应更大的数据集。一个自然的想法是我们能否通过堆更多的硬件解决问题，也就是同时使用多个 GPU。</p>
+<p>框架设计者就会问：我们怎么才能让计算在设备间并行？而且，当我们引入多线程的时候，如何同步计算？一个运行环境依赖引擎是这些问题的解决方案。</p>
+<p>在这篇文档中，我们检验了使用运行环境依赖调度装置来加速深度学习的方法，解释了运行环境依赖调度器如何同时加速和简化多设备深度学习。我们还探索了框架独立或操作独立的通用依赖引擎可能的设计方案。</p>
+<p>这里的很多讨论都是源于 MXNet 依赖引擎。我们讨论的依赖追踪算法主要由 <a href="https://github.com/hotpxl" target="_blank" rel="noopener">Yutian Li</a> 和 <a href="https://github.com/jermainewang" target="_blank" rel="noopener">Mingjie Wang</a> 设计。</p>
+<h1 id="Dependency-Scheduling"><a href="#Dependency-Scheduling" class="headerlink" title="Dependency Scheduling"></a>Dependency Scheduling</h1><p>尽管大多数用户想利用并行计算，但大部分人更熟悉串行编程。所以一个问题是：我们如何能写串行程序，构建一个库，自动地并行我们的程序？</p>
+<p>举个例子，下面的代码，我们可以以任意顺序运行 <code>B = A + 1</code> 和 <code>C = A + 2</code> 这两个命令，或是并行运行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">A = 2</span><br><span class="line">B = A + 1</span><br><span class="line">C = A + 2</span><br><span class="line">D = B * C</span><br></pre></td></tr></table></figure>
+<p>但是由于最后一个操作 <code>D = B * C</code>，导致手动编码序列很麻烦，最后一个操作需要等待前面的操作完成才能继续。下面的依赖图/数据流图展示了这个过程。</p>
+<center><img src="/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/Fig1.png" alt="Figure1"></center>
+
+<p>一个依赖引擎可以获取一个操作序列并且根据依赖关系调度他们，更可能以并行的方式。所以在这个例子中，一个依赖库可以并行运算 <code>B = A + 1</code> 和 <code>C = A + 2</code>，然后在这两个操作完成后运行 <code>D = B * C</code>。</p>
+<h1 id="Problems-in-Dependency-Scheduling"><a href="#Problems-in-Dependency-Scheduling" class="headerlink" title="Problems in Dependency Scheduling"></a>Problems in Dependency Scheduling</h1>
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/blog/img/alipay.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/blog/img/wx_pay.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">dataset</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">software</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/blog/categories/dataset//" class="article-tag-list-link color3">dataset</a>
+        			<a href="/blog/categories/software//" class="article-tag-list-link color4">software</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+        <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://davidham3.github.io/2019/04/07/mxnet-dependency-engine-for-deep-learning/" alt="微信分享二维码">
+      <!-- <img src="//pan.baidu.com/share/qrcode?url=https://davidham3.github.io/2019/04/07/mxnet-dependency-engine-for-deep-learning/" alt="微信分享二维码"> -->
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/blog/2018/07/11/mndot-traffic-data/" class="archive-article-date">
-  	<time datetime="2018-07-11T07:54:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-11</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/blog/2019/04/06/pyspark中的hbaseconverters/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">pyspark中的HBaseConverters</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/blog/2018/07/11/mndot-traffic-data/">MnDOT traffic data</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">dataset</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/blog/categories/dataset//" class="article-tag-list-link color3">dataset</a>
-        		</li>
-      		
-		</ul>
-	</div>
+        
+        
+    </div>
+</aside>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+
+
   
-  
-    </div></section>
+  <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zNzEwMS8xMzYzNw==">
+<script type="text/javascript">
+    (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+
+        if (typeof LivereTower === 'function') { return; }
+
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+
+        e.parentNode.insertBefore(j, e);
+    })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
   
 
-    
+  
+  
+  
+
+  
+
+  
+
+  
 
 
           </div>
@@ -302,9 +412,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		toc_hide_index: true,
