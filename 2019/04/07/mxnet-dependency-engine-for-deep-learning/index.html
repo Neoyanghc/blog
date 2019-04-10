@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/Fig2.png">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/Fig3.png">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/07/mxnet-dependency-engine-for-deep-learning/Fig4.png">
-<meta property="og:updated_time" content="2019-04-07T04:48:45.208Z">
+<meta property="og:updated_time" content="2019-04-10T02:38:57.520Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MXNet: Dependency Engine for Deep Learning">
 <meta name="twitter:description" content="MXNet: Dependency Engine for Deep Learning">
@@ -189,7 +189,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>MXNet: Dependency Engine for Deep Learning<br><a id="more"></a></p>
+        <p><a href="https://mxnet.incubator.apache.org/versions/master/architecture/note_engine.html" target="_blank" rel="noopener">MXNet: Dependency Engine for Deep Learning</a><br><a id="more"></a></p>
 <p>我们总是想让深度学习框架跑的更快，能适应更大的数据集。一个自然的想法是我们能否通过堆更多的硬件解决问题，也就是同时使用多个 GPU。</p>
 <p>框架设计者就会问：我们怎么才能让计算在设备间并行？而且，当我们引入多线程的时候，如何同步计算？一个运行环境依赖引擎是这些问题的解决方案。</p>
 <p>在这篇文档中，我们检验了使用运行环境依赖调度装置来加速深度学习的方法，解释了运行环境依赖调度器如何同时加速和简化多设备深度学习。我们还探索了框架独立或操作独立的通用依赖引擎可能的设计方案。</p>
