@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="https://davidham3.github.io">
   <title>pyspark读取HBase | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="应甲方需求，写一个 pyspark 读取 HBase 的教程。主要包含了基本读取方法和自定义Converter的方法。">
+  <meta name="description" content="应甲方需求，写一个 pyspark 读取 HBase 的教程。主要包含了基本读取方法和自定义 Converter 的方法。">
 <meta name="keywords" content="software,Spark">
 <meta property="og:type" content="article">
 <meta property="og:title" content="pyspark读取HBase">
 <meta property="og:url" content="https://davidham3.github.io/2019/04/10/pyspark读取hbase/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="应甲方需求，写一个 pyspark 读取 HBase 的教程。主要包含了基本读取方法和自定义Converter的方法。">
+<meta property="og:description" content="应甲方需求，写一个 pyspark 读取 HBase 的教程。主要包含了基本读取方法和自定义 Converter 的方法。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-10T09:27:45.343Z">
+<meta property="og:updated_time" content="2019-04-10T09:27:53.753Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pyspark读取HBase">
-<meta name="twitter:description" content="应甲方需求，写一个 pyspark 读取 HBase 的教程。主要包含了基本读取方法和自定义Converter的方法。">
+<meta name="twitter:description" content="应甲方需求，写一个 pyspark 读取 HBase 的教程。主要包含了基本读取方法和自定义 Converter 的方法。">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
   
@@ -184,7 +184,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>应甲方需求，写一个 pyspark 读取 HBase 的教程。主要包含了基本读取方法和自定义Converter的方法。<br><a id="more"></a></p>
+        <p>应甲方需求，写一个 pyspark 读取 HBase 的教程。主要包含了基本读取方法和自定义 Converter 的方法。<br><a id="more"></a></p>
 <h1 id="pyspark-读取-HBase"><a href="#pyspark-读取-HBase" class="headerlink" title="pyspark 读取 HBase"></a>pyspark 读取 HBase</h1><p>pyspark 读取 HBase 需要借助 Java 的类完成读写。</p>
 <p>首先需要明确的是，HBase 中存储的是 <code>byte[]</code>，也就是说，不管是什么样的数据，都需要先转换为 <code>byte[]</code> 后，才能存入 HBase。</p>
 <h2 id="基本方法"><a href="#基本方法" class="headerlink" title="基本方法"></a>基本方法</h2><p>pyspark 读取 HBase 需要使用 <code>SparkContext</code> 的 <a href="http://spark.apache.org/docs/1.6.0/api/python/pyspark.html#pyspark.SparkContext.newAPIHadoopRDD" target="_blank" rel="noopener">newAPIHadoopRDD</a> 这个方法，这个方法需要使用 Java 的类，用这些类读取 HBase</p>
