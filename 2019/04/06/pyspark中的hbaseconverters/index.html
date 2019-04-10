@@ -8,19 +8,19 @@
   <link rel="dns-prefetch" href="https://davidham3.github.io">
   <title>pyspark中的HBaseConverters | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="最近项目有个需求，使用 pyspark 读取 HBase 中存储的 java.math.BigDecimal。">
+  <meta name="description" content="最近项目上有个需求，使用 pyspark 读取 HBase 中存储的 java.math.BigDecimal。">
 <meta name="keywords" content="software,Spark">
 <meta property="og:type" content="article">
 <meta property="og:title" content="pyspark中的HBaseConverters">
 <meta property="og:url" content="https://davidham3.github.io/2019/04/06/pyspark中的hbaseconverters/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="最近项目有个需求，使用 pyspark 读取 HBase 中存储的 java.math.BigDecimal。">
+<meta property="og:description" content="最近项目上有个需求，使用 pyspark 读取 HBase 中存储的 java.math.BigDecimal。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/06/pyspark中的hbaseconverters/Fig1.JPG">
-<meta property="og:updated_time" content="2019-04-07T03:37:07.542Z">
+<meta property="og:updated_time" content="2019-04-10T02:39:49.924Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pyspark中的HBaseConverters">
-<meta name="twitter:description" content="最近项目有个需求，使用 pyspark 读取 HBase 中存储的 java.math.BigDecimal。">
+<meta name="twitter:description" content="最近项目上有个需求，使用 pyspark 读取 HBase 中存储的 java.math.BigDecimal。">
 <meta name="twitter:image" content="https://davidham3.github.io/blog/2019/04/06/pyspark中的hbaseconverters/Fig1.JPG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
@@ -181,12 +181,12 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：868字 | 预计阅读时长：4分钟
+        字数：869字 | 预计阅读时长：4分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>最近项目有个需求，使用 pyspark 读取 HBase 中存储的 java.math.BigDecimal。</p>
+        <p>最近项目上有个需求，使用 pyspark 读取 HBase 中存储的 java.math.BigDecimal。</p>
 <a id="more"></a>
 <p>最近甲方让我们写一个 pyspark 的教程，他们以后打算使用 pyspark 开发。他们的数据是那种精度要求比较高的数据，我们使用 java.math.BigDecimal 表示数字，然后转成 byte[] 后存入了 HBase，但是 python 是没法直接读取这个 BigDecimal，所以需要使用 spark-examples 中 HBaseConverters.scala 读取。</p>
 <p>我们讨论的 spark 版本是 1.6，因为用的是 CDH 5，所以是这个版本。</p>
