@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="应甲方需求，写一个 pyspark 读写 HBase 的教程。主要包含了基本读写方法和自定义 Converter 的方法。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-12T14:59:48.485Z">
+<meta property="og:updated_time" content="2019-04-12T15:05:32.927Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pyspark读写HBase">
 <meta name="twitter:description" content="应甲方需求，写一个 pyspark 读写 HBase 的教程。主要包含了基本读写方法和自定义 Converter 的方法。">
@@ -68,7 +68,7 @@
 		</nav>
 		<nav>
 			总文章数 65<br>
-			总字数 <span class="post-count">189.4k</span>
+			总字数 <span class="post-count">189.8k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -179,7 +179,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2.9k字 | 预计阅读时长：12分钟
+        字数：3.2k字 | 预计阅读时长：14分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -249,6 +249,10 @@
 <p>举个例子，如果我想存入一个 <code>java.math.BigDecimal</code>，那实现的方法就是：在 pyspark 程序中，将数字转换成 <code>str</code> 类型，调用我们自己写的一个 converter：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.math.<span class="type">BigDecimal</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StringListToBigDecimalToPutConverter</span> <span class="keyword">extends</span> <span class="title">Converter</span>[<span class="type">Any</span>, <span class="type">Put</span>] </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">convert</span></span>(obj: <span class="type">Any</span>): <span class="type">Put</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> output = obj.asInstanceOf[java.util.<span class="type">ArrayList</span>[<span class="type">String</span>]].asScala.toArray</span><br><span class="line">    <span class="keyword">val</span> put = <span class="keyword">new</span> <span class="type">Put</span>(<span class="type">Bytes</span>.toBytes(output(<span class="number">0</span>)))</span><br><span class="line">    put.add(</span><br><span class="line">        <span class="type">Bytes</span>.toBytes(output(<span class="number">1</span>)),</span><br><span class="line">        <span class="type">Bytes</span>.toBytes(output(<span class="number">2</span>)),</span><br><span class="line">        <span class="type">Bytes</span>.toBytes(<span class="keyword">new</span> <span class="type">BigDecimal</span>(output(<span class="number">3</span>)))</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>就可以实现存入的值是 <code>java.math.BigDecimal</code> 了。</p>
+<h1 id="CDH-5-9-以前的版本，python3，master-选定为-yarn-时的-bug"><a href="#CDH-5-9-以前的版本，python3，master-选定为-yarn-时的-bug" class="headerlink" title="CDH 5.9 以前的版本，python3，master 选定为 yarn 时的 bug"></a>CDH 5.9 以前的版本，python3，master 选定为 yarn 时的 bug</h1><p>CDH 5.9 以前的版本在使用 yarn 作为 spark master 的时候，如果使用 python3，会出现 yarn 內部 <code>topology.py</code> 这个文件引发的 bug。这个文件是 python2 的语法，我们使用 python3 运行任务的时候，python3 的解释器在处理这个文件时会出错。</p>
+<p>解决方案是：将这个文件重写为 python3 的版本，每次在重启 yarn 之后，将这个文件复制到所有机器的 <code>/etc/hadoop/conf.cloudera.yarn/</code>目录下。</p>
+<p>以下是 python3 版本的 <code>topology.py</code>。</p>
+<p><code>topology.py</code><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Copyright (c) 2010-2012 Cloudera, Inc. All rights reserved.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">This script is provided by CMF for hadoop to determine network/rack topology.</span></span><br><span class="line"><span class="string">It is automatically generated and could be replaced at any time. Any changes</span></span><br><span class="line"><span class="string">made to it will be lost when this happens.</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> xml.dom.minidom</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">  MAP_FILE = <span class="string">'&#123;&#123;CMF_CONF_DIR&#125;&#125;/topology.map'</span></span><br><span class="line">  DEFAULT_RACK = <span class="string">'/default'</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> <span class="string">'CMF_CONF_DIR'</span> <span class="keyword">in</span> MAP_FILE:</span><br><span class="line">    <span class="comment"># variable was not substituted. Use this file's dir</span></span><br><span class="line">    MAP_FILE = os.path.join(os.path.dirname(__file__), <span class="string">"topology.map"</span>)</span><br><span class="line"></span><br><span class="line">  <span class="comment"># We try to keep the default rack to have the same</span></span><br><span class="line">  <span class="comment"># number of elements as the other hosts available.</span></span><br><span class="line">  <span class="comment"># There are bugs in some versions of Hadoop which</span></span><br><span class="line">  <span class="comment"># make the system error out.</span></span><br><span class="line">  max_elements = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">  map = dict()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">try</span>:</span><br><span class="line">    mapFile = open(MAP_FILE, <span class="string">'r'</span>)</span><br><span class="line"></span><br><span class="line">    dom = xml.dom.minidom.parse(mapFile)</span><br><span class="line">    <span class="keyword">for</span> node <span class="keyword">in</span> dom.getElementsByTagName(<span class="string">"node"</span>):</span><br><span class="line">      rack = node.getAttribute(<span class="string">"rack"</span>)</span><br><span class="line">      max_elements = max(max_elements, rack.count(<span class="string">"/"</span>))</span><br><span class="line">      map[node.getAttribute(<span class="string">"name"</span>)] = node.getAttribute(<span class="string">"rack"</span>)</span><br><span class="line">  <span class="keyword">except</span>:</span><br><span class="line">    default_rack = <span class="string">""</span>.join([ DEFAULT_RACK <span class="keyword">for</span> _ <span class="keyword">in</span> range(max_elements)])</span><br><span class="line">    print(default_rack)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line"></span><br><span class="line">  default_rack = <span class="string">""</span>.join([ DEFAULT_RACK <span class="keyword">for</span> _ <span class="keyword">in</span> range(max_elements)])</span><br><span class="line">  <span class="keyword">if</span> len(sys.argv)==<span class="number">1</span>:</span><br><span class="line">    print(default_rack)</span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">    print(<span class="string">" "</span>.join([map.get(i, default_rack) <span class="keyword">for</span> i <span class="keyword">in</span> sys.argv[<span class="number">1</span>:]]))</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">  sys.exit(main())</span><br></pre></td></tr></table></figure></p>
 
       
 
@@ -599,11 +603,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Kafka</a>
+                <a href="javascript:void(0)" class="js-tag color1">algorithms</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">algorithms</a>
+                <a href="javascript:void(0)" class="js-tag color1">Kafka</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -615,11 +619,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
+                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">normalization</a>
+                <a href="javascript:void(0)" class="js-tag color1">virtual machine</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -627,11 +631,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
+                <a href="javascript:void(0)" class="js-tag color2">ResNet</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ResNet</a>
+                <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
               </li>
              
               <li class="article-tag-list-item">
