@@ -17,7 +17,7 @@
 <meta property="og:description" content="AAAI 2019。处理的是网格数据，两个问题：空间依赖动态性，另一个是周期平移。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/21/revisiting-spatial-temporal-similarity-a-deep-learning-framework-for-traffic-prediction/Fig1.JPG">
-<meta property="og:updated_time" content="2019-04-12T09:01:41.523Z">
+<meta property="og:updated_time" content="2019-04-12T09:13:18.525Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta name="twitter:description" content="AAAI 2019。处理的是网格数据，两个问题：空间依赖动态性，另一个是周期平移。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
@@ -70,7 +70,7 @@
 		</nav>
 		<nav>
 			总文章数 65<br>
-			总字数 <span class="post-count">188.2k</span>
+			总字数 <span class="post-count">188.5k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -181,7 +181,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：4k字 | 预计阅读时长：15分钟
+        字数：4.3k字 | 预计阅读时长：16分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -242,7 +242,14 @@
 <p>我们同时预测出发和到达流量，损失函数定义为：</p>
 <p>$$\tag{11}<br>\mathcal{L} = \sum^n_{i=1} \lambda (y^s_{i,t+1} - \hat{y}^s_{i, t+1})^2 + (1 - \lambda) (y^e_{i,t+1} - \hat{y}^e_{i, t+1})^2,<br>$$</p>
 <p>$\lambda$ 用来平衡流入和流出的影响。区域 $i$ 在时间 $t+1$ 实际的流入和流出流量表示为 $\hat{y}^s_{i, t+1}, \hat{y}^e_{i, t+1}$。</p>
-<h1 id="Experiment"><a href="#Experiment" class="headerlink" title="Experiment"></a>Experiment</h1><h2 id="Experiment-Settings"><a href="#Experiment-Settings" class="headerlink" title="Experiment Settings"></a>Experiment Settings</h2>
+<h1 id="Experiment"><a href="#Experiment" class="headerlink" title="Experiment"></a>Experiment</h1><h2 id="Experiment-Settings"><a href="#Experiment-Settings" class="headerlink" title="Experiment Settings"></a>Experiment Settings</h2><p><strong>Datasets</strong> 我们在两个 NYC 的大型数据集上评价了模型。每个数据集包含旅行记录，详情如下：</p>
+<ul>
+<li>NYC-Taxi：2015 年 22349490 个出租车的旅行记录，从 2015年1月1日到2015年3月1日。实验中，我们使用1月1日到2月10日作为训练，剩下20天测试。</li>
+<li>NYC-Bike：2016 年 NYC 自行车轨迹数据，7月1日到8月29日，包含了 2605648 条记录。前 40 天用来训练，后 20 天做测试。</li>
+</ul>
+<p><strong>Preprocessing</strong> 我们将整个城市分成 $10 \times 20$ 个区域。每个区域大小是 $1km \times 1km$。时段长度设为 30min。使用最大最小归一化 volume 和 flow 到 $[0, 1]$。预测后，使用逆变换后的值评价。我们使用滑动窗采样。测试模型的时候，滤掉 volumn 小于 10 的样本，这是工业界和学界常用的技巧 (Yao et al. 2018)。因为真实数据集中，关注较小的交通数据没有太大的意义。我们选择 80% 的数据训练，20% 验证。</p>
+<p><strong>Evaluation Metric &amp; Baselines</strong> 两个指标：MAPE, RMSE。baselines：HA, ARIMA, Ridge, Lin-UOTD (Tong el al. 2017), XGBoost, MLP, ConvLSTM, DeepSD, ST-ResNet, DMVST-Net。</p>
+
       
 
       
