@@ -8,19 +8,19 @@
   <link rel="dns-prefetch" href="https://davidham3.github.io">
   <title>Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="AAAI 2019。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
+  <meta name="description" content="AAAI 2019。处理的是网格数据，两个问题：空间依赖动态性，另一个是周期平移。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta name="keywords" content="deep learning,Graph,graph convolutional network,STDM,Time Series">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta property="og:url" content="https://davidham3.github.io/2019/03/21/revisiting-spatial-temporal-similarity-a-deep-learning-framework-for-traffic-prediction/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="AAAI 2019。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
+<meta property="og:description" content="AAAI 2019。处理的是网格数据，两个问题：空间依赖动态性，另一个是周期平移。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/21/revisiting-spatial-temporal-similarity-a-deep-learning-framework-for-traffic-prediction/Fig1.JPG">
-<meta property="og:updated_time" content="2019-03-25T08:03:17.232Z">
+<meta property="og:updated_time" content="2019-04-12T09:01:41.523Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
-<meta name="twitter:description" content="AAAI 2019。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
+<meta name="twitter:description" content="AAAI 2019。处理的是网格数据，两个问题：空间依赖动态性，另一个是周期平移。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta name="twitter:image" content="https://davidham3.github.io/blog/2019/03/21/revisiting-spatial-temporal-similarity-a-deep-learning-framework-for-traffic-prediction/Fig1.JPG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
@@ -70,7 +70,7 @@
 		</nav>
 		<nav>
 			总文章数 65<br>
-			总字数 <span class="post-count">187.7k</span>
+			总字数 <span class="post-count">188.2k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -181,12 +181,12 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：3.5k字 | 预计阅读时长：13分钟
+        字数：4k字 | 预计阅读时长：15分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>AAAI 2019。原文链接：<a href="http://export.arxiv.org/abs/1803.01254" target="_blank" rel="noopener">Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction</a><br><a id="more"></a></p>
+        <p>AAAI 2019。处理的是网格数据，两个问题：空间依赖动态性，另一个是周期平移。原文链接：<a href="http://export.arxiv.org/abs/1803.01254" target="_blank" rel="noopener">Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction</a><br><a id="more"></a></p>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>由于大规模的交通数据越来越多，而且交通预测在实际中很重要，交通预测在 AI 领域引起越来越多的关注。举个例子，一个精确的出租车需求预测可以协助出租车公司预分配出租车。交通预测的关键在于如何对复杂的空间依赖和时间动态性建模。尽管两个因素在建模的时候都会考虑，当前的方法仍会做很强的假设，即空间依赖在时间上是平稳的，时间依赖是严格周期的。然而，实际中的空间依赖可能是动态的（即随时间的变化而变化），而且时间动态性可能从一个时段到另一个时段有波动。在这篇文章中，我们有两个重要发现：（1）区域间的空间依赖是动态的；（2）时间依赖虽说有天和周的模式，但因为有动态时间平移，它不是严格周期的。为了解决这两个问题，我们提出了一个新的时空动态网络（STDN），我们用一个门控机制学习区域间的动态相似性，用一个周期性平移的注意力机制来处理长期周期时间平移现象。据我们所知，这是第一个在一个统一的框架中解决这两个问题的工作。我们的实验结果证明了提出的方法是有效的。</p>
 <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>交通预测是一个时空预测问题。精确的预测模型对很多应用都很重要。在传统交通预测问题中，给定历史数据（比如一个区域的流量，或一个交叉卡前几个月每小时的流量），预测未来一段时间的数据。这方面的研究已经有几十年了。在时间序列社区，ARIMA 和 Kalman filtering被广泛地应用到这一领域。然而这些早期方法是针对每个区域分别预测，最近的方法考虑了空间信息（比如针对近邻区域增加正则项）和外部因素（如地点信息，天气状况，地区活动）。然而，这些方法仍基于机器学习中的传统时间序列模型，不能很好的捕获复杂的非线性时空依赖）。</p>
 <p>最近，深度学习方法在很多任务上取得了成功。比如，一些研究将城市交通看作是热力图的图片，使用 CNN 对非线性空间关系建模。为了对非线性时间关系建模，人们提出了基于 RNN 的框架。Yao et al。 更是提出了用 CNN 和 LSTM 同时处理时间和空间依赖的框架。</p>
@@ -230,8 +230,19 @@
 <p>我们用了一个注意力机制捕获时间平移并且获得了前几天的每一天的一个表示。前几天每一天的表示 $\mathbf{h}^p_{i,t}$ 是时段 $q$ 每一个选中时间的带权加和，定义为：</p>
 <p>$$\tag{6}<br>\mathbf{h}^p_{i,t} = \sum_{q \in Q} \alpha^{p,q}_{i,t} \mathbf{h}^{p,q}_{i,t},<br>$$</p>
 <p>权重 $\alpha^{p,q}_{i,t}$ 衡量了在 $p \in P$ 这天时段 $q$ 的重要性。重要值 $\alpha^{p,q}_{i,t}$ 通过对比从短期记忆（式2）得到的时空表示和前一个隐藏状态 $\mathbf{h}^{p,q}_{i,t}$ 得到。权重定义为：</p>
-<p>$$\tag{7}<br>\alpha^{p,q}<br>$$</p>
-
+<p>$$\tag{7}<br>\alpha^{p,q}_{i,t} = \frac{\text{exp}(\text{score}(\mathbf{h}^{p,q}_{i,t}, \mathbf{h}_{i,t}))} {\sum_{q \in Q} \text{exp}(\text{score} (\mathbf{h}^{p,q}_{i,t}, \mathbf{h}_{i,t})}<br>$$</p>
+<p>类似 (Luong, Pham and Manning 2015)，注意力分数的定义可以看作是基于内容的函数：</p>
+<p>$$\tag{8}<br>\text{score}(\mathbf{h}^{p,q}_{i,t}, \mathbf{h}_{i,t}) = \mathbf{v}^\text{T} \text{tanh} (\mathbf{W_H} \mathbf{h}^{p,q}_{i,t} + \mathbf{W_X} \mathbf{h}_{i,t} + \mathbf{b_X}),<br>$$</p>
+<p>其中，$\mathbf{W_H}, \mathbf{W_X}, \mathbf{b_X}, \mathbf{v}$ 是参数，$\mathbf{v}^\text{T}$ 是转置。对于前面的每一天 $p$，我们得到一个周期表示 $\mathbf{h}^p_{i,t}$。然后我们使用另一个 LSTM 用这些周期表示作为输入，保存序列信息，即</p>
+<p>$$\tag{9}<br>\hat{\mathbf{h}}^p_{i,t} = \text{LSTM}(\mathbf{h}^p_{i,t}, \hat{\mathbf{h}}^{p-1}_{i,t}).<br>$$</p>
+<p>我们将最后一个时段的输出 $\hat{\mathbf{h}}^P_{i,t}$ 看作是时间动态相似度的表示（即长期周期信息）。</p>
+<h2 id="Joint-Training"><a href="#Joint-Training" class="headerlink" title="Joint Training"></a>Joint Training</h2><p>我们拼接把短期表示 $\mathbf{h}_{i,t}$ 和 长期表示 $\hat{\mathbf{h}}^P_{i,t}$ 拼接得到 $\mathbf{h}^c_{i,t}$，对于预测区域和时间来说既保留了短期依赖又保留了长期依赖。我们将 $\mathbf{h}^c_{i,t}$ 输入到全连接中，获得每个区域 $i$ 流入和流出流量的最终预测值，分别表示为 $y^i_{s,t+1}$ 和 $y^i_{e,t+1}$。最终预测函数定义为：</p>
+<p>$$\tag{10}<br>[y^i_{s,t+1}, y^i_{e,t+1}] = \text{tanh}(\mathbf{W}_{fa} \mathbf{h}^c_{i,t} + \mathbf{b}_{fa}),<br>$$</p>
+<p>因为我们做了归一化，所以输出的范围在 $(-1, 1)$，输出值会映射回需求值。</p>
+<p>我们同时预测出发和到达流量，损失函数定义为：</p>
+<p>$$\tag{11}<br>\mathcal{L} = \sum^n_{i=1} \lambda (y^s_{i,t+1} - \hat{y}^s_{i, t+1})^2 + (1 - \lambda) (y^e_{i,t+1} - \hat{y}^e_{i, t+1})^2,<br>$$</p>
+<p>$\lambda$ 用来平衡流入和流出的影响。区域 $i$ 在时间 $t+1$ 实际的流入和流出流量表示为 $\hat{y}^s_{i, t+1}, \hat{y}^e_{i, t+1}$。</p>
+<h1 id="Experiment"><a href="#Experiment" class="headerlink" title="Experiment"></a>Experiment</h1><h2 id="Experiment-Settings"><a href="#Experiment-Settings" class="headerlink" title="Experiment Settings"></a>Experiment Settings</h2>
       
 
       
