@@ -6,20 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://davidham3.github.io">
-  <title>pyspark读取HBase | Davidham&#39;s blog</title>
+  <title>pyspark读写HBase | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="应甲方需求，写一个 pyspark 读取 HBase 的教程。主要包含了基本读取方法和自定义 Converter 的方法。">
+  <meta name="description" content="应甲方需求，写一个 pyspark 读写 HBase 的教程。主要包含了基本读写方法和自定义 Converter 的方法。">
 <meta name="keywords" content="software,Spark">
 <meta property="og:type" content="article">
-<meta property="og:title" content="pyspark读取HBase">
-<meta property="og:url" content="https://davidham3.github.io/2019/04/10/pyspark读取hbase/index.html">
+<meta property="og:title" content="pyspark读写HBase">
+<meta property="og:url" content="https://davidham3.github.io/2019/04/10/pyspark读写hbase/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="应甲方需求，写一个 pyspark 读取 HBase 的教程。主要包含了基本读取方法和自定义 Converter 的方法。">
+<meta property="og:description" content="应甲方需求，写一个 pyspark 读写 HBase 的教程。主要包含了基本读写方法和自定义 Converter 的方法。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-10T10:53:40.352Z">
+<meta property="og:updated_time" content="2019-04-12T14:59:14.913Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="pyspark读取HBase">
-<meta name="twitter:description" content="应甲方需求，写一个 pyspark 读取 HBase 的教程。主要包含了基本读取方法和自定义 Converter 的方法。">
+<meta name="twitter:title" content="pyspark读写HBase">
+<meta name="twitter:description" content="应甲方需求，写一个 pyspark 读写 HBase 的教程。主要包含了基本读写方法和自定义 Converter 的方法。">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
   
@@ -161,19 +161,19 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-pyspark读取hbase" class="article article-type-post " itemscope="" itemprop="blogPost">
+            <article id="post-pyspark读写hbase" class="article article-type-post " itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      pyspark读取HBase
+      pyspark读写HBase
     </h1>
   
 
         
-        <a href="/blog/2019/04/10/pyspark读取hbase/" class="archive-article-date">
+        <a href="/blog/2019/04/10/pyspark读写hbase/" class="archive-article-date">
   	<time datetime="2019-04-10T09:26:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-10</time>
 </a>
         
@@ -184,7 +184,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>应甲方需求，写一个 pyspark 读取 HBase 的教程。主要包含了基本读取方法和自定义 Converter 的方法。<br><a id="more"></a></p>
+        <p>应甲方需求，写一个 pyspark 读写 HBase 的教程。主要包含了基本读写方法和自定义 Converter 的方法。<br><a id="more"></a></p>
 <h1 id="pyspark-读取-HBase"><a href="#pyspark-读取-HBase" class="headerlink" title="pyspark 读取 HBase"></a>pyspark 读取 HBase</h1><p>以下内容的环境：python 3.5，spark 1.6</p>
 <p>pyspark 读取 HBase 需要借助 Java 的类完成读写。</p>
 <p>首先需要明确的是，HBase 中存储的是 <code>byte[]</code>，也就是说，不管是什么样的数据，都需要先转换为 <code>byte[]</code> 后，才能存入 HBase。</p>
@@ -341,8 +341,8 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-        <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://davidham3.github.io/2019/04/10/pyspark读取hbase/" alt="微信分享二维码">
-      <!-- <img src="//pan.baidu.com/share/qrcode?url=https://davidham3.github.io/2019/04/10/pyspark读取hbase/" alt="微信分享二维码"> -->
+        <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://davidham3.github.io/2019/04/10/pyspark读写hbase/" alt="微信分享二维码">
+      <!-- <img src="//pan.baidu.com/share/qrcode?url=https://davidham3.github.io/2019/04/10/pyspark读写hbase/" alt="微信分享二维码"> -->
     </div>
 </div>
 
