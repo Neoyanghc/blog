@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/09/21/pixie-a-system-for-recommending-3-billion-items-to-200-million-users-in-real-time/Alg1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/09/21/pixie-a-system-for-recommending-3-billion-items-to-200-million-users-in-real-time/Alg2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/09/21/pixie-a-system-for-recommending-3-billion-items-to-200-million-users-in-real-time/Alg3.JPG">
-<meta property="og:updated_time" content="2018-10-01T06:47:00.289Z">
+<meta property="og:updated_time" content="2019-04-25T11:08:10.002Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Pixie: A System for Recommending 3+ Billion Items to 200+ Million Users in Real-Time">
 <meta name="twitter:description" content="WWW 2018. 对随机游走进行了改进，提出了Pixie随机游走，实际上就是一个有偏的随机游走，根据相似度进行偏离，从而实现个性化推荐，而且使用了早停策略。原文链接：Pixie: A System for Recommending 3+ Billion Items to 200+ Million Users in Real-Time">
@@ -72,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">193.2k</span>
+			总字数 <span class="post-count">193.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -198,7 +198,7 @@
 <p><strong>Traditional collaborative filtering approaches.</strong> 更一般地来讲，我们的方法与协同过滤相关，协同过滤通过挖掘用户图和商品图之间的交集部分，匹配用户与相似的商品偏好来生成推荐结果。系统过滤依赖于用户-商品矩阵的矩阵分解，生成表示用户和商品的隐向量[16, 17, 25, 30]。然而，基于矩阵分解的协同过滤算法的时间与空间复杂度最低是用户-商品图中顶点数的线性关系，使得使用这些算法在数十亿的商品以及百亿用户的问题上变得很有挑战。相比之下，我们的随机游走推荐算法与数据集的大小无关。</p>
 <p><strong>Content-based methods.</strong> 在纯基于内容的推荐系统中，对商品的表示只依赖于它们的内容特征[24]。许多先进的大规模推荐系统是基于内容的，经常使用深度神经网络[6, 8, 11, 29]。尽管这些算法凭借着参数空间的维度只依赖于特征空间的维度，能扩展到大的数据集上，这些方法并不能利用图结构的信息，而这点（图结构信息）对Pinterest很重要。</p>
 <h1 id="3-Proposed-Method"><a href="#3-Proposed-Method" class="headerlink" title="3. Proposed Method"></a>3. Proposed Method</h1><p>Pinterest是一个用户与pins交互的平台。用户可以保存相关的pins到board中。这些board是相似pins的集合体。举个例子，一个用户可以创建一个关于食谱的board，将食物相关的pins放进去。Pinterest可以看作是一些boards，每个board是一组pins，每个pin又组成了成千上万不同的boards。形式化来说，Pinterest可以组成一个无向二分图 $G = (P, B, E)^2$ 。其中，$P$ 表示一组pins，$B$ 表示boards的集合。集合 $P \cup B$是 $G$ 的顶点集。如果用户 $p$ 保存了 $b$，那么在pin $p \in P$ 与 board $b \in B$ 之间就有一条边 $e \in E$。我们使用 $E(p)$ 表示连接到pin $p$ 的board顶点，$E(b)$ 表示连接到 $b$ 的pins。我们认为图 $G$ 是连通的，在实际中也是这样的。</p>
-<p>Pixie接受的输入是一组带权的pins $Q = { (q, w_q) }$，其中 $q$ 是查询的pin，$w_q$是在查询集合中的重要度。查询集合 $Q$ 是用户指定的，并且在每次用户的行为后动态生成的，最近操作的pins有高的权重，随着时间的增长，权重会降低。给定查询 $Q$ Pixie会通过模拟新式的有重启的有偏随机游走来生成推荐结果。</p>
+<p>Pixie接受的输入是一组带权的pins $Q = \lbrace (q, w_q) \rbrace$，其中 $q$ 是查询的pin，$w_q$是在查询集合中的重要度。查询集合 $Q$ 是用户指定的，并且在每次用户的行为后动态生成的，最近操作的pins有高的权重，随着时间的增长，权重会降低。给定查询 $Q$ Pixie会通过模拟新式的有重启的有偏随机游走来生成推荐结果。</p>
 <h1 id="3-1-Pixie-Random-Walk"><a href="#3-1-Pixie-Random-Walk" class="headerlink" title="3.1 Pixie Random Walk"></a>3.1 Pixie Random Walk</h1><p>为了更好的解释Pixie，我们首先解释最简单的随机游走，然后讨论如何将它扩展到Pixes使用的新的随机游走算法上。所有基于基本随机游走的创新对于Pixie提升性能来说都是至关重要的。</p>
 <p><strong>Basic Random Walk.</strong> 考虑一个简单的例子，用户指定了查询 $Q$，包含一个pin $q$。给定一个输入pin $q$，可以在 $G$ 上模拟出很多短的随机游走，都是从 $q$ 开始的，记录每个pin $p$ 的访问次数(visit count)，表示随机游走访问到 $p$ 的次数。如果一个pin被访问的次数越多，那么这个 $q$ 就和它越相关。</p>
 <p>我们在算法1中描述了最基本的随机游走 $\rm BASICRANDOMWALK$ [28]。每个随机游走生成了一个 <em>steps</em> 的序列。每个 step 由3个操作组成。首先，给定当前pin $p$，(初始为 $q$ )，我们从 $E(p)$ 中选择一条连接 $q$ 和 $b$ 的边 $e$。然后我们通过从 $E(b)$ 中采样一条连接 $b$ 和 $p’$ 的一条边，得到pin $pin’$。第三步，当前的pin更新到 $p’$，然后重复之前的步骤。</p>

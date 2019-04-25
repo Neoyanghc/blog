@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/10/31/deeper-insights-into-graph-convolutional-networks-for-semi-supervised-learning/Table1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/10/31/deeper-insights-into-graph-convolutional-networks-for-semi-supervised-learning/Alg1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/10/31/deeper-insights-into-graph-convolutional-networks-for-semi-supervised-learning/Alg2.JPG">
-<meta property="og:updated_time" content="2018-12-22T05:32:13.024Z">
+<meta property="og:updated_time" content="2019-04-25T11:12:00.311Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning">
 <meta name="twitter:description" content="AAAI 2018. 原文链接：Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning">
@@ -72,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">193.2k</span>
+			总字数 <span class="post-count">193.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -250,12 +250,12 @@
 <p>我们已经证明了图卷积本质上就是一种拉普拉斯平滑。那 GCN 中应该放多少层呢？当然不是越多越好。GCN 层多了会不好训练。而且重复使用拉普拉斯平滑可能会混合不同类簇中的顶点的特征，使得他们区分不清。我们来举个例子。</p>
 <p>我们在 Zachary 的 karate club dataset (Zachary 1977) 上跑几个层数不同的模型。这个数据集有 34 个结点，两类，78 条边。GCN 的参数像 (Glorot and Bengio 2010) 中的一样随机初始化。隐藏层的维数是 16，输出层的维度是2。每个结点的特征向量是一个 one-hot 向量。每个 GCN 的输出绘制在图2中。我们可以看到图卷积的影响（图2a）。使用两次平滑，分类效果相对较好。再次使用平滑，点就会混合（图2c，2d，2e）。因为这是个小的数据集，两类之间的顶点有很多连接，所以很快就发生了混合。</p>
 <p>接下来，我们会证明重复使用拉普拉斯平滑，顶点的特征以及图的每个连通分量会收敛到相同的值。对于对称的拉普拉斯平滑，他们收敛到的值与顶点度数的二分之一次幂成正比。</p>
-<p>假设图 $\mathcal{G}$ 有 $k$ 个连通分量 ${ C_i}^k_{i=1}$，对于第 $i$ 个连通分量的指示向量表示为 $\mathbf{1}^{(i)} \in \mathbb{R}^n$。这个向量表示顶点是否在分量 $C_i$中，即：</p>
+<p>假设图 $\mathcal{G}$ 有 $k$ 个连通分量 $\lbrace  C_i\rbrace ^k_{i=1}$，对于第 $i$ 个连通分量的指示向量表示为 $\mathbf{1}^{(i)} \in \mathbb{R}^n$。这个向量表示顶点是否在分量 $C_i$中，即：</p>
 <p>$$\tag{11}<br>\mathbf{1}^{(i)}_j = \begin{cases}<br>1, v_j \in C_i,\\<br>0, v_j \notin C_i<br>\end{cases}<br>$$</p>
 <p><strong>Theorem 1. </strong> 如果一个图没有二分的连通分量，那么对于任意 $\mathrm{w} \in \mathbb{R}^n$，$\alpha \in (0, 1]$，</p>
 <p>$$<br>\lim_{m \rightarrow + \infty} (I - \alpha L_{rw})^m \mathrm{w} = [\mathbf{1}^{(1)}, \mathbf{1}^{(2)}, …, \mathbf{1}^{(k)}]\theta_1,<br>$$</p>
 <p>$$<br>\lim_{m \rightarrow + \infty} (I - \alpha L_{sym})^m \mathrm{w} = D^{-\frac{1}{2}}[\mathbf{1}^{(1)}, \mathbf{1}^{(2)}, …, \mathbf{1}^{(k)}]\theta_2,<br>$$</p>
-<p>其中 $\theta_1 \in \mathbb{R}^k, \theta_2 \in \mathbb{R}^k$，也就是他们分别收敛到 ${\mathbf{1}^{(i)}}^k_{i=1}$ 和 ${ D^{-\frac{1}{2}} \mathbf{1}^{(i)} }^k_{i=1}$。</p>
+<p>其中 $\theta_1 \in \mathbb{R}^k, \theta_2 \in \mathbb{R}^k$，也就是他们分别收敛到 $\lbrace \mathbf{1}^{(i)}\rbrace ^k_{i=1}$ 和 $\lbrace  D^{-\frac{1}{2}} \mathbf{1}^{(i)} \rbrace ^k_{i=1}$。</p>
 <p><em>Proof.</em> $L_{rw}$ 和 $L_{sym}$ 有相同的 $n$ 个特征值，不同的特征向量 (Von Luxbury 2007)。如果一个图没有二分的连通分量，那么特征值就会在 $[0, 2)$ 区间内 (Chung 1997)。后面就没看懂了。。。</p>
 <h1 id="4-Solutions"><a href="#4-Solutions" class="headerlink" title="4. Solutions"></a>4. Solutions</h1><p><strong>Co-Train a GCN with a Random Walk Model</strong></p>
 <p>使用一个 partially absorbing random walks (Wu et al. 2012) 来捕获网络的全局结构。方法就是计算归一化的吸收概率矩阵 $P = (L + \alpha \Lambda)^{-1}$，$P_{i, j}$ 是从顶点 $i$ 出发被吸收到顶点 $j$ 的概率，表示 $i$ 和 $j$ 有多大的可能性属于同一类。然后我们对每类 $k$，计算可信向量 $\mathbf{p} = \sum_{j \in S_k} P_{:, j}$，其中 $\mathbf{p} \in \mathbb{R}^n$，$p_i$ 是顶点 $i$ 属于类 $k$ 的概率。最后，找到 $t$ 个最可信的顶点把他们加到训练集的类 $k$ 中。</p>

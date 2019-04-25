@@ -17,7 +17,7 @@
 <meta property="og:description" content="AAAI 2019。处理的是网格数据，两个问题：空间依赖动态性，另一个是周期平移。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/21/revisiting-spatial-temporal-similarity-a-deep-learning-framework-for-traffic-prediction/Fig1.JPG">
-<meta property="og:updated_time" content="2019-04-12T10:57:36.066Z">
+<meta property="og:updated_time" content="2019-04-25T11:07:54.287Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta name="twitter:description" content="AAAI 2019。处理的是网格数据，两个问题：空间依赖动态性，另一个是周期平移。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
@@ -70,7 +70,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">193.2k</span>
+			总字数 <span class="post-count">193.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -199,7 +199,7 @@
 <li>我们提出了一个周期平移注意力机制，通过同时时可用长期周期信息和时间平移。</li>
 <li>我们在几个真实数据集上开展了实验，效果好。</li>
 </ul>
-<h1 id="Notations-and-Problem-Formulation"><a href="#Notations-and-Problem-Formulation" class="headerlink" title="Notations and Problem Formulation"></a>Notations and Problem Formulation</h1><p>我们将整个城市分为 $a \times b$ 个网格，一共 $n$ 个区域（$n = a \times b$），使用 ${1,2,\dots,n }$ 表示他们。我们将整个时间周期分为 $m$ 个登场的连续时段。任何一个个体的移动，其本质上是整个城市交通的一部分，总是从一个区域出发，过一段时间到达目的地。我们在一个时段内给每个区域定义一个开始/结束流量作为区域出发/到达的移动发生次数。$y^s_{i,t}$ 和 $y^e_{i,t}$ 表示开区域 $i$ 在时段 $t$ 的开始/结束流量。此外，对个体旅行的聚合形成交通流，描述了区域对之间的考虑时间的移动。时段 $t$ 从区域 $i$ 开始的交通流在时段 $\tau$ 于区域 $j$ 结束，表示为 $f^{j,\tau}_{i,t}$。显然，交通流反映了区域间的连通性，也反映了个体的移动。图1（c）给出了流量和流动的展示。</p>
+<h1 id="Notations-and-Problem-Formulation"><a href="#Notations-and-Problem-Formulation" class="headerlink" title="Notations and Problem Formulation"></a>Notations and Problem Formulation</h1><p>我们将整个城市分为 $a \times b$ 个网格，一共 $n$ 个区域（$n = a \times b$），使用 $\lbrace 1,2,\dots,n \rbrace$ 表示他们。我们将整个时间周期分为 $m$ 个登场的连续时段。任何一个个体的移动，其本质上是整个城市交通的一部分，总是从一个区域出发，过一段时间到达目的地。我们在一个时段内给每个区域定义一个开始/结束流量作为区域出发/到达的移动发生次数。$y^s_{i,t}$ 和 $y^e_{i,t}$ 表示开区域 $i$ 在时段 $t$ 的开始/结束流量。此外，对个体旅行的聚合形成交通流，描述了区域对之间的考虑时间的移动。时段 $t$ 从区域 $i$ 开始的交通流在时段 $\tau$ 于区域 $j$ 结束，表示为 $f^{j,\tau}_{i,t}$。显然，交通流反映了区域间的连通性，也反映了个体的移动。图1（c）给出了流量和流动的展示。</p>
 <p><strong>Problem(Traffic Volume Prediction)</strong> 给定知道时段 $t$ 的数据，交通流预测问题目标是预测时段 $t+1$ 的起始和结束流量。</p>
 <h1 id="Spatial-Temporal-Dynamic-Network"><a href="#Spatial-Temporal-Dynamic-Network" class="headerlink" title="Spatial-Temporal Dynamic Network*"></a>Spatial-Temporal Dynamic Network*</h1><p>这部分，我们讲一下细节。图1是我们模型的架构。</p>
 <center><img src="/blog/2019/03/21/revisiting-spatial-temporal-similarity-a-deep-learning-framework-for-traffic-prediction/Fig1.JPG" alt="Figure1"></center>

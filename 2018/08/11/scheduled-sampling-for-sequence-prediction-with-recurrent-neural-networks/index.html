@@ -18,7 +18,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/08/11/scheduled-sampling-for-sequence-prediction-with-recurrent-neural-networks/Fig1.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/08/11/scheduled-sampling-for-sequence-prediction-with-recurrent-neural-networks/Fig2.jpg">
-<meta property="og:updated_time" content="2018-11-04T12:53:57.107Z">
+<meta property="og:updated_time" content="2019-04-25T11:07:43.472Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Scheduled Sampling for Sequence Prediction with Recurrent Neural Networks">
 <meta name="twitter:description" content="NIPS 2015. 在训练seq2seq的时候，比如像机器翻译，训练的时候，每个输出y，它所依据的前一个词，都是正确的。但是在预测的时候，输出的这个词依照的上一个词，是模型输出的词，无法保证是正确的，这就会造成模型的输入和预测的分布不一致，可能会造成错误的累积。本文提出了scheduled sampling来处理这个问题。原文链接：Scheduled Sampling for Sequence">
@@ -71,7 +71,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">193.2k</span>
+			总字数 <span class="post-count">193.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -195,7 +195,7 @@
 <p>在这两种情况，循环神经网络一般都是通过给定的输入，最大化生成目标序列的似然。实际上，这个是通过给定当前模型的状态和之前的目标token，最大化每个目标token的似然，这使得模型可以在目标token上学习一种语言模型。然而，在推断过程中，真的<em>previous</em>目标token是无法获取的，这就使得模型需要用它自己生成的token，导致模型在训练和预测时会有差异。通过使用beam search启发式的生成几个目标序列可以缓解这种差异，但是对于连续的状态空间模型，如RNN，不存在动态规划的方法，所以即便是使用beam search，考虑的序列的数量仍然会很小。</p>
 <p>主要问题是，在生成序列时越早出现错误，会导致将这个错误输入进模型，然后会扩大模型的误差，因为模型会将它在训练时未见过的错误考虑到状态空间内。</p>
 <p>我们提出了一个递进学习方法，在对序列预测任务上使用RNN的训练和推测时构建了桥梁。我们提出，改变训练过程，为了逐渐地使模型处理它的错误，使它在推断时也可以进行。这样，模型在训练时会探索更多的情况，因此在推断时会更鲁棒的纠正它的错误，因为它在训练时就学习过这个。我们会展示这个方法在几个序列预测问题上的结果。</p>
-<h1 id="2-Proposed-Approach"><a href="#2-Proposed-Approach" class="headerlink" title="2 Proposed Approach"></a>2 Proposed Approach</h1><p>我们考虑一个监督学习任务，训练集是给定的 $N$ 个样本的输入输出对，${X^i, Y^i}^N_{i=1}$，$X^i$ 是输入，要么静态（图像），要么动态（序列），输出 $Y^i$ 是一个可变数量的token的序列 $y^i_1, y^i_2, …, y^i_{T_i}$，token属于一个已知的词典。</p>
+<h1 id="2-Proposed-Approach"><a href="#2-Proposed-Approach" class="headerlink" title="2 Proposed Approach"></a>2 Proposed Approach</h1><p>我们考虑一个监督学习任务，训练集是给定的 $N$ 个样本的输入输出对，$\lbrace X^i, Y^i \rbrace^N_{i=1}$，$X^i$ 是输入，要么静态（图像），要么动态（序列），输出 $Y^i$ 是一个可变数量的token的序列 $y^i_1, y^i_2, …, y^i_{T_i}$，token属于一个已知的词典。</p>
 <h2 id="2-1-Model"><a href="#2-1-Model" class="headerlink" title="2.1 Model"></a>2.1 Model</h2><p>给定一个输入/输出对儿 $(X, Y)$，log 概率 $P(Y \mid X)$ 可由下式计算：</p>
 <p>$$\tag{1}<br>\begin{aligned}<br>\mathrm{log} P(Y \mid X) &amp;= \mathrm{log} P(y^T_1 \mid X) \\<br>&amp;= \sum^T_{t = 1} \mathrm{log} P(y_t \mid y^{t-1}_1, X)<br>\end{aligned}<br>$$</p>
 <p>其中，$Y$ 是长度为 $T$ 的序列，$y_1, y_2, …, y_T$。在前面的等式中，后面的项通过一个参数为 $\theta$ 的循环神经网络，通过一个状态向量 $h_t$估计得到，也就是通过前一个输出 $y_{t-1}$ 和前一个状态 $h_{t-1}$估计得到：</p>

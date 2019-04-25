@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Table1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Table2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Table3.JPG">
-<meta property="og:updated_time" content="2019-03-14T07:46:41.789Z">
+<meta property="og:updated_time" content="2019-04-25T11:12:15.753Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta name="twitter:description" content="AAAI 2017, MSRA的城市人流预测，用三个相同结构的残差卷积神经网络对近邻时间、周期、趋势（远期）分别建模，输出的结果进行集成，然后和外部因素集成，得到预测结果。原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
@@ -79,7 +79,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">193.2k</span>
+			总字数 <span class="post-count">193.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -219,11 +219,11 @@
 <center><img src="/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig2.JPG" alt="Figure2"></center>
 
 <p>**Definition 2(Inflow/outflow (Zhang et al. 2016)) $\mathbb{P}$ 是第 t 时段的轨迹集合。对于第 $i$ 行第 $j$ 列的网格，时段 $t$ 流入和流出的人流分别定义为：</p>
-<p>$$<br>x^{in,i,j}_t = \sum_{T_r \in \mathbb{P}} \vert { k &gt; 1 \mid g_{k-1} \not \in (i, j) \wedge g_k \in (i,j) } \vert<br>\\<br>x^{out,i,j}_t = \sum_{T_r \in \mathbb{P}} \vert { k \geq 1 \mid g_k \in (i,j) \wedge g_{k+1} \not \in (i,j) } \vert<br>$$</p>
+<p>$$<br>x^{in,i,j}_t = \sum_{T_r \in \mathbb{P}} \vert \lbrace k &gt; 1 \mid g_{k-1} \not \in (i, j) \wedge g_k \in (i,j) \rbrace \vert<br>\\<br>x^{out,i,j}_t = \sum_{T_r \in \mathbb{P}} \vert \lbrace k \geq 1 \mid g_k \in (i,j) \wedge g_{k+1} \not \in (i,j) \rbrace \vert<br>$$</p>
 <p>其中 $T_r: g_1 \rightarrow g_2 \rightarrow \cdots \rightarrow g_{\vert T_r \vert}$ 是 $\mathbb{P}$ 中的轨迹，$g_k$ 是地理坐标；$g_k \in (i,j)$ 表示点 $g_k$ 落在 $(i, j)$ 内；$\vert · \vert$ 表示集合基数。</p>
 <p>时段 $t$ ，所有区域的流入和流出可以表示成 $\mathbf{X}_t \in \mathbb{R}^{2 \times I \times J}$，$(\mathbf{X}_t)_{0,i,j}=x^{in,i,j}_t, (\mathbf{X}_t)_{1,i,j} = x^{out,i,j}_t$。流入矩阵如图2(b)。</p>
 <p>空间区域可以表达成一个 $I \times J$ 的区域，有两类流动，所以观测值可以表示为 $\mathbf{X} \in \mathbb{R}^{2 \times I \times J}$。</p>
-<p><strong>Problem 1</strong> 给定历史观测值 ${ \mathbf{X}_t \mid t = 0,\dots,n-1 }$，预测 $\mathbf{X}_n$。</p>
+<p><strong>Problem 1</strong> 给定历史观测值 $\lbrace \mathbf{X}_t \mid t = 0,\dots,n-1 \rbrace$，预测 $\mathbf{X}_n$。</p>
 <h2 id="Deep-Residual-Learning"><a href="#Deep-Residual-Learning" class="headerlink" title="Deep Residual Learning"></a>Deep Residual Learning</h2><p>$$\tag{1}<br>\mathbf{X}^{(l+1)} = \mathbf{X}^{(l)} + \mathcal{F}(\mathbf{X}^{(l)})<br>$$</p>
 <h1 id="Deep-Spatio-Temporal-Residual-Networks"><a href="#Deep-Spatio-Temporal-Residual-Networks" class="headerlink" title="Deep Spatio-Temporal Residual Networks"></a>Deep Spatio-Temporal Residual Networks</h1><center><img src="/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig3.JPG" alt="Figure3"></center>
 

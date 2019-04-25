@@ -17,7 +17,7 @@
 <meta property="og:description" content="NIPS 2016。DCNNs，写的云里雾里的，不是很懂在干什么。。。就知道是融入了转移概率矩阵，和顶点的特征矩阵相乘，算出每个顶点到其他所有顶点的 $j$ 步转移的特征与转移概率的乘积，成为新的顶点表示，称为diffusion-convolutional representation，然后乘以一个卷积核，套一个激活，卷积就定义好了。应用还是在顶点分类与图分类上。原文链接：Diffusion-Co">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/19/diffusion-convolutional-neural-networks/Fig1.JPG">
-<meta property="og:updated_time" content="2018-11-04T12:53:57.091Z">
+<meta property="og:updated_time" content="2019-04-25T11:12:21.138Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Diffusion-Convolutional Neural Networks">
 <meta name="twitter:description" content="NIPS 2016。DCNNs，写的云里雾里的，不是很懂在干什么。。。就知道是融入了转移概率矩阵，和顶点的特征矩阵相乘，算出每个顶点到其他所有顶点的 $j$ 步转移的特征与转移概率的乘积，成为新的顶点表示，称为diffusion-convolutional representation，然后乘以一个卷积核，套一个激活，卷积就定义好了。应用还是在顶点分类与图分类上。原文链接：Diffusion-Co">
@@ -70,7 +70,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">193.2k</span>
+			总字数 <span class="post-count">193.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -193,7 +193,7 @@
 <p>我们的受到的启发是：捕获了图扩散性的表示在预测上可以提供比图本身更好的结果。图扩散性可以表达成矩阵的幂序列，提供了一个简单的机制来包含关于实体的上下文信息，这些实体可以在多项式时间复杂度内计算出来，并在GPU上实现。</p>
 <p>我们提出了diffusion-convolutional神经网络(DCNN)，在图数据的各种各样的分类任务上测试了性能。在分类任务中很多技术包含了结构的信息，比如概率关系模型和核方法；DCNN提供了一个补充的方法，在顶点分类上获得了巨大的提升。</p>
 <p>DCNN的优势：<br>·<strong>精度：</strong> DCNN比其他方法在顶点分类任务上精度更高，图分类上表现的也不错。<br>·<strong>灵活性：</strong> DCNN提供了图数据的灵活表示，使用简单的处理对顶点特征、边特征以及结构信息进行编码。DCNN可以用于很多分类任务，包括顶点分类，边分类，图分类。<br>·<strong>速度：</strong> DCNN的预测可以表示成一系列多项式时间复杂度的tensor操作，模型可以在GPU上实现。</p>
-<h1 id="2-模型"><a href="#2-模型" class="headerlink" title="2 模型"></a>2 模型</h1><p>长度为 $T$ 的一个图的集合 $\mathcal{G} = {G_t \mid t \in 1…T }$。每个图 $G_t = (V_t, E_t)$ 由顶点 $V_t$ 和边 $E_t$ 组成。顶点一起表示为一个 $N_t \times F$ 的特征矩阵 $X_t$，其中 $N_t$ 是 $G_t$ 的顶点数，边 $E_t$ 通过一个 $N_t \times N_t$ 的邻接矩阵 $A_t$ 编码，通过这个我们可以计算出一个度归一化的转移矩阵 $P_t$，这个矩阵给出了从顶点 $i$ 一步转移到 $j$ 的概率。图 $G_t$ 没有限制，有向无向，带权不带权都可以。对于我们的任务来说，要么是顶点、边有标签 $Y$，要么是图有标签 $Y$，不同情况下 $Y$ 的维度不同。</p>
+<h1 id="2-模型"><a href="#2-模型" class="headerlink" title="2 模型"></a>2 模型</h1><p>长度为 $T$ 的一个图的集合 $\mathcal{G} = \lbrace G_t \mid t \in 1…T \rbrace $。每个图 $G_t = (V_t, E_t)$ 由顶点 $V_t$ 和边 $E_t$ 组成。顶点一起表示为一个 $N_t \times F$ 的特征矩阵 $X_t$，其中 $N_t$ 是 $G_t$ 的顶点数，边 $E_t$ 通过一个 $N_t \times N_t$ 的邻接矩阵 $A_t$ 编码，通过这个我们可以计算出一个度归一化的转移矩阵 $P_t$，这个矩阵给出了从顶点 $i$ 一步转移到 $j$ 的概率。图 $G_t$ 没有限制，有向无向，带权不带权都可以。对于我们的任务来说，要么是顶点、边有标签 $Y$，要么是图有标签 $Y$，不同情况下 $Y$ 的维度不同。</p>
 <p>如果 $T=1$，也就是只有一个图，标签是顶点或边，那么预测标签 $Y$ 就转换为了半监督分类问题了；如果输入中没有边的表示，就变成了标准的监督问题。如果 $T&gt;1$，标签是每个图的标签，那就是监督图分类问题。</p>
 <p><img src="/blog/2018/07/19/diffusion-convolutional-neural-networks/Fig1.JPG" alt="Figure1"></p>
 <p>DCNN接受 $\mathcal{G}$ 作为输入，返回一个 $Y$ 的hard prediction或是条件概率分布 $\mathbb{P}(Y \mid X)$。每个实体（顶点、图、或边）被转换为扩散卷积表示，由 $F$ 个特征上 $H$ 步扩散的维度为 $H \times F$ 的实数矩阵定义，每个实体是由 $H \times F$ 的实数矩阵 $W^c$ 和一个非线性可微分函数 $f$ 计算激活定义的。所以对于顶点分类任务，图 $t$ 的扩散卷积(diffusion-convolutional)表示 $Z_t$，是一个 $N_t \times H \times F$ 的tensor，如图1a所示；对于图或边分类任务，$Z_t$ 是一个 $H \times F$ 或 $N_t \times H \times F$ 的矩阵，如图1b和图1c。(原文里面写的是 $M_t \times H \times F$，我觉得是写错了)</p>

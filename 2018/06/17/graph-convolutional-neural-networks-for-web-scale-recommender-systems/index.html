@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/algo1.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/algo2.PNG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/Fig2.PNG">
-<meta property="og:updated_time" content="2019-02-06T10:09:43.171Z">
+<meta property="og:updated_time" content="2019-04-25T11:10:07.939Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Graph Convolutional Neural Networks for Web-Scale Recommender Systems">
 <meta name="twitter:description" content="KDD 2018。使用图卷积对顶点进行表示，学习顶点的 embedding ，通过卷积将该顶点的邻居信息融入到向量中。原文链接：Graph Convolutional Neural Networks for Web-Scale Recommender Systems。">
@@ -73,7 +73,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">193.2k</span>
+			总字数 <span class="post-count">193.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -217,11 +217,11 @@
 <center><img src="/blog/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/algo2.PNG" alt=""></center>
 
 <p>算法2详细描述了如何堆叠卷积操作，针对一个 minibatch 的顶点 $\mathcal{M}$ 生成 embeddings。首先计算每个顶点的邻居，然后使用 $K$ 个卷积迭代来生成目标顶点的 K 层表示。最后一层卷积层的输出之后会输入到一个全连接神经网络来生成最后的 embedding $z_u$，$\forall{u} \in \mathcal{M}$。</p>
-<p>模型需要学习的参数有：每个卷积层的权重和偏置（$Q^{(k)}$，$q^{(k)}$，$W^{(k)}$，$w^{(k)}$，$\forall{k} \in {1,…,K}$），还有最后的全连接网络中的参数 $G_1$，$G_2$，$g$。算法1的第一行的每层输出的维度（也就是 $Q$ 的列空间的维度）设为 $m$。为了简单起见，我们将所有卷积层（算法1的第三行的输出）的输出都设为同一个数，表示为 $d$。模型最后的输出（算法2第18行之后）也设为 $d$。</p>
+<p>模型需要学习的参数有：每个卷积层的权重和偏置（$Q^{(k)}$，$q^{(k)}$，$W^{(k)}$，$w^{(k)}$，$\forall{k} \in \lbrace 1,…,K\rbrace $），还有最后的全连接网络中的参数 $G_1$，$G_2$，$g$。算法1的第一行的每层输出的维度（也就是 $Q$ 的列空间的维度）设为 $m$。为了简单起见，我们将所有卷积层（算法1的第三行的输出）的输出都设为同一个数，表示为 $d$。模型最后的输出（算法2第18行之后）也设为 $d$。</p>
 <h2 id="3-3-Model-Training"><a href="#3-3-Model-Training" class="headerlink" title="3.3 Model Training"></a>3.3 Model Training</h2><p>我们使用 max-margin ranking loss 来训练 PinSage。在这步，假设我们有了一组标记的物品对 $\mathcal{L}$，$(q,i) \in \mathcal{L}$ 认为是相关的，也就是当查询 $q$ 时，物品 $i$ 是一个好的推荐候选项。训练阶段的目标是优化 PinSage 的参数，使得物品对 $(q,i) \in \mathcal{L}$ 的 embedding 在标记集合中尽可能的接近。</p>
 <p>我们先来看看 margin-based loss function。首先我们来看看我们使用的可以高效地计算并且使 PinSage 快速收敛的一些技术，这些技术可以让我们训练包含数十亿级别的顶点的图，以及数十亿训练样本。最后，我们描述我们的 curriculum-training scheme，这个方法可以全方位的提升我们的推荐质量。</p>
 <p><strong>Loss function.</strong> 为了训练模型的参数，我们使用了一个基于最大边界的损失函数。基本的思想是我们希望最大化正例之间的内积，也就是说，查询物品的 embedding 和对应的相关物品的 embedding 之间的内积。与此同时我们还想确保负例之间的内积，也就是查询物品的 embedding 和那些不相关物品 embedding 之间的内积要小于通过提前定义好的边界划分出的正例的内积。对于单个顶点对 embeddings $(z_q, z_i):(q, i) \in \mathcal{L}$ 的损失函数是：</p>
-<p>$$<br>J_{\mathcal{G}}(z_qz_i) = \mathbb{E}_{n_k \thicksim p_n(q)}\max{0, z_q \cdot z_{n_k}-z_q \cdot z_i + \Delta}<br>$$</p>
+<p>$$<br>J_{\mathcal{G}}(z_qz_i) = \mathbb{E}_{n_k \thicksim p_n(q)}\max\lbrace 0, z_q \cdot z_{n_k}-z_q \cdot z_i + \Delta\rbrace<br>$$</p>
 <p>其中，$P_n(q)$ 表示物品 $q$ 的负样本分布，$\Delta$ 表示 margin 超参数。一会儿会讲负样本采样。</p>
 <p><strong>Multi-GPU training with large minibatches.</strong> 为了在训练中充分利用单台机器的多个 GPU，我们以一种 multi-tower 的方法运行前向和反向传播。我们首先将每个 minibatch（图1底部）分成相等大小的部分。每个 GPU 获得 minibatch 的一部分，使用同一组参数来运算。在反向传播之后，所有 GPU 上的针对每个参数的梯度进行汇集，然后使用一个同步的 SGD。由于训练需要极大数量的样本，我们在运行时使用了很大的 batch size，范围从 512 到 4096。</p>
 <p>我们使用与 Goyal et al.[16] 提出的相似的技术来确保快速收敛，而且在处理大 batch size 时训练的稳定和泛化精度。我们在第一轮训练的时候根据线性缩放原则使用一个 gradual warmup procedure，使学习率从小增大到一个峰值。之后学习率以指数级减小。</p>

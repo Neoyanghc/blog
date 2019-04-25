@@ -24,7 +24,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/Table3.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/Table4.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/Fig5.JPG">
-<meta property="og:updated_time" content="2019-03-19T08:50:32.008Z">
+<meta property="og:updated_time" content="2019-04-25T11:06:53.659Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spatiotemporal Multi-Graph Convolution Network for Ride-hailing Demand Forecasting">
 <meta name="twitter:description" content="AAAI 2019，滴滴的网约车需求预测，5个点预测1个点。空间依赖建模上：以图的形式表示数据，从空间地理关系、区域功能相似度、区域交通连通性三个角度构造了三个不同的图，提出了多图卷积，分别用 k 阶 ChebNet 对每个图做图卷积，然后将多个图的卷积结果进行聚合(sum, average 等)成一个图；时间依赖建模上：提出了融合背景信息的 Contextual Gated RNN (CGRNN">
@@ -77,7 +77,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">193.2k</span>
+			总字数 <span class="post-count">193.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -228,7 +228,7 @@
 <p>$$\tag{3}<br>A_{S,i,j} = \text{sim}(P_{v_i}, P_{v_j}) \in [0, 1]<br>$$</p>
 <p>其中 $P_{v_i}, P_{v_j}$ 是区域 $v_i$ 和 $v_j$ 的 POI 向量，维度等于 POI 种类的个数，每个分量表示这个区域内这个 POI 类型的数量。</p>
 <p><strong>Transportation connectivity</strong> 运输系统也是一个重要因素。一般来说，这些空间距离上相距较远但是可以很方便到达的区域可以关联起来。这种连接包含高速公路、公路、地铁这样的公共运输。我们定义：如果两个区域间通过这些路直接相连，那么他们之间有边：</p>
-<p>$$\tag{4}<br>A_{C,i,j} = max(0, \text{conn}(v_i, v_j) - A_{N,i,j}) \in {0, 1}<br>$$</p>
+<p>$$\tag{4}<br>A_{C,i,j} = max(0, \text{conn}(v_i, v_j) - A_{N,i,j}) \in \lbrace 0, 1\rbrace<br>$$</p>
 <p>$\text{conn}(u, v)$ 表示 $v_i$ 和 $v_j$ 之间的连通性。邻居的边在这个图中移除掉了，减少冗余的关系，所以这个图最后是一个稀疏图。</p>
 <p><strong>Multi-graph convolution for spatial dependency modeling</strong> 有了这些图，我们提出了多图卷积对空间关系建模：</p>
 <p>$$\tag{5}<br>\boldsymbol{X}_{l+1} = \sigma(\bigsqcup_{\mathbf{A} \in \mathbb{A}} f(\mathbf{A; \theta_i}) \boldsymbol{X}_l \mathbf{W}_l)<br>$$</p>

@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/13/graph-attention-networks/Table2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/13/graph-attention-networks/Table3.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/07/13/graph-attention-networks/Fig2.JPG">
-<meta property="og:updated_time" content="2019-01-21T07:03:57.966Z">
+<meta property="og:updated_time" content="2019-04-25T11:10:28.545Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Graph Attention Networks">
 <meta name="twitter:description" content="ICLR 2018。图注意力网络，使用 self-attention 来构建 graph attentional layer，attention 会考虑当前顶点所有的邻居对它的重要性，基于谱图理论的模型不能应用到其他不同结构的图上，而这个基于attention的方法能有效的解决这个问题。原文链接：Graph Attention Networks">
@@ -74,7 +74,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">193.2k</span>
+			总字数 <span class="post-count">193.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -202,7 +202,7 @@
 <p>值得注意的是，如 Kipf &amp; Welling 2017和Atwood &amp; Towsley 2016，我们的工作可以重写为 MoNet(Monti et al., 2016)的一种特殊形式。除此以外，我们的分享神经网络跨边计算时是对关系网络公式的联想(Santoro et al., 2017)和VAIN(Hoshen, 2017)，在这两篇文章中，object 和 agent 间的关系被聚合成对，通过使用一种共享机制。相似地，我们的注意力模型可以与 Duan et al., 2017 和 Denil et al., 2017 的工作相连，他们使用一个邻居注意力操作来计算环境中不同 object 的注意力系数。其他相关的方法包括局部线性嵌入(LLE)(Roweis &amp; Saul, 2000)和记忆网络(Weston et al., 2014)。LLE 在每个数据点选择了固定数量的邻居，为每个邻居学习了权重系数，以此将每个数据点重构为邻居的加权之和。之后的优化提取了顶点嵌入的特征。记忆网络与我们的工作也有关系，如果我们将一个顶点的邻居解释为记忆，通过注意它的值可以计算顶点特征，之后通过在同样的位置存储新特征进行更新。</p>
 <h1 id="2-GAT-ARCHITECTURE"><a href="#2-GAT-ARCHITECTURE" class="headerlink" title="2 GAT ARCHITECTURE"></a>2 GAT ARCHITECTURE</h1><p>我们会在这部分描述如何创建 block layer 来构造任意的 graph attention networks，并且指明理论和实际上的优点以及相比于之前在神经图处理上的工作的缺点。</p>
 <h2 id="2-1-Graph-Attentional-Layer"><a href="#2-1-Graph-Attentional-Layer" class="headerlink" title="2.1 Graph Attentional Layer"></a>2.1 Graph Attentional Layer</h2><p>首先描述单个 graph attentional layer，因为这种层会在整个 GAT 架构中使用。我们使用的 attention 和 Bahdanau et al., 2015 的工作相似。</p>
-<p>输入是一组顶点特征，${\mathbf{h}} = { \vec{h}_1, \vec{h}_2, …, \vec{h}_N }, \vec{h}_i \in \mathbb{R}^F$，其中 $N$ 是顶点数，$F$ 是每个顶点的特征数。这个层会生成一组新的顶点特征，${\mathbf{h}’} = { \vec{h}’_1, \vec{h}’_2, …, \vec{h}’_N}, \vec{h}’_i \in \mathbb{R}^{F’}$，作为输出。</p>
+<p>输入是一组顶点特征，${\mathbf{h}} = \lbrace \vec{h}_1, \vec{h}_2, …, \vec{h}_N \rbrace , \vec{h}_i \in \mathbb{R}^F$，其中 $N$ 是顶点数，$F$ 是每个顶点的特征数。这个层会生成一组新的顶点特征，${\mathbf{h}’} = \lbrace \vec{h}’_1, \vec{h}’_2, …, \vec{h}’_N\rbrace , \vec{h}’_i \in \mathbb{R}^{F’}$，作为输出。</p>
 <p>为了在将输入特征变换到高维特征时获得充足的表现力，至少需要一个可学习的线性变换。为了到达这个目的，每个顶点都会使用一个共享参数的线性变换，参数为 ${\mathbf{W}} \in \mathbb{R}^{F’ \times F}$。然后在每个顶点上做一个 self-attention ——一个共享的attention机制 $a : \mathbb{R}^{F’} \times \mathbb{R}^{F’} \rightarrow \mathbb{R}$ 来计算注意力分数 <em>attention coefficients</em>：</p>
 <p>$$\tag{1}<br>e_{ij} = a(\mathbf{W} \vec{h}_i, \mathbf{W} \vec{h}_j)<br>$$</p>
 <p>表示顶点 $j$ 的特征对顶点 $i$ 的重要性(<em>importance</em>)。在一般的公式中，模型可以使每个顶点都注意其他的每个顶点，扔掉所有的结构信息。我们使用 <em>mask attention</em> 使得图结构可以注入到注意力机制中——我们只对顶点 $j \in \mathcal{N_i}$ 计算$e_{ij}$，其中$\mathcal{N_i}$ 是顶点 $i$ 在图中的一些邻居。在我们所有的实验中，这些是 $i$ 的一阶邻居（包括 $i$ ）。为了让系数在不同的顶点都可比，我们对所有的 $j$ 使用 softmax 进行了归一化：</p>

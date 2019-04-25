@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="关于谱聚类的文章，主要包含了谱聚类和拉普拉斯矩阵的内容。最近研究 GCN 的原理的时候发现了这篇论文。Von Luxburg U. A tutorial on spectral clustering[J]. Statistics and Computing, 2007, 17(4): 395-416.原文链接：A Tutorial on Spectral Clustering">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-07T03:24:37.057Z">
+<meta property="og:updated_time" content="2019-04-25T11:13:32.832Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="A Tutorial on Spectral Clustering">
 <meta name="twitter:description" content="关于谱聚类的文章，主要包含了谱聚类和拉普拉斯矩阵的内容。最近研究 GCN 的原理的时候发现了这篇论文。Von Luxburg U. A tutorial on spectral clustering[J]. Statistics and Computing, 2007, 17(4): 395-416.原文链接：A Tutorial on Spectral Clustering">
@@ -67,7 +67,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">193.2k</span>
+			总字数 <span class="post-count">193.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -185,9 +185,9 @@
       
         <p>关于谱聚类的文章，主要包含了谱聚类和拉普拉斯矩阵的内容。最近研究 GCN 的原理的时候发现了这篇论文。<br>Von Luxburg U. A tutorial on spectral clustering[J]. Statistics and Computing, 2007, 17(4): 395-416.<br>原文链接：<a href="https://arxiv.org/abs/0711.0189" target="_blank" rel="noopener">A Tutorial on Spectral Clustering</a><br><a id="more"></a></p>
 <h1 id="2-Similarity-graphs"><a href="#2-Similarity-graphs" class="headerlink" title="2 Similarity graphs"></a>2 Similarity graphs</h1><p>给定一组数据点 $x_1, …, x_n$ 还有数据点 $x_i$ 和 $x_j$ 之间的相似性 $s_{ij} \geq 0$，聚类的目标是将样本点分到几个组中，组的样本相似，不同组的样本不相似。如果没有更多的信息，使用 <em>similarity graph</em> 表示数据是一个好的方法，$G = (V, E)$。每个顶点 $v_i$ 表示一个数据点 $x_i$。如果相似度 $s_{ij}$ 是正的，且大于一个确定的阈值，那么两个顶点相连，边的权重为 $s_{ij}$。聚类的问题可以使用相似度图重新定义为：我们想找到一个划分方案，使得不同组之间的边有很小的权重（意味着不同类簇间的样本不相似），同组内的权重较高（意味着同一类簇的样本相似）。我们首先引入一些符号和性质。</p>
-<h2 id="2-1-Graph-notation"><a href="#2-1-Graph-notation" class="headerlink" title="2.1 Graph notation"></a>2.1 Graph notation</h2><p>$G = (V, E)$ 是无向图，顶点集 $V = { v_1, …, v_n }$。我们假设图 $G$ 是带权的，边有非负权重 $w_{ij} \geq 0$。带权的邻接矩阵是 $W = (w_{ij})_{i,j=1,…,n}$。如果 $w_{ij} = 0$，表示顶点 $v_i$ 和 $v_j$之间没有边。因为 $G$ 是无向的，所以 $w_{ij} = w_{ji}$。顶点 $v_i \in V$ 的度定义为：</p>
+<h2 id="2-1-Graph-notation"><a href="#2-1-Graph-notation" class="headerlink" title="2.1 Graph notation"></a>2.1 Graph notation</h2><p>$G = (V, E)$ 是无向图，顶点集 $V = \lbrace v_1, …, v_n \rbrace $。我们假设图 $G$ 是带权的，边有非负权重 $w_{ij} \geq 0$。带权的邻接矩阵是 $W = (w_{ij})_{i,j=1,…,n}$。如果 $w_{ij} = 0$，表示顶点 $v_i$ 和 $v_j$之间没有边。因为 $G$ 是无向的，所以 $w_{ij} = w_{ji}$。顶点 $v_i \in V$ 的度定义为：</p>
 <p>$$<br>d_i = \sum^n_{j = 1} w_{ij}.<br>$$</p>
-<p>事实上，这个加和只会在所有和 $v_i$ 邻接的顶点上做， 因为和其他的顶点之间的边权重为0。度矩阵 $D$ 定义为对角矩阵，对角线上是度 $d_1, …, d_n$。给定顶点的子集 $A \subset V$，它的补集 $V \ \backslash \ A$ 表示为 $\bar{A}$。定义一个指示向量 $1_A = (f_1, \dots f_n)’ \in \mathbb{R}^n$，如果 $v_i \in A$，$f_i = 1$，否则 $f_i = 0$。我们在做求和的时候，比如 $\sum_{i \in A} w_{ij}$， 把 ${ i \mid v_i \in A }$ 简记为 $i \in A$。对于两个不相交的集合 $A, B \subset V$，定义：</p>
+<p>事实上，这个加和只会在所有和 $v_i$ 邻接的顶点上做， 因为和其他的顶点之间的边权重为0。度矩阵 $D$ 定义为对角矩阵，对角线上是度 $d_1, …, d_n$。给定顶点的子集 $A \subset V$，它的补集 $V \ \backslash \ A$ 表示为 $\bar{A}$。定义一个指示向量 $1_A = (f_1, \dots f_n)’ \in \mathbb{R}^n$，如果 $v_i \in A$，$f_i = 1$，否则 $f_i = 0$。我们在做求和的时候，比如 $\sum_{i \in A} w_{ij}$， 把 $\lbrace i \mid v_i \in A \rbrace $ 简记为 $i \in A$。对于两个不相交的集合 $A, B \subset V$，定义：</p>
 <p>$$<br>W(A, B) := \sum_{i \in A, j \in B} w_{ij}.<br>$$</p>
 <p>我们考虑两个不同的方式来描述子集 $A \subset V$ 的“大小”：</p>
 <p>$$<br>\vert A \vert := A 的顶点数\\<br>\text{vol}(A) := \sum_{i \in A} d_i.<br>$$</p>

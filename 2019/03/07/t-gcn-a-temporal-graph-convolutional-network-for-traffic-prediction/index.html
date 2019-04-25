@@ -24,7 +24,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig6.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Fig7.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/07/t-gcn-a-temporal-graph-convolutional-network-for-traffic-prediction/Table1.JPG">
-<meta property="og:updated_time" content="2019-03-08T02:22:58.796Z">
+<meta property="og:updated_time" content="2019-04-25T11:06:30.128Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="T-GCN: A Temporal Graph Convolutional Network for Traffic Prediction">
 <meta name="twitter:description" content="T-GCN，arxiv上面的一篇文章，用 GCN 对空间建模，GRU 对时间建模，很简单的模型。没有对比近几年的图卷积在时空数据挖掘中的模型。原文地址：T-GCN: A Temporal Graph ConvolutionalNetwork for Traffic Prediction">
@@ -77,7 +77,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">193.2k</span>
+			总字数 <span class="post-count">193.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -215,7 +215,7 @@
 <p>尽管上述方法引入了 CNN 对空间依赖建模，在交通预测任务上有很大的进步，但 CNN 本质上只适用于欧氏空间，在有着复杂拓扑结构的交通网络上不能刻画空间依赖。因此，这类方法有缺陷。近些年，图卷积网络的发展，可以用来捕获图网络的结构特征，提供更好的解决方案。Li 等人提出了 DCRNN 模型，通过图上的随机游走捕获空间特征，通过编码解码结构捕获时间特征。</p>
 <p>基于这个背景，我们提出了新的神经网络方法捕获复杂的时空特征，可以用于基于城市路网的交通预测任务上。</p>
 <h1 id="3-Methodology"><a href="#3-Methodology" class="headerlink" title="3 Methodology"></a>3 Methodology</h1><h2 id="3-1-Problem-Definition"><a href="#3-1-Problem-Definition" class="headerlink" title="3.1 Problem Definition"></a>3.1 Problem Definition</h2><p>目标是基于历史信息预测未来。我们的方法中，交通信息是一个通用的概念，可以是速度、流量、密度。我们在实验的时候将交通信息看作是速度。</p>
-<p>定义1：路网 $G$。我们用图 $G = (V, E)$ 描述路网的拓扑结构，每条路是一个顶点，$V$ 顶点集，$V = {v_1, v_2, \dots, v_N }$，$N$ 是顶点数，$E$ 是边集。邻接矩阵 $A$ 表示路的关系，$A \in R^{N \times N}$。邻接矩阵只有 0 和 1。如果路之间有连接就为 1， 否则为 0。</p>
+<p>定义1：路网 $G$。我们用图 $G = (V, E)$ 描述路网的拓扑结构，每条路是一个顶点，$V$ 顶点集，$V = \lbrace v_1, v_2, \dots, v_N \rbrace$，$N$ 是顶点数，$E$ 是边集。邻接矩阵 $A$ 表示路的关系，$A \in R^{N \times N}$。邻接矩阵只有 0 和 1。如果路之间有连接就为 1， 否则为 0。</p>
 <p>定义2：特征矩阵 $X^{N \times P}$。我们将交通信息看作是顶点的特征。$P$ 表示特征数，$X_t \in R^{N \times i}$ 用来表示时刻 $i$ 每条路上的速度。</p>
 <p>时空交通预测的问题可以看作学习一个映射函数：</p>
 <p>$$\tag{1}<br>[X_{t+1}, \dots, X_{t+T}] = f(G; (X_{t-n}, \dots, X_{t-1}, X_t))<br>$$</p>
@@ -254,7 +254,7 @@
 <p>（4）Coefficient of Determination (R2):</p>
 <p>$$\tag{11}<br>R^2 = 1 - \frac{\sum_{i=1} (Y_t - \hat{Y}_t)^2}{\sum_{i=1}(Y_t - \bar{Y})^2}<br>$$</p>
 <p>（5）Explained Variance Score(Var):</p>
-<p>$$<br>var = 1 - \frac{Var{Y - \hat{Y}}}{Var{Y}}<br>$$</p>
+<p>$$<br>var = 1 - \frac{Var\lbrace Y - \hat{Y}\rbrace}{Var\lbrace Y\rbrace}<br>$$</p>
 <p>RMSE 和 MAE 用来评估预测误差：越小越好。精度衡量预测的精度：越大越好。$R^2$ 和 Var 计算相关系数，评估预测结果表达真实数据的能力，越大越好。</p>
 <h2 id="4-3-Model-Parameters-Designing"><a href="#4-3-Model-Parameters-Designing" class="headerlink" title="4.3 Model Parameters Designing"></a>4.3 Model Parameters Designing</h2><p>(1) Hyperparameter</p>
 <p>学习率、batch size、训练论述，隐藏层数。我们设定的是学习率0.001，batch size 64，轮数 3000 轮。</p>
