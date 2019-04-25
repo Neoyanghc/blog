@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig3.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig4.JPG">
-<meta property="og:updated_time" content="2019-04-25T07:51:08.962Z">
+<meta property="og:updated_time" content="2019-04-25T08:00:28.784Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta name="twitter:description" content="TKDE 2019 Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
@@ -74,7 +74,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">193k</span>
+			总字数 <span class="post-count">193.2k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -185,7 +185,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：3.1k字 | 预计阅读时长：11分钟
+        字数：3.3k字 | 预计阅读时长：12分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -212,7 +212,7 @@
 <p>表 1 列出了这篇文章中出现的数学符号。</p>
 <center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table1.JPG" alt="Table1"></center>
 
-<h1 id="2-Problem-Formulation"><a href="#2-Problem-Formulation" class="headerlink" title="2 Problem Formulation"></a>2 Problem Formulation</h1><p><strong><em>Definition 1(Node).</em></strong> 一个空间地图基于经纬度被分成 $I \times J$ 个网格，表示为 $V = {r_1, r_2, …, r_{I\timesJ} }$，每个元素表示一个空间节点，如图2(a)。</p>
+<h1 id="2-Problem-Formulation"><a href="#2-Problem-Formulation" class="headerlink" title="2 Problem Formulation"></a>2 Problem Formulation</h1><p><strong><em>Definition 1(Node).</em></strong> 一个空间地图基于经纬度被分成 $I \times J$ 个网格，表示为 $V = {r_1, r_2, …, r_{I\times J} }$，每个元素表示一个空间节点，如图2(a)。</p>
 <center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig2.JPG" alt="Figure2"></center>
 
 <p>令 $(\tau, x, y)$ 为时空坐标，$\tau$ 表示时间戳，$(x, y)$ 表示空间点。一个物体的移动可以记为一个按时间顺序的空间轨迹，起点和终点表示为 $s = (\tau_s, x_s, y_s)$ 和 $e = (\tau_e, x_e, y_e)$，表示出发地和目的地。$\mathbb{P}$ 表示所有的起止对。</p>
@@ -233,7 +233,10 @@
 <h1 id="3-Multitask-Deep-Learning"><a href="#3-Multitask-Deep-Learning" class="headerlink" title="3 Multitask Deep Learning"></a>3 Multitask Deep Learning</h1><p>图 4 展示了我们的 MDL 框架，包含 3 个组成部分，分别用于数据转换，顶点流量建模，边流量建模。我们首先将轨迹（或订单）数据转换成两类流量，i) 顶点流量表示成有时间顺序的张量序列 ${\mathcal{X}_t \mid t = t_1, \dots, t_T }$ (1a); ii) 边流量是一个有时间顺序的图序列（转移矩阵）${\mathbf{S}_t \mid t = t_1, \dots, t_T }$ (2a)，之后再根据 2.1 节的方法转换为张量的序列 ${\mathcal{M}_t \mid t = t_1, \dots, t_T }$ (2b)。这两类像视频一样的数据之后放到 NODENET 和 EDGENET 中。以 NODENET 为例，它选了三个不同类型的片段，放入 3S-FCN 中，对时间相关性建模。在这个模型中，每部分的 FCN 可以通过多重卷积捕获空间相关性。NODENET 和 EDGENET 中间的隐藏表示通过一个 BRIDGE 组件连接，共同训练。我们使用一个嵌入层来处理转移稀疏的问题。一个门控融合组件用来整合外部信息。顶点流量和边流量用一个正则化来建模。</p>
 <center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig4.JPG" alt="Figure4"></center>
 
-<h2 id="3-1-EDGENET"><a href="#3-1-EDGENET" class="headerlink" title="3.1 EDGENET"></a>3.1 EDGENET</h2>
+<h2 id="3-1-EDGENET"><a href="#3-1-EDGENET" class="headerlink" title="3.1 EDGENET"></a>3.1 EDGENET</h2><p>根据上述的转换方法，每个时段的转移图可以转换成一个张量 $\mathcal{M}_t \in \mathbb{R}^{2N \times I \times J}$。对于每个顶点 $r_{ij}$，它最多有 $2N$ 个转移概率，包含 $N$ 个流入和 $N$ 个流出。然而，对于一个确定的时段，顶点间的转移是稀疏的。受 NLP 的嵌入方法启发，我们提出了使用空间嵌入方法，解决这样的稀疏和高维问题。详细来说，空间嵌入倾向于学习一个将 $2N$ 维映射到 $k$ 维的函数：</p>
+<p>$$\tag{4}<br>\mathcal{Z}_t(:, i, j) = \mathbf{W}_m \mathcal{M}_t (:, i, j) + \mathbf{b}_m, 1 \leq i \leq I, 1 \leq j \leq J<br>$$</p>
+<p>其中 $\mathbf{W}_m \in \mathbb{R}^{k \times 2N}$ 和 $\mathbf{b}_m \in \mathbb{R}^k$ 是参数。所有的结点共享参数。$\mathcal{M}_t(:, i, j) \in \mathbb{R}^{2N}$ 表示 $(i, j)$ 的向量。</p>
+
       
 
       
