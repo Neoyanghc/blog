@@ -17,7 +17,8 @@
 <meta property="og:description" content="TKDE 2019 Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig1.JPG">
-<meta property="og:updated_time" content="2019-04-25T03:06:15.755Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table1.JPG">
+<meta property="og:updated_time" content="2019-04-25T05:38:16.513Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta name="twitter:description" content="TKDE 2019 Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
@@ -70,7 +71,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">190.9k</span>
+			总字数 <span class="post-count">191.5k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -181,7 +182,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：959字 | 预计阅读时长：3分钟
+        字数：1.6k字 | 预计阅读时长：5分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -196,8 +197,18 @@
 <p>然而，同时预测所有结点和边的转移是很难的：</p>
 <ol>
 <li><strong>Scale and complexity</strong>: 一个地方的流入和流出依赖于它的邻居，近邻的和遥远的，因为人们会在这些区域之间转移，尤其是有活动的时候。给定一个城市，有 $N$ 个地点，$N$ 很大，那么就有 $N^2$ 种转移方式，尽管这些转移可能不会同时发生。因此，预测地点的流量，要么是流入、流出或是转移流量，我们需要考虑地点之间的依赖关系。而且，预测也考虑过去时段的流量。此外，我们不能单独地预测每个地点的流量，因为城市内的地点间是相连的，相关的，互相影响的。复杂度和尺度都是传统机器学习模型，如概率图模型在解决这个问题上的巨大挑战。</li>
-<li><strong>Model multiple correlations and external factors</strong>: 我们需要对三种关系建模来处理预测问题</li>
+<li><strong>Model multiple correlations and external factors</strong>: 我们需要对三种关系建模来处理预测问题。第一个是不同地点流量的空间相关性，包含近邻和遥远的。第二个是一个地点不同时段的流量间的时间关系，包括时间近邻、周期和趋势性。第三，流入流出流量和转移流量高度相关，互相影响。一个区域的转入流量之和是这个区域的流入流量。精确地预测一个区域的流出流量可以让预测其他区域的转移流量更精确，反之亦然。此外，这些流量受外部因素影响，如活动、天气、事故等。如何整合这些信息还是个难题。</li>
+<li><strong>Dynamics and sparsity</strong>: 由于 $N^2$ 种情况，区域间随时间改变的转移流量比流入流出流量要大得多。一个地点和其他地点间的转移会在接下来的时段发生，可能是 $N^2$ 中的很小一部分（稀疏）。预测这样的稀疏转移也是个难题。</li>
 </ol>
+<p>为了解决上述挑战，我们提出了多任务深度学习框架MDL（图4）来同时预测顶点流量和边流量。我们的贡献有三点：</p>
+<ul>
+<li>MDL 设计了一个深度神经网络来预测顶点流量（命名为 NODENET），另一个深度神经网络预测边流量（命名为 EDGENET）。通过将他们的隐藏状态拼接来连接这两个深度神经网络，并一同训练。此外，这两类流量的相关性通过损失函数中的正则项来建模。基于深度学习的模型可以处理复杂性和尺度等问题，同时多任务框架增强了每类流量的预测性能。</li>
+<li>NODENET 和 EDGENET 都是 three-stream 全卷积网络（3S-FCNs），closeness-stream, period-stream, trend-stream捕获三种不同的时间相关性。每个 FCN 也同时捕获近邻和遥远的空间关系。一个门控组件用来融合时空相关性和外部因素。为了解决转移稀疏的问题，EDGENET 中我们设计了一个嵌入组件，用一个隐藏低微表示编码了稀疏高维的输入。</li>
+<li>我们在北京和纽约的 taxicab data 上评估了方法。结果显示我们的 MDL 超越了其他 11 种方法。</li>
+</ul>
+<p>表 1 列出了这篇文章中出现的数学符号。</p>
+<center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table1.JPG" alt="Table1"></center>
+
 
       
 
