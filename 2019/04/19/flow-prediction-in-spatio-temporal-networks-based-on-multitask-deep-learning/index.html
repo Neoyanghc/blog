@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig3.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig4.JPG">
-<meta property="og:updated_time" content="2019-04-25T08:00:28.784Z">
+<meta property="og:updated_time" content="2019-04-25T09:30:39.852Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta name="twitter:description" content="TKDE 2019 Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
@@ -193,26 +193,26 @@
         <p>TKDE 2019 <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=8606218" target="_blank" rel="noopener">Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning</a></p>
 <a id="more"></a>
 <p><strong>Abstract</strong>——预测流量（如车流、人流、自行车流）包括结点的流入、流出流量以及不同的结点间的转移，在交通运输系统中的时空网络里扮演着重要的角色。然而，这个问题受多方面复杂因素影响，比如不同地点的空间关系、不同时段的时间关系、还有像活动和天气这样的外部因素，所以这是个有挑战性的问题。此外，一个结点的流量（结点流量）和结点之间的转移（边流量）互相影响。为了解决这个问题，我们提出了一个多任务的深度学习框架可以同时预测一个时空网络上的结点流量和边流量。基于全卷积网络，我们的方法设计了两个复杂的模型分别处理结点流量预测和边流量预测。这两个模型通过组合中间层的隐藏表示连接，而且共同训练。外部因素通过一个门控融合机制引入模型。在边流量预测模型上，我们使用了一个嵌入组件来处理顶点间的系数转移问题。我们在北京和纽约的出租车数据集上做了实验。实验结果显示比11种方法都好。</p>
-<h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h1><p>时空网络（ST-networks），如运输网络和传感器网络，在世界上到处都是，每个点有个空间坐标，每个边具有动态属性。时空网络中的流量又两种表示，如图1，顶点流量（一个结点的流入和流出流量）和边流量（结点间的转移流量）。在运输系统中，这两类流量可通过4种方式测量，1. 近邻道路的车辆数，2. 公交车的旅客数，3. 行人数，4. 以上三点。图1b 是一个示意图。取顶点 $r_1$ 为例，我们可以根据手机信令和车辆 GPS 轨迹分别计算得到流入流量是 3，流出流量是 3。$r_3$ 到 $r_1$ 的转移是 3，$r_1$ 到 $r_2$ 和 $r_4$ 的转移是 2 和 1。因此，如图1c所示，我们能拿到两种类型的流量，四个结点的流入和流出分别是 $(3,3,0,5)$ 和 $(3,2,5,1)$。所有的边转移都看作是在有向图上发生的。</p>
+<h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h1><p>时空网络（ST-networks），如运输网络和传感器网络，在世界上到处都是，每个点有个空间坐标，每个边具有动态属性。时空网络中的流量有两种表示，如图 1，顶点流量（一个结点的流入和流出流量）和边流量（结点间的转移流量）。在运输系统中，这两类流量可通过4种方式测量，1. 近邻道路的车辆数，2. 公交车的旅客数，3. 行人数，4. 以上三点。图1b 是一个示意图。取顶点 $r_1$ 为例，我们可以根据手机信令和车辆 GPS 轨迹分别计算得到流入流量是 3，流出流量是 3。$r_3$ 到 $r_1$ 的转移是 3，$r_1$ 到 $r_2$ 和 $r_4$ 的转移是 2 和 1。因此，如图1c所示，我们能拿到两种类型的流量，四个结点的流入和流出分别是 $(3,3,0,5)$ 和 $(3,2,5,1)$。所有的边转移都看作是在有向图上发生的。</p>
 <center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig1.JPG" alt="Figure1"></center>
 
-<p>预测这类的流量对公共安全，交通管理，网络优化很重要。取人流做一个例子，2015 年跨年夜的上海，踩踏事故导致 36 人死亡。如果能预测每个区域之间的人流转移，这样的悲剧就可以通过应急预案避免或减轻。</p>
+<p>预测这类的流量对公共安全，交通管理，网络优化很重要。取人口流动做一个例子，2015 年跨年夜的上海，踩踏事故导致 36 人死亡。如果能预测每个区域之间的人流转移，这样的悲剧就可以通过应急预案避免或减轻。</p>
 <p>然而，同时预测所有结点和边的转移是很难的：</p>
 <ol>
-<li><strong>Scale and complexity</strong>: 一个地方的流入和流出依赖于它的邻居，近邻的和遥远的，因为人们会在这些区域之间转移，尤其是有活动的时候。给定一个城市，有 $N$ 个地点，$N$ 很大，那么就有 $N^2$ 种转移方式，尽管这些转移可能不会同时发生。因此，预测地点的流量，要么是流入、流出或是转移流量，我们需要考虑地点之间的依赖关系。而且，预测也考虑过去时段的流量。此外，我们不能单独地预测每个地点的流量，因为城市内的地点间是相连的，相关的，互相影响的。复杂度和尺度都是传统机器学习模型，如概率图模型在解决这个问题上的巨大挑战。</li>
+<li><strong>Scale and complexity</strong>: 一个地方的流入和流出依赖于它的邻居，有近邻的也有遥远的，因为人们会在这些区域之间转移，尤其是有活动的时候。给定一个城市，有 $N$ 个地点，$N$ 很大，那么就有 $N^2$ 种转移方式，尽管这些转移可能不会同时发生。因此，预测地点的流量，要么是流入、流出或是转移流量，我们需要考虑地点之间的依赖关系。而且，预测也考虑过去时段的流量。此外，我们不能单独地预测每个地点的流量，因为城市内的地点间是相连的，相关的，互相影响的。复杂度和尺度都是传统机器学习模型，如概率图模型在解决这个问题时面临的巨大挑战。</li>
 <li><strong>Model multiple correlations and external factors</strong>: 我们需要对三种关系建模来处理预测问题。第一个是不同地点流量的空间相关性，包含近邻和遥远的。第二个是一个地点不同时段的流量间的时间关系，包括时间近邻、周期和趋势性。第三，流入流出流量和转移流量高度相关，互相影响。一个区域的转入流量之和是这个区域的流入流量。精确地预测一个区域的流出流量可以让预测其他区域的转移流量更精确，反之亦然。此外，这些流量受外部因素影响，如活动、天气、事故等。如何整合这些信息还是个难题。</li>
 <li><strong>Dynamics and sparsity</strong>: 由于 $N^2$ 种情况，区域间随时间改变的转移流量比流入流出流量要大得多。一个地点和其他地点间的转移会在接下来的时段发生，可能是 $N^2$ 中的很小一部分（稀疏）。预测这样的稀疏转移也是个难题。</li>
 </ol>
 <p>为了解决上述挑战，我们提出了多任务深度学习框架MDL（图4）来同时预测顶点流量和边流量。我们的贡献有三点：</p>
 <ul>
 <li>MDL 设计了一个深度神经网络来预测顶点流量（命名为 NODENET），另一个深度神经网络预测边流量（命名为 EDGENET）。通过将他们的隐藏状态拼接来连接这两个深度神经网络，并一同训练。此外，这两类流量的相关性通过损失函数中的正则项来建模。基于深度学习的模型可以处理复杂性和尺度等问题，同时多任务框架增强了每类流量的预测性能。</li>
-<li>NODENET 和 EDGENET 都是 three-stream 全卷积网络（3S-FCNs），closeness-stream, period-stream, trend-stream捕获三种不同的时间相关性。每个 FCN 也同时捕获近邻和遥远的空间关系。一个门控组件用来融合时空相关性和外部因素。为了解决转移稀疏的问题，EDGENET 中我们设计了一个嵌入组件，用一个隐藏低微表示编码了稀疏高维的输入。</li>
+<li>NODENET 和 EDGENET 都是 three-stream 全卷积网络（3S-FCNs），closeness-stream, period-stream, trend-stream 捕获三种不同的时间相关性。每个 FCN 也同时捕获近邻和遥远的空间关系。一个门控组件用来融合时空相关性和外部因素。为了解决转移稀疏的问题，EDGENET 中我们设计了一个嵌入组件，用一个隐藏低维表示编码了稀疏高维的输入。</li>
 <li>我们在北京和纽约的 taxicab data 上评估了方法。结果显示我们的 MDL 超越了其他 11 种方法。</li>
 </ul>
 <p>表 1 列出了这篇文章中出现的数学符号。</p>
 <center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table1.JPG" alt="Table1"></center>
 
-<h1 id="2-Problem-Formulation"><a href="#2-Problem-Formulation" class="headerlink" title="2 Problem Formulation"></a>2 Problem Formulation</h1><p><strong><em>Definition 1(Node).</em></strong> 一个空间地图基于经纬度被分成 $I \times J$ 个网格，表示为 $V = {r_1, r_2, …, r_{I\times J} }$，每个元素表示一个空间节点，如图2(a)。</p>
+<h1 id="2-Problem-Formulation"><a href="#2-Problem-Formulation" class="headerlink" title="2 Problem Formulation"></a>2 Problem Formulation</h1><p><strong><em>Definition 1(Node).</em></strong> 一个空间地图基于经纬度被分成 $I \times J$ 个网格，表示为 $V = \lbrace r_1, r_2, …, r_{I\times J} \rbrace$，每个元素表示一个空间节点，如图2(a)。</p>
 <center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig2.JPG" alt="Figure2"></center>
 
 <p>令 $(\tau, x, y)$ 为时空坐标，$\tau$ 表示时间戳，$(x, y)$ 表示空间点。一个物体的移动可以记为一个按时间顺序的空间轨迹，起点和终点表示为 $s = (\tau_s, x_s, y_s)$ 和 $e = (\tau_e, x_e, y_e)$，表示出发地和目的地。$\mathbb{P}$ 表示所有的起止对。</p>
