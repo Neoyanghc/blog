@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig2.JPG">
-<meta property="og:updated_time" content="2019-04-25T07:18:13.731Z">
+<meta property="og:updated_time" content="2019-04-25T07:34:33.758Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta name="twitter:description" content="TKDE 2019 Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
@@ -72,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">192.5k</span>
+			总字数 <span class="post-count">192.7k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -183,7 +183,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2.6k字 | 预计阅读时长：9分钟
+        字数：2.8k字 | 预计阅读时长：10分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -224,7 +224,9 @@
 <p>$$\tag{3}<br>\mathbf{S}_t(r_s, r_e) = \vert { (s,e) \in \mathbb{P} : (x_s, y_s) \in r_s \wedge (x_e, y_e) \in r_e \wedge \tau_s \in t \wedge \tau_e \in t } \vert<br>$$</p>
 <p>其中 $r_s, r_e \in V$ 是起始顶点和终止顶点。$(x, y) \in r$ 表示点 $(x, y)$ 在网格 $r$ 上。$\tau_s \in t$ 和 $\tau_e \in t$ 表示时间戳 $\tau_s$ 和 $\tau_e$ 都在时段 $t$ 内。我们考虑转移至发生在一个特定的时段内。因此，对于实际应用来说，我们可以预测起始和结束都发生在未来的转移。</p>
 <h2 id="2-1-Converting-time-varying-graphs-into-tensors"><a href="#2-1-Converting-time-varying-graphs-into-tensors" class="headerlink" title="2.1 Converting time-varying graphs into tensors"></a>2.1 Converting time-varying graphs into tensors</h2><p>我们将每个时间上的图转为张量。给定时间 $t$ 有向图 $G_t = (V, E_t)$，我们先展开，然后计算有向带权矩阵（转移矩阵 $\mathbf{S}_t$），最后给定一个张量 $\mathcal{M}_t \in \mathbf{R}^{2N \times I \times J}$。图 3 是示意图。(a)给定时间 $t$ 4 个顶点 6 条边的图。(b)首先展开成有向图。(c)对每个顶点，有一个流入的转移，还有个流出的转移，由一个向量表示（维度是8）。取 $r_1$ 为例，它的流出和流入转移向量分别为 $[0, 2, 0, 1]$ 和 $[0, 0, 3, 0]$，拼接后得到一个向量 $[0, 2, 0, 1, 0, 0, 3, 0]$，包含流出和流入的信息。(d)最后，我们将矩阵 reshape 成一个张量，每个顶点根据原来地图有一个固定的空间位置，保护了空间相关性。</p>
-<h2 id="2-2-FLow-Prediction-Problem"><a href="#2-2-FLow-Prediction-Problem" class="headerlink" title="2.2 FLow Prediction Problem"></a>2.2 FLow Prediction Problem</h2>
+<h2 id="2-2-FLow-Prediction-Problem"><a href="#2-2-FLow-Prediction-Problem" class="headerlink" title="2.2 FLow Prediction Problem"></a>2.2 FLow Prediction Problem</h2><p>流量预测，简单来说，是时间序列问题，目标是给定历史 $T$ 个时段的观测值，预测 $T+1$ 时段每个区域的流量。但是我们的文章中流量有两个层次，流入和流出以及区域间的转移流量。我们的目标是同时预测这些流量。此外，我们还融入了外部因素如房价信息，天气状况，温度等等。这些外部因素可以收集并提供一些额外有用的信息。相关的符号在表 1 之中。</p>
+<p><strong><em>Problem 1.</em></strong> 给定历史观测值 ${ \mathcal{X}_t, \mathcal{M}_t \mid t = t_1, \dots, t_T }$，外部特征 $\mathcal{E}_T$，我们提出一个模型共同预测 $\mathcal{X}_{t_{T+1}}$ 和 $\mathcal{M}_{t_{T+1}}$。</p>
+<h1 id="3-Multitask-Deep-Learning"><a href="#3-Multitask-Deep-Learning" class="headerlink" title="3 Multitask Deep Learning"></a>3 Multitask Deep Learning</h1>
       
 
       
