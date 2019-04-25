@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig3.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig4.JPG">
-<meta property="og:updated_time" content="2019-04-25T11:03:57.345Z">
+<meta property="og:updated_time" content="2019-04-25T11:30:41.439Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta name="twitter:description" content="TKDE 2019 Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
@@ -74,7 +74,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">193.4k</span>
+			总字数 <span class="post-count">193.7k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -185,7 +185,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：3.3k字 | 预计阅读时长：12分钟
+        字数：3.6k字 | 预计阅读时长：13分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -230,12 +230,20 @@
 
 <h2 id="2-2-FLow-Prediction-Problem"><a href="#2-2-FLow-Prediction-Problem" class="headerlink" title="2.2 FLow Prediction Problem"></a>2.2 FLow Prediction Problem</h2><p>流量预测，简单来说，是时间序列问题，目标是给定历史 $T$ 个时段的观测值，预测 $T+1$ 时段每个区域的流量。但是我们的文章中流量有两个层次，流入和流出以及区域间的转移流量。我们的目标是同时预测这些流量。此外，我们还融入了外部因素如房价信息，天气状况，温度等等。这些外部因素可以收集并提供一些额外有用的信息。相关的符号在表 1 之中。</p>
 <p><strong><em>Problem 1.</em></strong> 给定历史观测值 $\lbrace \mathcal{X}_t, \mathcal{M}_t \mid t = t_1, \dots, t_T \rbrace$，外部特征 $\mathcal{E}_T$，我们提出一个模型共同预测 $\mathcal{X}_{t_{T+1}}$ 和 $\mathcal{M}_{t_{T+1}}$。</p>
-<h1 id="3-Multitask-Deep-Learning"><a href="#3-Multitask-Deep-Learning" class="headerlink" title="3 Multitask Deep Learning"></a>3 Multitask Deep Learning</h1><p>图 4 展示了我们的 MDL 框架，包含 3 个组成部分，分别用于数据转换，顶点流量建模，边流量建模。我们首先将轨迹（或订单）数据转换成两类流量，i) 顶点流量表示成有时间顺序的张量序列 $\lbrace\mathcal{X}_t \mid t = t_1, \dots, t_T \rbrace$ (1a); ii) 边流量是一个有时间顺序的图序列（转移矩阵）$\lbrace\mathbf{S}_t \mid t = t_1, \dots, t_T \rbrace$ (2a)，之后再根据 2.1 节的方法转换为张量的序列 $\lbrace\mathcal{M}_t \mid t = t_1, \dots, t_T \rbrace$ (2b)。这两类像视频一样的数据之后放到 NODENET 和 EDGENET 中。以 NODENET 为例，它选了三个不同类型的片段，放入 3S-FCN 中，对时间相关性建模。在这个模型中，每部分的 FCN 可以通过多重卷积捕获空间相关性。NODENET 和 EDGENET 中间的隐藏表示通过一个 BRIDGE 组件连接，共同训练。我们使用一个嵌入层来处理转移稀疏的问题。一个门控融合组件用来整合外部信息。顶点流量和边流量用一个正则化来建模。</p>
+<h1 id="3-Multitask-Deep-Learning"><a href="#3-Multitask-Deep-Learning" class="headerlink" title="3 Multitask Deep Learning"></a>3 Multitask Deep Learning</h1><p>图 4 展示了我们的 MDL 框架，包含 3 个组成部分，分别用于数据转换，顶点流量建模，边流量建模。我们首先将轨迹（或订单）数据转换成两类流量，i) 顶点流量表示成有时间顺序的张量序列 $\lbrace\mathcal{X}_t \mid t = t_1, \dots, t_T \rbrace$ (1a); ii) 边流量是一个有时间顺序的图序列（转移矩阵）$\lbrace\mathbf{S}_t \mid t = t_1, \dots, t_T \rbrace$ (2a)，之后再根据 2.1 节的方法转换为张量的序列 $\lbrace\mathcal{M}_t \mid t = t_1, \dots, t_T \rbrace$ (2b)。这两类像视频一样的数据之后放到 NODENET 和 EDGENET 中。以 NODENET 为例，它选了三个不同类型的片段，放入 3S-FCN 中，对时间相关性建模。在这个模型中，每部分的 FCN 可以通过多重卷积捕获空间相关性。NODENET 和 EDGENET 中间的隐藏表示通过一个 BRIDGE 组件连接，使两个模型可以共同训练。我们使用一个嵌入层来处理转移稀疏的问题。一个门控融合组件用来整合外部信息。顶点流量和边流量用一个正则化来建模。</p>
 <center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig4.JPG" alt="Figure4"></center>
 
 <h2 id="3-1-EDGENET"><a href="#3-1-EDGENET" class="headerlink" title="3.1 EDGENET"></a>3.1 EDGENET</h2><p>根据上述的转换方法，每个时段的转移图可以转换成一个张量 $\mathcal{M}_t \in \mathbb{R}^{2N \times I \times J}$。对于每个顶点 $r_{ij}$，它最多有 $2N$ 个转移概率，包含 $N$ 个流入和 $N$ 个流出。然而，对于一个确定的时段，顶点间的转移是稀疏的。受 NLP 的嵌入方法启发，我们提出了使用空间嵌入方法，解决这样的稀疏和高维问题。详细来说，空间嵌入倾向于学习一个将 $2N$ 维映射到 $k$ 维的函数：</p>
 <p>$$\tag{4}<br>\mathcal{Z}_t(:, i, j) = \mathbf{W}_m \mathcal{M}_t (:, i, j) + \mathbf{b}_m, 1 \leq i \leq I, 1 \leq j \leq J<br>$$</p>
 <p>其中 $\mathbf{W}_m \in \mathbb{R}^{k \times 2N}$ 和 $\mathbf{b}_m \in \mathbb{R}^k$ 是参数。所有的结点共享参数。$\mathcal{M}_t(:, i, j) \in \mathbb{R}^{2N}$ 表示 $(i, j)$ 的向量。</p>
+<p>流量，比如城市中的交通流，总是受时空依赖关系影响。为了捕获不同的时间依赖（近邻、周期、趋势），Zhang et al. 提出了深度时空残差网络，沿时间轴选择不同的关键帧。受这点的启发，我们选择近邻、较近、远期关键帧来预测时段 $t$，分别表示为 $M^{dep}_t = \lbrace M^{close}_t, M^{period}_t, M^{trend}_t \rbrace$，如下：</p>
+<ul>
+<li><strong>Closeness</strong> dependents:<br>$$M^{close}_t = \lbrace \mathcal{Z}_{t-l_c}, \dots, \mathcal{Z}_{t-1} \rbrace$$</li>
+<li><strong>Period</strong> dependents:<br>$$M^{period}_t = \lbrace \mathcal{Z}_{t-l_p}, \mathcal{Z}_{t-(l_p - 1) \cdot p}, \dots, \mathcal{Z}_{t-p} \rbrace$$</li>
+<li><strong>Trend</strong> dependents:<br>$$M^{trend}_t = \lbrace \mathcal{Z}_{t-l_q \cdot q}, \mathcal{Z}_{t-(l_q - 1)\cdot q}, \dots, \mathcal{Z}_{t-q} \rbrace$$</li>
+</ul>
+<p>其中 $p$ 和 $q$ 是周期和趋势范围。$l_c$, $l_p$ 和 $l_q$ 是三个序列的长度。</p>
+<p>输出（即下个时段的预测）和输入有相同的分辨率。这样的人物和图像分割问题很像，可以通过全卷积网络 (FCN) [22] 处理。</p>
 
       
 
