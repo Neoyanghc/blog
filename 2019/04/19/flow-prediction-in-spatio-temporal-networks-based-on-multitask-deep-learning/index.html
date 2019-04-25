@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig3.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig4.JPG">
-<meta property="og:updated_time" content="2019-04-25T11:30:41.439Z">
+<meta property="og:updated_time" content="2019-04-25T11:58:58.396Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta name="twitter:description" content="TKDE 2019 Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
@@ -74,7 +74,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">193.7k</span>
+			总字数 <span class="post-count">194k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -185,7 +185,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：3.6k字 | 预计阅读时长：13分钟
+        字数：3.9k字 | 预计阅读时长：14分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -244,7 +244,10 @@
 </ul>
 <p>其中 $p$ 和 $q$ 是周期和趋势范围。$l_c$, $l_p$ 和 $l_q$ 是三个序列的长度。</p>
 <p>输出（即下个时段的预测）和输入有相同的分辨率。这样的人物和图像分割问题很像，可以通过全卷积网络 (FCN) [22] 处理。</p>
-
+<p>受到这个启发，我们提出了三组件的 FCN，如图 4，来捕获时间近邻、周期和趋势依赖。每个组件都是个 FCN，包含了很多卷积（图 5）。根据卷积的性质，一个卷积层可以捕获空间近邻关系。随着卷积层数的增加，FCN 可以捕获更远的依赖，甚至是城市范围大小的空间依赖。然而，这样的深层卷积网络很难训练。因此我们使用残差连接来帮助训练。类似残差网络中的残差连接，我们使用一个包含 BN，ReLU，卷积的块。令三个近邻、周期、趋势三组件的输出分别为 $\mathcal{M}_c$, $\mathcal{M}_p$, $\mathcal{M}_q$。不同的顶点在近邻、周期、趋势上可能有不同的性质。为了解决这个问题，我们提出使用一个基于参数矩阵的融合方式（图 4 中的 PM 融合）：</p>
+<p>$$\tag{5}<br>\mathcal{M}_{fcn} = \mathbf{W}_c \odot \mathcal{M}_c + \mathbf{W}_p \odot \mathcal{M}_p + \mathbf{W}_q \odot \mathcal{M}_q<br>$$</p>
+<p>其中 $\odot$ 是哈达玛积，$\mathbf{W}$ 是参数，调整三种时间依赖关系的影响。</p>
+<h2 id="3-2-NODENET-and-BRIDGE"><a href="#3-2-NODENET-and-BRIDGE" class="headerlink" title="3.2 NODENET and BRIDGE"></a>3.2 NODENET and BRIDGE</h2>
       
 
       
