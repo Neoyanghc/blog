@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig2.JPG">
-<meta property="og:updated_time" content="2019-04-25T06:32:49.120Z">
+<meta property="og:updated_time" content="2019-04-25T07:04:20.592Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta name="twitter:description" content="TKDE 2019 Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
@@ -72,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">191.8k</span>
+			总字数 <span class="post-count">192.3k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -183,7 +183,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.9k字 | 预计阅读时长：6分钟
+        字数：2.3k字 | 预计阅读时长：8分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -218,7 +218,12 @@
 <p>$$\tag{1}<br>\mathcal{X}_t(0, i, j) = \vert { (s,e) \in \mathbb{P} : (x_s, y_s) \in r_{ij} \wedge \tau_s \in t } \vert<br>$$</p>
 <p>$$\tag{2}<br>\mathcal{X}_t(1, i, j) = \vert { (s,e) \in \mathbb{P} : (x_e, y_e) \in r_{ij} \wedge \tau_e \in t } \vert<br>$$</p>
 <p>其中 $\mathcal{X}_t(0, :, :)$ 和 $\mathcal{X}_t(1, :, :)$ 表示流出和流入矩阵。$(x, y) \in r_{ij}$ 表示点 $(x, y)$ 在顶点 $r_{ij}$ 上，$\tau_e \in t$ 表示时间戳 $\tau_e$ 在时段 $t$ 内。流入和流出矩阵在特定时间的矩阵如图2。</p>
-
+<p>考虑两类流量（流入和流出），一个随时间变化的空间地图一般表示一个时间有序的张量序列，每个张量对应地图在特定时间的一个快照。详细来说，每个张量包含两个矩阵：流入矩阵和流出矩阵，如图 2 所示。</p>
+<p>让 $V$ 表示时空网络中的顶点集，$N \triangleq \vert V \vert = I \times J$ 是顶点数。一个时间图包含 $T$ 个离散的不重叠的时段，表示为有向图 $G_{t_1}, \dots G_{t_T}$ 的时间有序序列。图 $G_t = (V, E_t)$ 捕获了时段 $t$ 时空系统上的拓扑状态。对于每个图 $G_t$ (其中 $t = t_1, \dots, t_T$) 存在一个对应的权重矩阵 $\mathbf{S}_t \in \mathbb{R}^{N \times N}$，表示时段 $t$ 的带权有向边。在我们的研究中，时段 $t$ 顶点 $r_s$ 到顶点 $r_e$ 的边的权重，是一个非负标量，表示 $r_s$ 到 $r_e$ 的 <em>transition</em>，时段 $t$ 上两个顶点间没有连接的话，对应的元素在 $\mathbf{S}_t$ 中为 0。</p>
+<p><strong><em>Definition 3 (Transition).</em></strong> 给定一组起止点对 $\mathbb{P}$。$\mathcal{T} = { t_1, \dots, t_T }$ 是一组时段的序列。$\mathbf{S}_t$ 是时段 $t$ 的转移矩阵，$r_s$ 到 $r_e$ 之间的转移表示为 $\mathbf{S}_t(r_s, r_e)$，定义为：</p>
+<p>$$\tag{3}<br>\mathbf{S}_t(r_s, r_e) = \vert { (s,e) \in \mathbb{P} : (x_s, y_s) \in r_s \wedge (x_e, y_e) \in r_e \wedge \tau_s \in t \wedge \tau_e \in t } \vert<br>$$</p>
+<p>其中 $r_s, r_e \in V$ 是起始顶点和终止顶点。$(x, y) \in r$ 表示点 $(x, y)$ 在网格 $r$ 上。$\tau_s \in t$ 和 $\tau_e \in t$ 表示时间戳 $\tau_s$ 和 $\tau_e$ 都在时段 $t$ 内。我们考虑转移至发生在一个特定的时段内。因此，对于实际应用来说，我们可以预测起始和结束都发生在未来的转移。</p>
+<h2 id="2-1-Converting-time-varying-graphs-into-tensors"><a href="#2-1-Converting-time-varying-graphs-into-tensors" class="headerlink" title="2.1 Converting time-varying graphs into tensors"></a>2.1 Converting time-varying graphs into tensors</h2>
       
 
       
