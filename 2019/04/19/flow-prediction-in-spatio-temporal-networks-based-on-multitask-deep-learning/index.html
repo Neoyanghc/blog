@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig3.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig4.JPG">
-<meta property="og:updated_time" content="2019-04-25T11:58:58.396Z">
+<meta property="og:updated_time" content="2019-04-25T12:19:00.554Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta name="twitter:description" content="TKDE 2019 Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
@@ -74,7 +74,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">194k</span>
+			总字数 <span class="post-count">194.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -185,7 +185,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：3.9k字 | 预计阅读时长：14分钟
+        字数：4.3k字 | 预计阅读时长：16分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -247,7 +247,16 @@
 <p>受到这个启发，我们提出了三组件的 FCN，如图 4，来捕获时间近邻、周期和趋势依赖。每个组件都是个 FCN，包含了很多卷积（图 5）。根据卷积的性质，一个卷积层可以捕获空间近邻关系。随着卷积层数的增加，FCN 可以捕获更远的依赖，甚至是城市范围大小的空间依赖。然而，这样的深层卷积网络很难训练。因此我们使用残差连接来帮助训练。类似残差网络中的残差连接，我们使用一个包含 BN，ReLU，卷积的块。令三个近邻、周期、趋势三组件的输出分别为 $\mathcal{M}_c$, $\mathcal{M}_p$, $\mathcal{M}_q$。不同的顶点在近邻、周期、趋势上可能有不同的性质。为了解决这个问题，我们提出使用一个基于参数矩阵的融合方式（图 4 中的 PM 融合）：</p>
 <p>$$\tag{5}<br>\mathcal{M}_{fcn} = \mathbf{W}_c \odot \mathcal{M}_c + \mathbf{W}_p \odot \mathcal{M}_p + \mathbf{W}_q \odot \mathcal{M}_q<br>$$</p>
 <p>其中 $\odot$ 是哈达玛积，$\mathbf{W}$ 是参数，调整三种时间依赖关系的影响。</p>
-<h2 id="3-2-NODENET-and-BRIDGE"><a href="#3-2-NODENET-and-BRIDGE" class="headerlink" title="3.2 NODENET and BRIDGE"></a>3.2 NODENET and BRIDGE</h2>
+<h2 id="3-2-NODENET-and-BRIDGE"><a href="#3-2-NODENET-and-BRIDGE" class="headerlink" title="3.2 NODENET and BRIDGE"></a>3.2 NODENET and BRIDGE</h2><p>类似 EDGENET，NODENET 也是一个 3S-GCN，我们选择近邻、较近、遥远的关键帧作为近邻、周期、趋势依赖。区别是 NODENET 没有嵌入层因为输入的通道数只有 2。这三种不同的依赖放入三个不同的 FCN 中，输出通过 PM 融合组件融合（图 4）。然后，得到 3S-FCN 的输出，表示为 $\mathcal{X}_{fcn} \in \mathbb{R}^{C_x \times I \times J}$。</p>
+<p>考虑顶点流量与边流量的相关性，所以从 NODENET 和 EDGENET 学习到的表示应该是相通的。为了连接 NODENET 和 EDGENET，假设 NODENET 和 EDGENET 的隐藏表示分别为 $\mathcal{X}_{fcn}$ 和 $\mathcal{M}_{fcn}$。我们提出两种融合方法：</p>
+<p><strong>SUM Fusion:</strong> 加和融合方法直接将两种表示相加：</p>
+<p>$$\tag{6}<br>\mathcal{H}(c, :, :) = \mathcal{X}_{fcn}(c, :, :) + \mathcal{M}_{fcn}(c, :, :), c = 0, \dots, C - 1<br>$$</p>
+<p>其中 $C$ 是 $\mathcal{X}_{fcn}$ 和 $\mathcal{M}_{fcn}$ 的通道数，$\mathcal{H} in \mathbb{R}^{C \times I \times J}$。显然这种融合方法受限于两种表示必须有相同的维度。</p>
+<p><strong>CONCAT Fusion:</strong> 为了从上述的限制中解脱，我们提出了另一种融合方法。顺着通道拼接两个隐藏表示：</p>
+<p>$$\tag{7}<br>\mathcal{H}(c, :, :) = \mathcal{X}_{fcn}(c, :, :), c=0, \dots, C_x - 1<br>$$</p>
+<p>$$\tag{8}<br>\mathcal{H}(C_x + c, :, :) = \mathcal{M}_{fcn}(c, :, :), c=0, \dots, C_m - 1<br>$$</p>
+<p>$C_x$ 和 $C_m$ 分别是两个隐藏表示的通道数。$\mathcal{H} \in \mathbb{R}^{(C_x + C_m) \times I \times J}$。拼接融合实际上可以通过互相强化更好地融合顶点流量和边流量。像 BRIDGE 一样我们也讨论了其他的融合方式（4.3 节）。</p>
+
       
 
       
