@@ -28,7 +28,10 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table3.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table4.JPG">
-<meta property="og:updated_time" content="2019-04-26T11:54:21.280Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table5.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table6.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig8.JPG">
+<meta property="og:updated_time" content="2019-04-26T12:15:49.151Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta name="twitter:description" content="TKDE 2019 Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
@@ -81,7 +84,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">195.8k</span>
+			总字数 <span class="post-count">196.1k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -192,7 +195,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：5.7k字 | 预计阅读时长：22分钟
+        字数：6k字 | 预计阅读时长：24分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -307,6 +310,16 @@
 <h3 id="4-1-4-Hyperparameters"><a href="#4-1-4-Hyperparameters" class="headerlink" title="4.1.4 Hyperparameters"></a>4.1.4 Hyperparameters</h3><p>$\lambda_{node} = 1$ 和 $\lambda_{edge} = 1$，$\lambda_{mdl} = 0.0005$，$p$ 和 $q$ 按经验设定为一天和一周。三个依赖序列的长度分别为 $l_c \in \lbrace 1, 2, 3\rbrace$, $l_p \in \lbrace 1,2,3 \rbrace$, $l_q \in \lbrace 1,2,3 \rbrace$。卷积的数量是 5 个。训练集的 90% 用来训练，10% 来验证，用早停选最好的参数。然后使用所有的数据训练模型。网络参数通过随机初始化，Adam 优化。batch size 32。学习率 $\lbrace 0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005 \rbrace$。</p>
 <h3 id="4-1-5-Evaluation-Metrics"><a href="#4-1-5-Evaluation-Metrics" class="headerlink" title="4.1.5 Evaluation Metrics"></a>4.1.5 Evaluation Metrics</h3><p>RMSE 和 MAE。</p>
 <h2 id="4-2-Results"><a href="#4-2-Results" class="headerlink" title="4.2 Results"></a>4.2 Results</h2><center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table4.JPG" alt="Table4"></center>
+
+<p><strong>Node Flow Prediction.</strong> 我们先比流入和流出流量的预测。表 4 展示了两个数据集上的评价指标结果。MDL 和 MRF 比其他所有的方法多要好。我们的 MDL 在 NYC 的数据集上明显比 MRF 好。BJ 的数据集上，MDL 比 MRF 差不多。原因是 NYC 数据集比 BJ 数据集大了三倍。换句话说，在大的数据集上，我们的方法比 MRF 更好。我们也注意到训练 MRF 很好使，在 BJ 数据集上训练了一个星期。</p>
+<center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table5.JPG" alt="Table5"></center>
+
+<p><strong>Results of Edge Flow Prediction.</strong> 表6 展示了边流量预测。边流量预测的实验很费时。MDL 比其他的都好。</p>
+<center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table6.JPG" alt="Table6"></center>
+
+<h2 id="4-3-Evaluation-on-Fusing-Mechanisms"><a href="#4-3-Evaluation-on-Fusing-Mechanisms" class="headerlink" title="4.3 Evaluation on Fusing Mechanisms"></a>4.3 Evaluation on Fusing Mechanisms</h2><p>融合 NODENET 和 EDGENET 有 CONCAT 和 SUM 两种方法。融合外部因素有 GATED 和 SIMPLE 融合，或者不使用。因此总共有 6 种方法。如表 7。使用同样的超参数设定。我们发现 CONCAT + GATING 比其他的方法好。</p>
+<h2 id="4-4-Evaluation-on-Model-Hyper-parameters"><a href="#4-4-Evaluation-on-Model-Hyper-parameters" class="headerlink" title="4.4 Evaluation on Model Hyper-parameters"></a>4.4 Evaluation on Model Hyper-parameters</h2><h3 id="4-4-1-Effect-of-Training-Data-Size"><a href="#4-4-1-Effect-of-Training-Data-Size" class="headerlink" title="4.4.1 Effect of Training Data Size"></a>4.4.1 Effect of Training Data Size</h3><p>我们选了 NYC 3 个月，6 个月，1 年，3 年数据。$l_c = 3$, $l_p = 1$, $l_q = 1$。图 8 是结果。我们观察到数据越多，效果越好。</p>
+<center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig8.JPG" alt="Figure8"></center>
       
 
       
