@@ -31,7 +31,11 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table5.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table6.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig8.JPG">
-<meta property="og:updated_time" content="2019-04-26T12:15:49.151Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig9.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table8.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig10.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig11.JPG">
+<meta property="og:updated_time" content="2019-04-26T12:24:25.445Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta name="twitter:description" content="TKDE 2019 Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
@@ -84,7 +88,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">196.1k</span>
+			总字数 <span class="post-count">196.3k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -195,7 +199,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：6k字 | 预计阅读时长：24分钟
+        字数：6.2k字 | 预计阅读时长：24分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -320,6 +324,19 @@
 <h2 id="4-3-Evaluation-on-Fusing-Mechanisms"><a href="#4-3-Evaluation-on-Fusing-Mechanisms" class="headerlink" title="4.3 Evaluation on Fusing Mechanisms"></a>4.3 Evaluation on Fusing Mechanisms</h2><p>融合 NODENET 和 EDGENET 有 CONCAT 和 SUM 两种方法。融合外部因素有 GATED 和 SIMPLE 融合，或者不使用。因此总共有 6 种方法。如表 7。使用同样的超参数设定。我们发现 CONCAT + GATING 比其他的方法好。</p>
 <h2 id="4-4-Evaluation-on-Model-Hyper-parameters"><a href="#4-4-Evaluation-on-Model-Hyper-parameters" class="headerlink" title="4.4 Evaluation on Model Hyper-parameters"></a>4.4 Evaluation on Model Hyper-parameters</h2><h3 id="4-4-1-Effect-of-Training-Data-Size"><a href="#4-4-1-Effect-of-Training-Data-Size" class="headerlink" title="4.4.1 Effect of Training Data Size"></a>4.4.1 Effect of Training Data Size</h3><p>我们选了 NYC 3 个月，6 个月，1 年，3 年数据。$l_c = 3$, $l_p = 1$, $l_q = 1$。图 8 是结果。我们观察到数据越多，效果越好。</p>
 <center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig8.JPG" alt="Figure8"></center>
+
+<h3 id="4-4-2-Effect-of-Network-Depth"><a href="#4-4-2-Effect-of-Network-Depth" class="headerlink" title="4.4.2 Effect of Network Depth"></a>4.4.2 Effect of Network Depth</h3><p>图 9 展示了网络深度在 NYC 3 个月数据集上的影响。网络越深，RMSE 会下降，因为网络越深越能捕获更大范围的空间依赖。然而，网络更深 RMSE 就会上升，这是因为网络加深后训练会变得困难。</p>
+<center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig9.JPG" alt="Figure9"></center>
+
+<h3 id="4-4-3-Effect-of-multi-task-component"><a href="#4-4-3-Effect-of-multi-task-component" class="headerlink" title="4.4.3 Effect of multi-task component"></a>4.4.3 Effect of multi-task component</h3><p>表 8 和图 10 展示了多任务组件的影响。</p>
+<p>我们可以看到转移流量预测任务大多数情况下可以提升，$\lambda_{node} = \lambda_{edge} = 1$，$\lambda_{mdl}=0.1$，我们的模型获得最好的效果，两种任务都获得更好的结果，证明了多任务可以互相提升。</p>
+<center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table8.JPG" alt="Table8"></center>
+
+<center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig10.JPG" alt="Figure10"></center>
+
+<h2 id="4-5-Flow-Predictions"><a href="#4-5-Flow-Predictions" class="headerlink" title="4.5 Flow Predictions"></a>4.5 Flow Predictions</h2><p>图 11 描绘了我们的 MDL 在 NYC 上预测两个节点未来一小时的数据。结点 (10, 1)，总是比 (8, 3) 高。我们的模型在预测曲线上更精确。</p>
+<center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig11.JPG" alt="Figure11"></center>
+
       
 
       
