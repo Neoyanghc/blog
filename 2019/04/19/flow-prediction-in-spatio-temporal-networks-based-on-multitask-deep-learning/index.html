@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table8.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig10.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig11.JPG">
-<meta property="og:updated_time" content="2019-04-29T09:02:14.545Z">
+<meta property="og:updated_time" content="2019-04-29T09:06:35.421Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta name="twitter:description" content="TKDE 2019 Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
@@ -275,7 +275,7 @@
 <p>在拼接融合中，我们在 NODENET 和 EDGENET 中分别加了一层卷积。卷积用来将合并的隐藏特征 $\mathcal{H}$ 映射到 不同通道大小的输出上，即 $\mathcal{X}_{res} \in \mathbb{R}^{2 \times I \times J}$ 和 $\mathcal{M}_{res} \in \mathbb{R}^{2N \times I \times J}$，如图 6。</p>
 <center><img src="/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig6.JPG" alt="Figure6"></center>
 
-<h2 id="3-3-Fusing-External-Factors-Using-a-Gating-Mechanism"><a href="#3-3-Fusing-External-Factors-Using-a-Gating-Mechanism" class="headerlink" title="3.3 Fusing External Factors Using a Gating Mechanism"></a>3.3 Fusing External Factors Using a Gating Mechanism</h2><p>外部因素，活动、天气会影响时空网络不同部分的流量。举个例子，一起事故可能会阻塞一个局部区域的交通，一场暴风雨可能会减少整个城市的流量。这样的外部因素就像一个开关，如果它打开了那流量会产生巨大的变化。基于这个思路，我们开发了一种基于门控机制的融合，如图 6 所示。时间 $t$ 的外部因素表示为 $\mathcal{E}_t \in \mathbb{R}^{l_e \times I \times J}$，$\mathcal{E}_t(:, i, j) \in \mathbb{R}^{l_e}$ 表示一个特定顶点的外部信息。我们可以通过下式获得 EDGENET 的门控值：</p>
+<h2 id="3-3-Fusing-External-Factors-Using-a-Gating-Mechanism"><a href="#3-3-Fusing-External-Factors-Using-a-Gating-Mechanism" class="headerlink" title="3.3 Fusing External Factors Using a Gating Mechanism"></a>3.3 Fusing External Factors Using a Gating Mechanism</h2><p>外部因素，活动、天气会影响时空网络不同区域的流量。举个例子，一起事故可能会阻塞一个局部区域的交通，一场暴风雨可能会减少整个城市的流量。这样的外部因素就像一个开关，如果它打开了那流量会产生巨大的变化。基于这个思路，我们开发了一种基于门控机制的融合，如图 6 所示。时间 $t$ 的外部因素表示为 $\mathcal{E}_t \in \mathbb{R}^{l_e \times I \times J}$，$\mathcal{E}_t(:, i, j) \in \mathbb{R}^{l_e}$ 表示一个特定顶点的外部信息。我们可以通过下式获得 EDGENET 的门控值：</p>
 <p>$$\tag{9}<br>\mathbf{F}_m(i, j) = \sigma(\mathbf{W}_e(:, i, j) \cdot \mathcal{E}_t(:, i, j) + \mathbf{b}_e(i, j)), 1 \leq i \leq I, 1 \leq j \leq J<br>$$</p>
 <p>其中 $\mathbf{W}_e \in \mathbb{R}^{l_e \times I \times J}$ 和 $\mathbf{b}_e \in \mathbb{R}^{I \times J}$ 是参数。$\mathbf{F}_m \in \mathbb{R}^{I \times J}$ 是 GATING 的输出，$\mathbf{F}_m(i, j)$ 是对应时空网络中结点 $r_{ij}$ 的门控值。$\sigma(\cdot)$ 是 sigmoid 激活函数，$\cdot$ 是两向量的内积。</p>
 <p>然后我们使用 PRODUCT 融合方式：</p>
@@ -286,7 +286,7 @@
 <h2 id="3-4-Losses"><a href="#3-4-Losses" class="headerlink" title="3.4 Losses"></a>3.4 Losses</h2><p>令 $\phi$ 为 EDGENET 中所有的参数，我们的目标是通过最小化目标函数学习这些参数：</p>
 <p>$$\tag{12}<br>\mathop{\mathrm{argmin}}\limits_{\phi} \mathcal{J}_{edge} = \sum_{t \in \mathcal{T}}\sum^{2N-1}_{c=0} \Vert Q^c_t \odot (\hat{\mathcal{M}}_t(c, :, :) - \mathcal{M}_t(c, :, :)) \Vert^2_F<br>$$</p>
 <p>其中 $Q^c_t$ 是指示矩阵，表示 $\mathcal{M}_t(c, :, :)$ 中所有非零元素。$\mathcal{T}$ 是可用的时段，$\Vert \cdot \Vert_F$ 是矩阵的 F 范数。</p>
-<p>类似的，$\theta$ 是 EDGENET 的参数，目标函数是：</p>
+<p>类似的，$\theta$ 是 NODENET 的参数，目标函数是：</p>
 <p>$$\tag{13}<br>\mathop{\mathrm{argmin}}\limits_{\theta} \mathcal{J}_{node} = \sum_{t \in \mathcal{T}}\sum^1_{c=0} \Vert P^c_t \odot (\hat{\mathcal{X}}_t(c, :, :) - \mathcal{X}_t(c, :, :)) \Vert^2_F<br>$$</p>
 <p>其中 $P^c_t$ 是指示矩阵，表示 $\mathcal{X}_t(c, :, :)$ 中所有非零元素。我们知道对于一个结点来说，它的转入流量之和就是它的流入流量，转出流量之和就是流出流量。定义 2 中定义，$\hat{\mathcal{X}}_t(0, :, :)$ 和 $\hat{\mathcal{X}}_t(1, :, :)$ 分别是流出和流入矩阵。根据 2.1 节定义的方法构建转移矩阵，可知前 $N$ 个通道表示转出流量，后 $N$ 个通道表示转入流量。因此，有下面的损失函数：</p>
 <p>$$\tag{14}<br>\mathop{\mathrm{argmin}}\limits_{\theta, \phi} \sum_{t \in \mathcal{T}} \sum_i \sum_j (\Vert \hat{\mathcal{X}}_t(0, i, j) - \sum^{N-1}_{c=0} \hat{\mathcal{M}}_t(c,i,j) \Vert^2 + \Vert \hat{\mathcal{M}}_t(1,i,j) - \sum^{2N-1}_{c=N} \hat{\mathcal{M}}_t(c,i,j) \Vert^2)<br>$$</p>
