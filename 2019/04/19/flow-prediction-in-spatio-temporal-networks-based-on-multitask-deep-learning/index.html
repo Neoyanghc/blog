@@ -8,13 +8,13 @@
   <link rel="dns-prefetch" href="https://davidham3.github.io">
   <title>Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="TKDE 2019，流量预测，将地图分格，用一个模型同时预测每个网格的流入和流出流量，以及网格之间的转移流量，以上两类分别称为顶点流量和边流量，同时预测这两类流量是本文所解决的多任务预测问题。本文提出的是个框架，所以里面用什么组件应该都是可以的，文章中使用了 FCN。使用两个子模型分别处理顶点流量和边流量预测问题，使用两个子模型的输出作为隐藏状态表示，通过拼接或加和的方式融合，融合后的新表示再分别">
+  <meta name="description" content="TKDE 2019，流量预测，将地图分格，用一个模型同时预测每个网格的流入/流出流量，以及网格之间的转移流量，以上两类分别称为顶点流量和边流量，同时预测这两类流量是本文所解决的多任务预测问题。本文提出的是个框架，所以里面用什么组件应该都是可以的，文章中使用了 FCN。使用两个子模型分别处理顶点流量和边流量预测问题，使用两个子模型的输出作为隐藏状态表示，通过拼接或加和的方式融合，融合后的新表示再分别">
 <meta name="keywords" content="deep learning,Graph,graph convolutional network,ResNet,STDM,Time Series">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta property="og:url" content="https://davidham3.github.io/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="TKDE 2019，流量预测，将地图分格，用一个模型同时预测每个网格的流入和流出流量，以及网格之间的转移流量，以上两类分别称为顶点流量和边流量，同时预测这两类流量是本文所解决的多任务预测问题。本文提出的是个框架，所以里面用什么组件应该都是可以的，文章中使用了 FCN。使用两个子模型分别处理顶点流量和边流量预测问题，使用两个子模型的输出作为隐藏状态表示，通过拼接或加和的方式融合，融合后的新表示再分别">
+<meta property="og:description" content="TKDE 2019，流量预测，将地图分格，用一个模型同时预测每个网格的流入/流出流量，以及网格之间的转移流量，以上两类分别称为顶点流量和边流量，同时预测这两类流量是本文所解决的多任务预测问题。本文提出的是个框架，所以里面用什么组件应该都是可以的，文章中使用了 FCN。使用两个子模型分别处理顶点流量和边流量预测问题，使用两个子模型的输出作为隐藏状态表示，通过拼接或加和的方式融合，融合后的新表示再分别">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table1.JPG">
@@ -35,10 +35,10 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table8.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig10.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig11.JPG">
-<meta property="og:updated_time" content="2019-04-29T09:17:02.996Z">
+<meta property="og:updated_time" content="2019-04-29T09:18:12.132Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
-<meta name="twitter:description" content="TKDE 2019，流量预测，将地图分格，用一个模型同时预测每个网格的流入和流出流量，以及网格之间的转移流量，以上两类分别称为顶点流量和边流量，同时预测这两类流量是本文所解决的多任务预测问题。本文提出的是个框架，所以里面用什么组件应该都是可以的，文章中使用了 FCN。使用两个子模型分别处理顶点流量和边流量预测问题，使用两个子模型的输出作为隐藏状态表示，通过拼接或加和的方式融合，融合后的新表示再分别">
+<meta name="twitter:description" content="TKDE 2019，流量预测，将地图分格，用一个模型同时预测每个网格的流入/流出流量，以及网格之间的转移流量，以上两类分别称为顶点流量和边流量，同时预测这两类流量是本文所解决的多任务预测问题。本文提出的是个框架，所以里面用什么组件应该都是可以的，文章中使用了 FCN。使用两个子模型分别处理顶点流量和边流量预测问题，使用两个子模型的输出作为隐藏状态表示，通过拼接或加和的方式融合，融合后的新表示再分别">
 <meta name="twitter:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig1.JPG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
@@ -204,7 +204,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>TKDE 2019，流量预测，将地图分格，用一个模型同时预测每个网格的流入和流出流量，以及网格之间的转移流量，以上两类分别称为顶点流量和边流量，同时预测这两类流量是本文所解决的多任务预测问题。本文提出的是个框架，所以里面用什么组件应该都是可以的，文章中使用了 FCN。使用两个子模型分别处理顶点流量和边流量预测问题，使用两个子模型的输出作为隐藏状态表示，通过拼接或加和的方式融合，融合后的新表示再分别输出顶点流量和边流量。这篇文章和之前郑宇的文章一样，考虑了三种时序性质、融合了外部因素。损失函数从顶点流量预测值和真值之间的差、边流量预测值和真值之间的差、顶点流量预测值之和与边流量的预测值之差三个方面考虑。数据集是北京和纽约的出租车数据集。 <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=8606218" target="_blank" rel="noopener">Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning</a></p>
+        <p>TKDE 2019，流量预测，将地图分格，用一个模型同时预测每个网格的流入/流出流量，以及网格之间的转移流量，以上两类分别称为顶点流量和边流量，同时预测这两类流量是本文所解决的多任务预测问题。本文提出的是个框架，所以里面用什么组件应该都是可以的，文章中使用了 FCN。使用两个子模型分别处理顶点流量和边流量预测问题，使用两个子模型的输出作为隐藏状态表示，通过拼接或加和的方式融合，融合后的新表示再分别输出顶点流量和边流量。这篇文章和之前郑宇的文章一样，考虑了三种时序性质、融合了外部因素。损失函数从顶点流量预测值和真值之间的差、边流量预测值和真值之间的差、顶点流量预测值之和与边流量的预测值之差三个方面考虑。数据集是北京和纽约的出租车数据集。 <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=8606218" target="_blank" rel="noopener">Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning</a></p>
 <a id="more"></a>
 <p><strong>Abstract</strong>——预测流量（如车流、人流、自行车流）包括结点的流入、流出流量以及不同的结点间的转移，在交通运输系统中的时空网络里扮演着重要的角色。然而，这个问题受多方面复杂因素影响，比如不同地点的空间关系、不同时段的时间关系、还有像活动和天气这样的外部因素，所以这是个有挑战性的问题。此外，一个结点的流量（结点流量）和结点之间的转移（边流量）互相影响。为了解决这个问题，我们提出了一个多任务的深度学习框架可以同时预测一个时空网络上的结点流量和边流量。基于全卷积网络，我们的方法设计了两个复杂的模型分别处理结点流量预测和边流量预测。这两个模型通过组合中间层的隐藏表示连接，而且共同训练。外部因素通过一个门控融合机制引入模型。在边流量预测模型上，我们使用了一个嵌入组件来处理顶点间的系数转移问题。我们在北京和纽约的出租车数据集上做了实验。实验结果显示比11种方法都好。</p>
 <h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h1><p>时空网络（ST-networks），如运输网络和传感器网络，在世界上到处都是，每个点有个空间坐标，每个边具有动态属性。时空网络中的流量有两种表示，如图 1，顶点流量（一个结点的流入和流出流量）和边流量（结点间的转移流量）。在运输系统中，这两类流量可通过4种方式测量，1. 近邻道路的车辆数，2. 公交车的旅客数，3. 行人数，4. 以上三点。图1b 是一个示意图。取顶点 $r_1$ 为例，我们可以根据手机信令和车辆 GPS 轨迹分别计算得到流入流量是 3，流出流量是 3。$r_3$ 到 $r_1$ 的转移是 3，$r_1$ 到 $r_2$ 和 $r_4$ 的转移是 2 和 1。因此，如图1c所示，我们能拿到两种类型的流量，四个结点的流入和流出分别是 $(3,3,0,5)$ 和 $(3,2,5,1)$。所有的边转移都看作是在有向图上发生的。</p>
