@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Table8.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig10.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/Fig11.JPG">
-<meta property="og:updated_time" content="2019-04-29T09:01:29.941Z">
+<meta property="og:updated_time" content="2019-04-29T09:02:14.545Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta name="twitter:description" content="TKDE 2019 Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
@@ -267,7 +267,7 @@
 <p>考虑顶点流量与边流量的相关性，所以从 NODENET 和 EDGENET 学习到的表示应该被连起来。为了连接 NODENET 和 EDGENET，假设 NODENET 和 EDGENET 的隐藏表示分别为 $\mathcal{X}_{fcn}$ 和 $\mathcal{M}_{fcn}$。我们提出两种融合方法：</p>
 <p><strong>SUM Fusion:</strong> 加和融合方法直接将两种表示相加：</p>
 <p>$$\tag{6}<br>\mathcal{H}(c, :, :) = \mathcal{X}_{fcn}(c, :, :) + \mathcal{M}_{fcn}(c, :, :), c = 0, \dots, C - 1<br>$$</p>
-<p>其中 $C$ 是 $\mathcal{X}_{fcn}$ 和 $\mathcal{M}_{fcn}$ 的通道数，$\mathcal{H} in \mathbb{R}^{C \times I \times J}$。显然这种融合方法受限于两种表示必须有相同的维度。</p>
+<p>其中 $C$ 是 $\mathcal{X}_{fcn}$ 和 $\mathcal{M}_{fcn}$ 的通道数，$\mathcal{H} \in \mathbb{R}^{C \times I \times J}$。显然这种融合方法受限于两种表示必须有相同的维度。</p>
 <p><strong>CONCAT Fusion:</strong> 为了从上述的限制中解脱，我们提出了另一种融合方法。顺着通道拼接两个隐藏表示：</p>
 <p>$$\tag{7}<br>\mathcal{H}(c, :, :) = \mathcal{X}_{fcn}(c, :, :), c=0, \dots, C_x - 1<br>$$</p>
 <p>$$\tag{8}<br>\mathcal{H}(C_x + c, :, :) = \mathcal{M}_{fcn}(c, :, :), c=0, \dots, C_m - 1<br>$$</p>
