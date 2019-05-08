@@ -8,13 +8,13 @@
   <link rel="dns-prefetch" href="https://davidham3.github.io">
   <title>Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="AAAI 2017, MSRA的城市人流预测，用三个相同结构的残差卷积神经网络对近邻时间、周期、趋势（远期）分别建模，输出的结果进行集成，然后和外部因素集成，得到预测结果。原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
+  <meta name="description" content="AAAI 2017, MSRA的城市人流预测，用三个相同结构的残差卷积神经网络对近邻时间、周期、趋势（远期）分别建模。与 RNN 相比，RNN 无法处理序列长度过大的序列。三组件的输出结果进行集成，然后和外部因素集成，得到预测结果。原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta name="keywords" content="deep learning,Graph,graph convolutional network,STDM,Time Series">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta property="og:url" content="https://davidham3.github.io/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="AAAI 2017, MSRA的城市人流预测，用三个相同结构的残差卷积神经网络对近邻时间、周期、趋势（远期）分别建模，输出的结果进行集成，然后和外部因素集成，得到预测结果。原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
+<meta property="og:description" content="AAAI 2017, MSRA的城市人流预测，用三个相同结构的残差卷积神经网络对近邻时间、周期、趋势（远期）分别建模。与 RNN 相比，RNN 无法处理序列长度过大的序列。三组件的输出结果进行集成，然后和外部因素集成，得到预测结果。原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig2.JPG">
@@ -26,10 +26,10 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Table1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Table2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Table3.JPG">
-<meta property="og:updated_time" content="2019-04-25T11:12:15.753Z">
+<meta property="og:updated_time" content="2019-05-08T08:38:16.227Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
-<meta name="twitter:description" content="AAAI 2017, MSRA的城市人流预测，用三个相同结构的残差卷积神经网络对近邻时间、周期、趋势（远期）分别建模，输出的结果进行集成，然后和外部因素集成，得到预测结果。原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
+<meta name="twitter:description" content="AAAI 2017, MSRA的城市人流预测，用三个相同结构的残差卷积神经网络对近邻时间、周期、趋势（远期）分别建模。与 RNN 相比，RNN 无法处理序列长度过大的序列。三组件的输出结果进行集成，然后和外部因素集成，得到预测结果。原文地址：Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction">
 <meta name="twitter:image" content="https://davidham3.github.io/blog/2019/03/08/deep-spatio-temporal-residual-networks-for-citywide-crowd-flows-prediction/Fig1.JPG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
@@ -195,7 +195,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>AAAI 2017, MSRA的城市人流预测，用三个相同结构的残差卷积神经网络对近邻时间、周期、趋势（远期）分别建模，输出的结果进行集成，然后和外部因素集成，得到预测结果。原文地址：<a href="https://arxiv.org/abs/1610.00081" target="_blank" rel="noopener">Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction</a><br><a id="more"></a></p>
+        <p>AAAI 2017, MSRA的城市人流预测，用三个相同结构的残差卷积神经网络对近邻时间、周期、趋势（远期）分别建模。与 RNN 相比，RNN 无法处理序列长度过大的序列。三组件的输出结果进行集成，然后和外部因素集成，得到预测结果。原文地址：<a href="https://arxiv.org/abs/1610.00081" target="_blank" rel="noopener">Deep Spatio-Temporal Residual Networks for Citywide Crowd Flows Prediction</a><br><a id="more"></a></p>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>对于交通管理和公共安全来说，预测人流很重要，但这个问题也很有挑战性，因为收到很多复杂的因素影响，如区域内的交通、事件、天气。我们提出了一个基于深度学习的模型 ST-ResNet，对城市内的每个区域的人流的进出一起预测。我们基于时空数据独一的属性，设计了一个端到端的结构。我们使用残差神经网络框架对时间近邻、周期、趋势属性建模。对每个属性，我们设计了残差卷积的一个分支，每个分支对人流的空间属性建模。ST-ResNet 基于数据动态地聚合三个残差神经网络的输出，给不同的分支和区域分配权重。聚合结果还融合了外部因素，像天气或日期。实验在北京和纽约两个数据集上开展。</p>
 <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>对于交通管理和公共安全来说，预测人流很重要（Zheng et al. 2014）。举个例子，2015年新年夜，上海有大量人群涌入一个区域，导致 36 人死亡。2016年六月中旬，数百名 Pokemon Go 玩家冲入纽约中央公园，为了抓一只特别稀有的怪，导致严重的踩踏事故。如果可以预测一个区域的人流，这样的悲剧可以通过应急措施避免，像提前做交通管控，发布预警，疏散人群等。</p>
 <p>我们在这篇文章中预测两类人流（Zhang et al. 2016)：如图 1（a）所示，流入和流出。流入是在给定时间段，从其他区域进入到一个区域的交通运载量。流出表示给定时段内，从一个区域向其他区域的交通运载量。两个流量都是区域间的人口流动。了解这个对风险评估和交通管理有很大帮助。流入/流出可以通过行人数量、邻近道路车辆数、公共运输系统的人数、或是所有的都加起来。图 1（b）展示了一个例子。我们可以使用手机信号测量行人数，$r_2$ 的流入和流出分别为 3 和 1。类似地，使用车辆 GPS 轨迹，分别是 0 和 3。</p>
