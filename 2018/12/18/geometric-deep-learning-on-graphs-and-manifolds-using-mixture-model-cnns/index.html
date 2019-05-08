@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="https://davidham3.github.io">
   <title>Geometric deep learning on graphs and manifolds using mixture model CNNs | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="CVPR 2017. 原文链接：Geometric deep learning on graphs and manifolds using mixture model CNNs">
+  <meta name="description" content="CVPR 2017. 这篇论文有点难，没看下去。。。原文链接：Geometric deep learning on graphs and manifolds using mixture model CNNs">
 <meta name="keywords" content="deep learning,Graph,graph convolutional network">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Geometric deep learning on graphs and manifolds using mixture model CNNs">
 <meta property="og:url" content="https://davidham3.github.io/2018/12/18/geometric-deep-learning-on-graphs-and-manifolds-using-mixture-model-cnns/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="CVPR 2017. 原文链接：Geometric deep learning on graphs and manifolds using mixture model CNNs">
+<meta property="og:description" content="CVPR 2017. 这篇论文有点难，没看下去。。。原文链接：Geometric deep learning on graphs and manifolds using mixture model CNNs">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-25T11:10:41.705Z">
+<meta property="og:updated_time" content="2019-05-08T07:46:23.993Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Geometric deep learning on graphs and manifolds using mixture model CNNs">
-<meta name="twitter:description" content="CVPR 2017. 原文链接：Geometric deep learning on graphs and manifolds using mixture model CNNs">
+<meta name="twitter:description" content="CVPR 2017. 这篇论文有点难，没看下去。。。原文链接：Geometric deep learning on graphs and manifolds using mixture model CNNs">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
   
@@ -68,7 +68,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">196.6k</span>
+			总字数 <span class="post-count">196.9k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -184,7 +184,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>CVPR 2017. 原文链接：<a href="https://arxiv.org/abs/1611.08402.pdf" target="_blank" rel="noopener">Geometric deep learning on graphs and manifolds using mixture model CNNs</a><br><a id="more"></a></p>
+        <p>CVPR 2017. 这篇论文有点难，没看下去。。。原文链接：<a href="https://arxiv.org/abs/1611.08402.pdf" target="_blank" rel="noopener">Geometric deep learning on graphs and manifolds using mixture model CNNs</a><br><a id="more"></a></p>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>大部分深度学习处理的是 1D，2D，3D 欧式结构数据，音频信号、图像、视频。最近大家开始研究在非欧氏空间上的数据，如复杂网络、计算社会科学、计算机图形学。我们提出了一个统一的框架，让 CNN 可以泛化到非欧氏空间上，学习局部的、平稳的、针对任务可分解的特征。我们发现之前提出的一些方法都可以放到我们的框架中。我们发现我们的方法效果比前人的方法都要好。</p>
 <h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h1><h1 id="2-Deep-learning-on-graphs"><a href="#2-Deep-learning-on-graphs" class="headerlink" title="2. Deep learning on graphs"></a>2. Deep learning on graphs</h1><p>无向带权图 $\mathcal{G} = (\lbrace 1, \dots, n\rbrace, \mathcal{E}, \mathbf{W})$，邻接矩阵 $\mathbf{W} = (w_{ij})$，其中 $w_{ij} = w_{ji}$，如果 $(i, j) \notin \mathcal{E}$，则 $w_{ij} = 0$，否则 $w_{ij} &gt; 0$。未归一化的拉普拉斯矩阵是个 $n \times n$ 的 实对称半正定矩阵 $\Delta = \bf D - W$，其中 $\mathbf{D} = \text{diag}(\sum_{j = \not i} w_{ij})$ 是度矩阵。</p>
 <p>拉普拉斯矩阵有特征值分解 $\bf \Delta = \Phi \Lambda \Phi^T$，其中 $\Phi = (\phi_1, \dots, \phi_n)$ 是相互正交的特征向量，$\Lambda = \text{diag}(\lambda_1, …, \lambda_n)$ 特征值组成的对角矩阵。在传统的谐波分析中，特征向量是拉普拉斯算子，特征值可以看作是频率。给定图上的一个信号 $\mathbf{f} = (f_1, \dots, f_n)^T$，它的图傅里叶变换是 $\hat{\mathbf{f}} = \Phi^T \mathbf{f}$。给定两个信号 $\bf f, g$，他们的谱卷积定义为傅里叶变换的 element-wise product：</p>

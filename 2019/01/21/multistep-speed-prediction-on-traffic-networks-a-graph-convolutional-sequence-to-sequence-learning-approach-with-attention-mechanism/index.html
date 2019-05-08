@@ -8,13 +8,13 @@
   <link rel="dns-prefetch" href="https://davidham3.github.io">
   <title>Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
+  <meta name="description" content="AGC-Seq2Seq，投的是TRC。清华大学和高德地图合作的一项研究。作者采用了 GCN + Seq2Seq + Attention 的混合模型，将路网中的边构建成图中的结点，在 GCN 上做了改进，将邻接矩阵扩展到 k 阶并与一个权重矩阵相乘，类似 HA-GCN(2016)，实现了邻居信息聚合时权重的自由调整，可以处理有向图。时间关系上使用 Seq2Seq + Attention 建模，完成了">
 <meta name="keywords" content="deep learning,graph convolutional network,STDM,Time Series">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
 <meta property="og:url" content="https://davidham3.github.io/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
+<meta property="og:description" content="AGC-Seq2Seq，投的是TRC。清华大学和高德地图合作的一项研究。作者采用了 GCN + Seq2Seq + Attention 的混合模型，将路网中的边构建成图中的结点，在 GCN 上做了改进，将邻接矩阵扩展到 k 阶并与一个权重矩阵相乘，类似 HA-GCN(2016)，实现了邻居信息聚合时权重的自由调整，可以处理有向图。时间关系上使用 Seq2Seq + Attention 建模，完成了">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig1.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig2.jpg">
@@ -27,10 +27,10 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Table2_a.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Table2_b.jpg">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Table2_c.jpg">
-<meta property="og:updated_time" content="2019-04-25T11:08:33.892Z">
+<meta property="og:updated_time" content="2019-05-08T07:46:00.814Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism">
-<meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。">
+<meta name="twitter:description" content="AGC-Seq2Seq，投的是TRC。清华大学和高德地图合作的一项研究。作者采用了 GCN + Seq2Seq + Attention 的混合模型，将路网中的边构建成图中的结点，在 GCN 上做了改进，将邻接矩阵扩展到 k 阶并与一个权重矩阵相乘，类似 HA-GCN(2016)，实现了邻居信息聚合时权重的自由调整，可以处理有向图。时间关系上使用 Seq2Seq + Attention 建模，完成了">
 <meta name="twitter:image" content="https://davidham3.github.io/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/Fig1.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
@@ -80,7 +80,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">196.6k</span>
+			总字数 <span class="post-count">196.9k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -191,12 +191,12 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：5.2k字 | 预计阅读时长：21分钟
+        字数：5.3k字 | 预计阅读时长：22分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。</p>
+        <p>AGC-Seq2Seq，投的是TRC。清华大学和高德地图合作的一项研究。作者采用了 GCN + Seq2Seq + Attention 的混合模型，将路网中的边构建成图中的结点，在 GCN 上做了改进，将邻接矩阵扩展到 k 阶并与一个权重矩阵相乘，类似 HA-GCN(2016)，实现了邻居信息聚合时权重的自由调整，可以处理有向图。时间关系上使用 Seq2Seq + Attention 建模，完成了北京市二环线的多步的车速预测，对比的方法中没有近几年出现的时空预测模型。</p>
 <a id="more"></a>
 <h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>为了在多步交通预测的任务中，捕获复杂的非平稳的时间动态性和空间依赖关系，我们提出了一个叫注意力图卷积序列到序列模型（AGC-Seq2Seq）。空间和时间用图卷积和序列到序列模型分开建模。注意力机制用来解决序列到序列模型在多步预测上的困难，同时来捕获交通流的异质性。</p>
 <h1 id="2-LITERATURE-REVIEW"><a href="#2-LITERATURE-REVIEW" class="headerlink" title="2. LITERATURE REVIEW"></a>2. LITERATURE REVIEW</h1><p>如 Li et al. 2017 所述，统计模型、shallow machine learning models 和 深度学习模型是三个主要的方法。</p>

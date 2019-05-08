@@ -8,21 +8,21 @@
   <link rel="dns-prefetch" href="https://davidham3.github.io">
   <title>Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="AAAI 2018. 原文链接：Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning">
+  <meta name="description" content="AAAI 2018。这篇论文很有趣，讲的是 GCN 堆得过多了之后，效果会变差的问题。作者分析了一下为什么会变差，主要是因为 GCN 的本质实际上是对每个结点的邻居特征和自身特征做线性组合，权重和邻接矩阵相关，所以对于顶点分类问题来说，如果堆得层数多了，就会让一个结点的特征聚合越来越多邻居的特征，让大家都变得相似，从而使得类间的相似度增大，自然分类效果就差了。作者提出了两个方法解决这个问题，算训练">
 <meta name="keywords" content="machine learning,deep learning,Graph,graph convolutional network">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning">
 <meta property="og:url" content="https://davidham3.github.io/2018/10/31/deeper-insights-into-graph-convolutional-networks-for-semi-supervised-learning/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="AAAI 2018. 原文链接：Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning">
+<meta property="og:description" content="AAAI 2018。这篇论文很有趣，讲的是 GCN 堆得过多了之后，效果会变差的问题。作者分析了一下为什么会变差，主要是因为 GCN 的本质实际上是对每个结点的邻居特征和自身特征做线性组合，权重和邻接矩阵相关，所以对于顶点分类问题来说，如果堆得层数多了，就会让一个结点的特征聚合越来越多邻居的特征，让大家都变得相似，从而使得类间的相似度增大，自然分类效果就差了。作者提出了两个方法解决这个问题，算训练">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/10/31/deeper-insights-into-graph-convolutional-networks-for-semi-supervised-learning/Table1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/10/31/deeper-insights-into-graph-convolutional-networks-for-semi-supervised-learning/Alg1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2018/10/31/deeper-insights-into-graph-convolutional-networks-for-semi-supervised-learning/Alg2.JPG">
-<meta property="og:updated_time" content="2019-04-25T11:12:00.311Z">
+<meta property="og:updated_time" content="2019-05-08T07:48:59.712Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning">
-<meta name="twitter:description" content="AAAI 2018. 原文链接：Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning">
+<meta name="twitter:description" content="AAAI 2018。这篇论文很有趣，讲的是 GCN 堆得过多了之后，效果会变差的问题。作者分析了一下为什么会变差，主要是因为 GCN 的本质实际上是对每个结点的邻居特征和自身特征做线性组合，权重和邻接矩阵相关，所以对于顶点分类问题来说，如果堆得层数多了，就会让一个结点的特征聚合越来越多邻居的特征，让大家都变得相似，从而使得类间的相似度增大，自然分类效果就差了。作者提出了两个方法解决这个问题，算训练">
 <meta name="twitter:image" content="https://davidham3.github.io/blog/2018/10/31/deeper-insights-into-graph-convolutional-networks-for-semi-supervised-learning/Table1.JPG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
@@ -72,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">196.6k</span>
+			总字数 <span class="post-count">196.9k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -183,12 +183,12 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：4.8k字 | 预计阅读时长：18分钟
+        字数：4.9k字 | 预计阅读时长：19分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>AAAI 2018. 原文链接：<a href="https://arxiv.org/abs/1801.07606" target="_blank" rel="noopener">Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning</a><br><a id="more"></a></p>
+        <p>AAAI 2018。这篇论文很有趣，讲的是 GCN 堆得过多了之后，效果会变差的问题。作者分析了一下为什么会变差，主要是因为 GCN 的本质实际上是对每个结点的邻居特征和自身特征做线性组合，权重和邻接矩阵相关，所以对于顶点分类问题来说，如果堆得层数多了，就会让一个结点的特征聚合越来越多邻居的特征，让大家都变得相似，从而使得类间的相似度增大，自然分类效果就差了。作者提出了两个方法解决这个问题，算训练上的 trick 吧。原文链接：<a href="https://arxiv.org/abs/1801.07606" target="_blank" rel="noopener">Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning</a><br><a id="more"></a></p>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>机器学习中很多有趣的问题正在用深度学习工具来重新审视。对于基于图的半监督学习问题，最新的一个重要进展就是图卷积神经网络 (GCNs)，这个模型可以很好的将顶点局部特征和图的拓扑结构整合进卷积层内。尽管 GCN 模型和其他的 state-of-the-art 方法相比效果更好，但是它的机理目前还不是很清楚，而且需要很多的标记数据用于验证以及模型选择。</p>
 <p>在这篇论文中，我们深入了 GCN 模型，解决了它的底层限制。首先，我们发现 GCN 模型的图卷积实际上是一个拉普拉斯平滑的特殊形式，这是 GCN 工作的关键原因，但是这也会给很多卷积层带来潜在的危害。其次，为了克服 GCN 层数少的限制，我们提出了协同训练和自训练方法来训练 GCNs。我们的方法显著地提升了 GCNs 在标记样本少的情况下的学习，并且让他们避免了使用额外的标记用来验证。大量的实验证明了我们的理论和方案。</p>
 <h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h1><p>深度学习中的突破使得人工智能和机器学习中正在发生范式变化。一方面，很多老问题通过深度神经网络重新审视，很多原来看起来在任务中无法完成的巨大进步现在也在发生着，如机器翻译和计算机视觉。另一方面，像几何深度学习 (Bronstein et al. 2017) 这样的技术正在发展，可能会将深度神经模型泛化到新的或非传统的领域。</p>

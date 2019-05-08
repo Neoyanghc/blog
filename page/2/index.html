@@ -66,7 +66,7 @@
 		</nav>
 		<nav>
 			总文章数 67<br>
-			总字数 <span class="post-count">196.6k</span>
+			总字数 <span class="post-count">196.9k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -339,12 +339,12 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：5.2k字 | 预计阅读时长：21分钟
+        字数：5.3k字 | 预计阅读时长：22分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>AGC-Seq2Seq，投的是TRC。用的机器翻译的 Seq2Seq + 注意力机制模型，里面加入了 GCN。</p>
+        <p>AGC-Seq2Seq，投的是TRC。清华大学和高德地图合作的一项研究。作者采用了 GCN + Seq2Seq + Attention 的混合模型，将路网中的边构建成图中的结点，在 GCN 上做了改进，将邻接矩阵扩展到 k 阶并与一个权重矩阵相乘，类似 HA-GCN(2016)，实现了邻居信息聚合时权重的自由调整，可以处理有向图。时间关系上使用 Seq2Seq + Attention 建模，完成了北京市二环线的多步的车速预测，对比的方法中没有近几年出现的时空预测模型。</p>
         
           <a class="article-more-a" href="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/#more">more >></a>
         
@@ -447,7 +447,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>CVPR 2017. 原文链接：<a href="https://arxiv.org/abs/1611.08402.pdf" target="_blank" rel="noopener">Geometric deep learning on graphs and manifolds using mixture model CNNs</a><br></p>
+        <p>CVPR 2017. 这篇论文有点难，没看下去。。。原文链接：<a href="https://arxiv.org/abs/1611.08402.pdf" target="_blank" rel="noopener">Geometric deep learning on graphs and manifolds using mixture model CNNs</a><br></p>
         
           <a class="article-more-a" href="/blog/2018/12/18/geometric-deep-learning-on-graphs-and-manifolds-using-mixture-model-cnns/#more">more >></a>
         
@@ -636,12 +636,12 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：4.8k字 | 预计阅读时长：18分钟
+        字数：4.9k字 | 预计阅读时长：19分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>AAAI 2018. 原文链接：<a href="https://arxiv.org/abs/1801.07606" target="_blank" rel="noopener">Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning</a><br></p>
+        <p>AAAI 2018。这篇论文很有趣，讲的是 GCN 堆得过多了之后，效果会变差的问题。作者分析了一下为什么会变差，主要是因为 GCN 的本质实际上是对每个结点的邻居特征和自身特征做线性组合，权重和邻接矩阵相关，所以对于顶点分类问题来说，如果堆得层数多了，就会让一个结点的特征聚合越来越多邻居的特征，让大家都变得相似，从而使得类间的相似度增大，自然分类效果就差了。作者提出了两个方法解决这个问题，算训练上的 trick 吧。原文链接：<a href="https://arxiv.org/abs/1801.07606" target="_blank" rel="noopener">Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning</a><br></p>
         
           <a class="article-more-a" href="/blog/2018/10/31/deeper-insights-into-graph-convolutional-networks-for-semi-supervised-learning/#more">more >></a>
         
