@@ -65,8 +65,8 @@
 			</ul>
 		</nav>
 		<nav>
-			总文章数 67<br>
-			总字数 <span class="post-count">196.9k</span>
+			总文章数 68<br>
+			总字数 <span class="post-count">198.9k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -160,6 +160,113 @@
           </div>
           <div id="js-content" class="content-ll">
             
+  
+    <article id="post-spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/">Spatiotemporal Multi-Graph Convolution Network for Ride-hailing Demand Forecasting</a>
+    </h1>
+  
+
+        
+        <a href="/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/" class="archive-article-date">
+  	<time datetime="2019-02-28T13:12:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-02-28</time>
+</a>
+        
+      </header>
+      <div align="center" class="post-count">
+        字数：5.9k字 | 预计阅读时长：22分钟
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>AAAI 2019，滴滴的网约车需求预测，5个点预测1个点。空间依赖建模上：以图的形式表示数据，从空间地理关系、区域功能相似度、区域交通连通性三个角度构造了三个不同的图，提出了多图卷积，分别用 k 阶 ChebNet 对每个图做图卷积，然后将多个图的卷积结果进行聚合(sum, average 等)成一个图；时间依赖建模上：提出了融合背景信息的 Contextual Gated RNN (CGRNN)，用 ChebNet 对每个结点卷积后，得到他们的邻居表示，即每个结点的背景信息表示，与原结点特征拼接，用一个两层全连接神经网络计算出 T 个权重，将权重乘到历史 T 个时刻的图上，对历史值进行缩放，然后用一个共享的 RNN，针对每个结点形成的长度为 T 的时间序列建模，得到每个结点新的时间表示。最后预测每个点的网约车需求。原文地址：<a href="http://www-scf.usc.edu/~yaguang/papers/aaai19_multi_graph_convolution.pdf" target="_blank" rel="noopener">Spatiotemporal Multi-Graph Convolution Network for Ride-hailing Demand Forecasting</a></p>
+        
+          <a class="article-more-a" href="/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">deep learning</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">STDM</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">graph convolutional network</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Graph</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Time Series</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/blog/categories/论文阅读笔记//" class="article-tag-list-link color2">论文阅读笔记</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
   
     <article id="post-归并排序改进" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
@@ -364,11 +471,11 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">graph convolutional network</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">STDM</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">STDM</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">graph convolutional network</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -467,11 +574,11 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Graph</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">graph convolutional network</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">graph convolutional network</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Graph</a>
         		</li>
       		
 		</ul>
@@ -665,11 +772,11 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Graph</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">graph convolutional network</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">graph convolutional network</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Graph</a>
         		</li>
       		
 		</ul>
@@ -1006,109 +1113,6 @@
 
 
   
-    <article id="post-large-scale-learnable-graph-convolutional-networks" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/blog/2018/09/17/large-scale-learnable-graph-convolutional-networks/">Large-Scale Learnable Graph Convolutional Networks</a>
-    </h1>
-  
-
-        
-        <a href="/blog/2018/09/17/large-scale-learnable-graph-convolutional-networks/" class="archive-article-date">
-  	<time datetime="2018-09-17T07:22:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-17</time>
-</a>
-        
-      </header>
-      <div align="center" class="post-count">
-        字数：3.2k字 | 预计阅读时长：11分钟
-      </div>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>KDD 2018.将图结构数据变换到网格状数据中，使用传统的一维卷积进行卷积。变换的方式是：针对每个特征的大小，对邻居结点进行排序，取这个特征前k大的数作为它邻居这列特征的k个值。如果邻居不够，那就用0来补。这样就能得到该顶点的邻居信息，组成一个矩阵，然后使用一维卷积。但是作者没说为什么非要取最大的k个数。原文链接：<a href="https://arxiv.org/abs/1808.03965?context=stat.ML" target="_blank" rel="noopener">Large-Scale Learnable Graph Convolutional Networks</a><br></p>
-        
-          <a class="article-more-a" href="/blog/2018/09/17/large-scale-learnable-graph-convolutional-networks/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">deep learning</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Graph</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">graph convolutional network</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">large-scale learning</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/blog/categories/论文阅读笔记//" class="article-tag-list-link color2">论文阅读笔记</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/blog/2018/09/17/large-scale-learnable-graph-convolutional-networks/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/blog/">&laquo; Prev</a><a class="page-number" href="/blog/">1</a><span class="page-number current">2</span><a class="page-number" href="/blog/page/3/">3</a><a class="page-number" href="/blog/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/7/">7</a><a class="extend next" rel="next" href="/blog/page/3/">Next &raquo;</a>
@@ -1247,7 +1251,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Graph</a>
+                <a href="javascript:void(0)" class="js-tag color5">STDM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1255,11 +1259,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+                <a href="javascript:void(0)" class="js-tag color1">Graph</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">dataset</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">graph</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1271,11 +1283,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Kafka</a>
+                <a href="javascript:void(0)" class="js-tag color2">super resolution</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">super resolution</a>
+                <a href="javascript:void(0)" class="js-tag color1">Kafka</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1299,10 +1311,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">STDM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ResNet</a>
               </li>
              
@@ -1311,11 +1319,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
+                <a href="javascript:void(0)" class="js-tag color4">已复现</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">已复现</a>
+                <a href="javascript:void(0)" class="js-tag color1">large-scale learning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1324,10 +1332,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">NER</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">large-scale learning</a>
               </li>
              
               <li class="article-tag-list-item">
