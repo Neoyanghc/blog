@@ -25,7 +25,9 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Alg1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Table1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Table2.JPG">
-<meta property="og:updated_time" content="2019-05-23T06:29:08.606Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Table3.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Table4.JPG">
+<meta property="og:updated_time" content="2019-05-23T06:46:49.539Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow Prediction in Metropolis">
 <meta name="twitter:description" content="AAAI 2019，对比ST-ResNet，抛出三个问题，卷积捕获的空间范围小、人口流动和区域的功能相关、之前的融合机制不好。原文链接：DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow  Prediction in Metropolis">
@@ -78,7 +80,7 @@
 		</nav>
 		<nav>
 			总文章数 68<br>
-			总字数 <span class="post-count">200.6k</span>
+			总字数 <span class="post-count">200.7k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -189,7 +191,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：3.8k字 | 预计阅读时长：13分钟
+        字数：3.8k字 | 预计阅读时长：14分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -258,6 +260,29 @@
 <p><strong><em>MobileBJ:</em></strong> 数据是中国一个很流行的社交网络应用商提供的，时间范围是4 月 1 日到 4 月 30 日。记录了用户请求区域服务时的位置。我们用定义 2 转换成了网格流量。我们选择最后一周的数据作为测试集，前面的作为训练集。表 2 展示了这个数据集的 17 类 POI 信息。</p>
 <p><strong><em>BikeNYC:</em></strong> NYC 的自行车数据，2014 年，4 月 1 日到 9 月 30 日。数据包含了旅途时长，出发和到达站的 ID，起始和结束时间。最后 14 天的数据用来测试，其他的训练。我们选了 9 类 POI 信息。</p>
 <center><img src="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Table2.JPG" alt="Table2"></center>
+
+<h2 id="Baselines"><a href="#Baselines" class="headerlink" title="Baselines"></a>Baselines</h2><ul>
+<li>HA</li>
+<li>VAR</li>
+<li>ARIMA</li>
+<li>ConvLSTM</li>
+<li>ST-ResNet</li>
+</ul>
+<h2 id="Metrics-and-Parameters"><a href="#Metrics-and-Parameters" class="headerlink" title="Metrics and Parameters"></a>Metrics and Parameters</h2><ul>
+<li>RMSE</li>
+</ul>
+<p>$$<br>RMSE = \sqrt{\frac{1}{T} \sum^T_{i=1} \Vert \mathbf{X}_i - \widehat{X}_i \Vert^2_2},<br>$$</p>
+<ul>
+<li>MAE</li>
+</ul>
+<p>$$<br>MAE = \frac{1}{T} \sum^T_{i=1} \vert \mathbf{X}_i - \widehat{\mathbf{X}}_i \vert,<br>$$</p>
+<p>RMSE 作为 loss function。</p>
+<center><img src="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Table3.JPG" alt="Table3"></center>
+
+<p>表 3 展示了不同的参数设置。</p>
+<center><img src="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Table4.JPG" alt="Table4"></center>
+
+
       
 
       
