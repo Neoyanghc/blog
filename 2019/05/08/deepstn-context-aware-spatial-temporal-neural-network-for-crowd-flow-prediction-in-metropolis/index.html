@@ -18,7 +18,8 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig2.JPG">
-<meta property="og:updated_time" content="2019-05-22T05:53:06.428Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig3.JPG">
+<meta property="og:updated_time" content="2019-05-23T03:18:16.161Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow Prediction in Metropolis">
 <meta name="twitter:description" content="AAAI 2019，对比ST-ResNet，抛出三个问题，卷积捕获的空间范围小、人口流动和区域的功能相关、之前的融合机制不好。原文链接：DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow  Prediction in Metropolis">
@@ -71,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 68<br>
-			总字数 <span class="post-count">198.9k</span>
+			总字数 <span class="post-count">199.5k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -182,7 +183,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2k字 | 预计阅读时长：7分钟
+        字数：2.6k字 | 预计阅读时长：9分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -212,6 +213,16 @@
 <h1 id="Our-Model"><a href="#Our-Model" class="headerlink" title="Our Model"></a>Our Model</h1><p>图 2 展示了我们模型的框架。主要有三个部分：流量输入、SemanticPlus 和 ResPlus 单元。流量慎入包含 <em>closeness, period, terend</em>，由于数据的时间范围限制可以减少为 <em>closeness, period</em>。SemanticPlus 包含 POI 分布和时间信息。ResPlus 单元可以捕获远距离空间依赖。每个区域的流入和流出流量通过每小时或者每半小时统计得到流量地图的时间序列。这些流量地图通过 Min-Max 归一化处理到 $[-1, 1]$。如图 2 所示，人口分布地图通过近期时间、近邻历史、远期历史选择后作为输入放入模型。不同类型的 POI 分布通过 Min-Max 归一化到 $[0, 1]$。如图 2 做部分所示，POI 分布地图通过时间信息赋予了不同的权重。之后，POI 信息和人流信息通过早融合后放入堆叠的 ResPlus 单元中。最后，ResPlus 单元不同级别的特征融合后进入卷积部分，然后通过 Tanh 映射到 $[-1, 1]$。下面会介绍细节。</p>
 <center><img src="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig2.JPG" alt="Figure2"></center>
 
+<h2 id="ResPlus"><a href="#ResPlus" class="headerlink" title="ResPlus"></a>ResPlus</h2><p>很多处理人口流量预测的深度学习模型主要包含两个部分：基于 RNN 的结构，像 ConvLSTM 和 Periodic-CRN，以及基于 CNN 的结构，如 Deep-ST 和 ST-ResNet。但是，训练基于 RNN 结构的模型费时。因此我们选用基于 CNN 的结构 ST-ResNet 作为我们的基础模型。</p>
+<p>在这篇论文中，我们设计 ConvPlus 来捕获城市内远距离的空间依赖。如图 3，ResPlus 单元使用一个 ConvPlus 和一个典型卷积。我们尝试了 Batch Normalization 和 Dropout，为了简介没有在图里面画出来。</p>
+<center><img src="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig3.JPG" alt="Figure3"></center>
+
+<p>典型卷积的每个通道对应一个卷积核。卷积核使用这些核来计算地图上的互相关系数，比如捕获梯度上的特征。卷积核的大小一般很小。在 ST-ResNet 和 DeepSTN+ 里面，卷积核的大小是 $3 \times 3$。但是城市中存在着远距离的依赖。人们可能坐地铁去上班。我们称这类关系叫远距离空间依赖关系。这种关系使得堆叠卷积难以有效地捕获这个关系。</p>
+<p>如图 3 左部分所示，在 ConvPlus 结构中，我们将典型卷积的一些通道分离来捕获每个区域的远距离空间依赖。然后用一个全连接层直接捕获每两个区域之间的远距离空间依赖，在这层前面用一个池化层来减少参数。因此，在 ConvPlus 的输出有两类通道。ConvPlus 的输出有着和普通卷积一样的输出，可以用于下一个卷积的输入。</p>
+<p>图 4 展示了两个不同区域的空间依赖热力图，分别是红色和黄色的星。这些目标区域不仅有区域上的依赖，还有一些和远处区域的远距离依赖。这也显示出不同的区域和地图上的其他区域有不一样的关系，这很难通过堆叠卷积有效地捕获。</p>
+<p>因为 ConvPlus 有两类不同的输出通道，我们在 ResPlus 单元中使用 ConvPlus + Conv 而不是 ConvPlus + ConvPlus。没有 SemanticPlus 的 DeepSTN+ 形式化为：</p>
+<p>$$<br>\widehat{\mathbf{X}} = f_{Res}(f_{EF}(\mathbf{X}^c + \mathbf{X}^p + \mathbf{X}^t)),<br>$$</p>
+<p>三个 $\mathbf{X}$ 表示三种类型的历史地图——<em>closeness, period, trend</em>。$\widehat{\mathbf{X}}$ 表示预测出的流量地图。$+$ 表示拼接操作。$f_{EF}$ 表示用来早融合不同类型信息的卷积函数，$f_{Res}$ 表示一个堆叠的 ResPlus 单元。</p>
 
       
 
