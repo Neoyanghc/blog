@@ -22,7 +22,8 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig4.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig5.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig6.JPG">
-<meta property="og:updated_time" content="2019-05-23T03:35:23.664Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Alg1.JPG">
+<meta property="og:updated_time" content="2019-05-23T05:56:47.576Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow Prediction in Metropolis">
 <meta name="twitter:description" content="AAAI 2019，对比ST-ResNet，抛出三个问题，卷积捕获的空间范围小、人口流动和区域的功能相关、之前的融合机制不好。原文链接：DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow  Prediction in Metropolis">
@@ -75,7 +76,7 @@
 		</nav>
 		<nav>
 			总文章数 68<br>
-			总字数 <span class="post-count">200.1k</span>
+			总字数 <span class="post-count">200.4k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -186,7 +187,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：3.2k字 | 预计阅读时长：11分钟
+        字数：3.5k字 | 预计阅读时长：12分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -236,6 +237,14 @@
 <p>$$<br>\mathbf{S} = \mathbf{X}^s \ast \mathbf{R} = \mathbf{X}^s \ast f_t(\mathbf{I})<br>$$</p>
 <p>函数 $f_t()$ 将时间向量转换为表示 POI 影响强度的向量。$\ast$ 表示每个 POI 分布地图会被附上一个权重，表示 POI 的影响强度。我们假设同一类在不同的区域的 POI 有相同的时间模式。因此，一个类别的 POI 分布地图会有相同的权重。图 6 展示了娱乐和居住区的影响强度。影响强度在一周内随时间的变化而变化，每天存在着一些典型的模式。很多人早上去上班，工作结束后回家，所以每天早上和下午住宅区有明显的两个峰。对比居住区，娱乐区的影响相对稳定。</p>
 <center><img src="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig6.JPG" alt="Figure6"></center>
+
+<h2 id="Fusion"><a href="#Fusion" class="headerlink" title="Fusion"></a>Fusion</h2><p>三组件应该用更复杂的融合方式，而不是线性组合。这些带有 POI 信息的流量信息也有复杂的交互。为了建模这种相互影响，我们使用早融合而不是末端融合使得不同的信息能更早的融合起来。早融合减少了大约三分之二的参数。此外，ST-ResNet 有些时候不能收敛。我们发现这个问题可以通过早融合减少参数来简化模型解决。考虑到不同层的特征有不同的函数，我们在模型末端设定了一个多尺度的融合机制。这里我们形式化描述整个网络：</p>
+<p>$$<br>\widehat{\mathbf{X}} = f_{con}(f_{Res}(f_{EF}(\mathbf{X}^c + \mathbf{X}^p + \mathbf{X}^t + \mathbf{S}))),<br>$$</p>
+<p>函数 $f_{EF}$ 表示一个早融合使用的卷积操作，在早融合之前压缩了通道数。函数 $f_{con}$ 表明了最后的多尺度融合，表示卷积层后的一个拼接层。$\bf{S}$ 表示 SemanticPlus 的输出，即 带有时间权重的 POI 分布。</p>
+<h2 id="Training"><a href="#Training" class="headerlink" title="Training"></a>Training</h2><p>算法 1 描述了训练过程。前 7 行是构建训练集和 POI 信息，模型通过 Adam 训练（8-12 行）</p>
+<center><img src="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Alg1.JPG" alt="Alg1"></center>
+
+
       
 
       
