@@ -8,13 +8,13 @@
   <link rel="dns-prefetch" href="https://davidham3.github.io">
   <title>DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow Prediction in Metropolis | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="AAAI 2019，网格流量预测，对比ST-ResNet，抛出三个问题，卷积捕获的空间范围小、人口流动和区域的功能相关、之前的融合机制不好。改了一下残差卷积，给 POI 信息增加了时间维度，融合提前，减少参数，稳定模型训练。原文链接：DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow  Prediction">
+  <meta name="description" content="AAAI 2019，网格流量预测，对比ST-ResNet，抛出三个问题，卷积捕获的空间范围小、人口流动和区域的功能相关、之前的融合机制不好。改了一下残差卷积，给 POI 信息增加了时间维度，融合提前，减少参数，稳定模型训练。原文链接：DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow Prediction i">
 <meta name="keywords" content="deep learning,STDM,graph convolutional network,Graph,Time Series">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow Prediction in Metropolis">
 <meta property="og:url" content="https://davidham3.github.io/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="AAAI 2019，网格流量预测，对比ST-ResNet，抛出三个问题，卷积捕获的空间范围小、人口流动和区域的功能相关、之前的融合机制不好。改了一下残差卷积，给 POI 信息增加了时间维度，融合提前，减少参数，稳定模型训练。原文链接：DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow  Prediction">
+<meta property="og:description" content="AAAI 2019，网格流量预测，对比ST-ResNet，抛出三个问题，卷积捕获的空间范围小、人口流动和区域的功能相关、之前的融合机制不好。改了一下残差卷积，给 POI 信息增加了时间维度，融合提前，减少参数，稳定模型训练。原文链接：DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow Prediction i">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig2.JPG">
@@ -29,10 +29,10 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Table4.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Table5.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig7.JPG">
-<meta property="og:updated_time" content="2019-05-23T07:11:26.734Z">
+<meta property="og:updated_time" content="2019-05-23T07:15:55.756Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow Prediction in Metropolis">
-<meta name="twitter:description" content="AAAI 2019，网格流量预测，对比ST-ResNet，抛出三个问题，卷积捕获的空间范围小、人口流动和区域的功能相关、之前的融合机制不好。改了一下残差卷积，给 POI 信息增加了时间维度，融合提前，减少参数，稳定模型训练。原文链接：DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow  Prediction">
+<meta name="twitter:description" content="AAAI 2019，网格流量预测，对比ST-ResNet，抛出三个问题，卷积捕获的空间范围小、人口流动和区域的功能相关、之前的融合机制不好。改了一下残差卷积，给 POI 信息增加了时间维度，融合提前，减少参数，稳定模型训练。原文链接：DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow Prediction i">
 <meta name="twitter:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig1.JPG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
@@ -198,7 +198,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>AAAI 2019，网格流量预测，对比ST-ResNet，抛出三个问题，卷积捕获的空间范围小、人口流动和区域的功能相关、之前的融合机制不好。改了一下残差卷积，给 POI 信息增加了时间维度，融合提前，减少参数，稳定模型训练。原文链接：<a href="https://github.com/FIBLAB/DeepSTN/blob/master/docs/5624_AAAI19_DeepSTN%2B_Camera_Ready.pdf" target="_blank" rel="noopener">DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow<br>  Prediction in Metropolis</a><br><a id="more"></a></p>
+        <p>AAAI 2019，网格流量预测，对比ST-ResNet，抛出三个问题，卷积捕获的空间范围小、人口流动和区域的功能相关、之前的融合机制不好。改了一下残差卷积，给 POI 信息增加了时间维度，融合提前，减少参数，稳定模型训练。原文链接：<a href="https://github.com/FIBLAB/DeepSTN/blob/master/docs/5624_AAAI19_DeepSTN%2B_Camera_Ready.pdf" target="_blank" rel="noopener">DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow Prediction in Metropolis</a><br><a id="more"></a></p>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>人口流量预测在城市规划、交通管控中的很多应用中都很重要。目的是预测流入和流出流量。我们提出了 DeepSTN+，一个基于深度学习的卷积模型，预测超大城市的人口流量。首先，DeepSTN+ 使用 <em>ConvPlus</em> 结构对大范围的空间依赖建模。此外，POI 分布和时间因素相融合来表达区域属性的影响，以此引入人口流动的先验知识。最后，我们提出了一个有效的融合机制来稳定训练过程，提升了结果。基于两个真实数据集的大量实验结果表明我们模型的先进性，和 state-of-the-art 比高了 8% ~ 13% 左右。</p>
 <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>如图 1 所示，人口流量预测是在给定历史流量信息的前提下，预测城市内每个区域的流入和流出流量。最近，为了解决这个问题，基于深度学习的模型被相继提出，获得了很好的效果。Deep-ST 是第一个使用卷积网络捕获空间信息的模型。ST-ResNet 用卷积模块替换了卷积。通过融合金字塔型的 ConvGRU 模型和周期表示，Periodic-CRN 设计成了捕获人口流动周期性的模型。</p>
 <center><img src="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig1.JPG" alt="Figure1"></center>
