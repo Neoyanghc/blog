@@ -19,7 +19,10 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig3.JPG">
-<meta property="og:updated_time" content="2019-05-23T03:18:16.161Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig4.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig5.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig6.JPG">
+<meta property="og:updated_time" content="2019-05-23T03:35:23.664Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow Prediction in Metropolis">
 <meta name="twitter:description" content="AAAI 2019，对比ST-ResNet，抛出三个问题，卷积捕获的空间范围小、人口流动和区域的功能相关、之前的融合机制不好。原文链接：DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow  Prediction in Metropolis">
@@ -72,7 +75,7 @@
 		</nav>
 		<nav>
 			总文章数 68<br>
-			总字数 <span class="post-count">199.5k</span>
+			总字数 <span class="post-count">200.1k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -183,7 +186,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2.6k字 | 预计阅读时长：9分钟
+        字数：3.2k字 | 预计阅读时长：11分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -220,10 +223,19 @@
 <p>典型卷积的每个通道对应一个卷积核。卷积核使用这些核来计算地图上的互相关系数，比如捕获梯度上的特征。卷积核的大小一般很小。在 ST-ResNet 和 DeepSTN+ 里面，卷积核的大小是 $3 \times 3$。但是城市中存在着远距离的依赖。人们可能坐地铁去上班。我们称这类关系叫远距离空间依赖关系。这种关系使得堆叠卷积难以有效地捕获这个关系。</p>
 <p>如图 3 左部分所示，在 ConvPlus 结构中，我们将典型卷积的一些通道分离来捕获每个区域的远距离空间依赖。然后用一个全连接层直接捕获每两个区域之间的远距离空间依赖，在这层前面用一个池化层来减少参数。因此，在 ConvPlus 的输出有两类通道。ConvPlus 的输出有着和普通卷积一样的输出，可以用于下一个卷积的输入。</p>
 <p>图 4 展示了两个不同区域的空间依赖热力图，分别是红色和黄色的星。这些目标区域不仅有区域上的依赖，还有一些和远处区域的远距离依赖。这也显示出不同的区域和地图上的其他区域有不一样的关系，这很难通过堆叠卷积有效地捕获。</p>
+<center><img src="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig4.JPG" alt="Figure4"></center>
+
 <p>因为 ConvPlus 有两类不同的输出通道，我们在 ResPlus 单元中使用 ConvPlus + Conv 而不是 ConvPlus + ConvPlus。没有 SemanticPlus 的 DeepSTN+ 形式化为：</p>
 <p>$$<br>\widehat{\mathbf{X}} = f_{Res}(f_{EF}(\mathbf{X}^c + \mathbf{X}^p + \mathbf{X}^t)),<br>$$</p>
 <p>三个 $\mathbf{X}$ 表示三种类型的历史地图——<em>closeness, period, trend</em>。$\widehat{\mathbf{X}}$ 表示预测出的流量地图。$+$ 表示拼接操作。$f_{EF}$ 表示用来早融合不同类型信息的卷积函数，$f_{Res}$ 表示一个堆叠的 ResPlus 单元。</p>
+<h2 id="SemanticPlus"><a href="#SemanticPlus" class="headerlink" title="SemanticPlus"></a>SemanticPlus</h2><p>POI 在人口流动上有很强烈的影响，这些影响随时间变化而变化。因此，我们继承这个先验知识到模型内。我们手机了包括类型、数量、位置的 POI 信息。然后统计每个网格内 POI 的数量，使用一个一维向量表示每种 POI 的分布。图 5 展示了北京的流量分布地图和餐饮分布地图。它们的分布很相似，并且互相关系数有 0.87，暗示了它们之间的潜在关系。</p>
+<center><img src="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig5.JPG" alt="Figure5"></center>
 
+<p>我们使用一个时间向量来表示每个人口流量地图的时间。时间向量包含两个部分：一个 one-hot 向量表示一天中的各个时间，如果时段按小时走，那长度就是 24；另一个 one-hot 向量表示是一周中的哪天，长度是 7。一个时间向量拼接了这两个向量。</p>
+<p>为了建模对流量地图有变化的时间影响的 POI 信息，我们将时间向量转换为 POI 的影响强度。我们使用大小为 $PN \times H \times W$ 的 $\mathbf{X}^s$ 来表示 POI 地图（$PN$ 表示 POI 的类数，$H$ 和 $W$ 是网格的行数和列数，一个向量 $\bf{I}$ 用来表示时间向量，大小为 $PN$ 的向量 $\bf{R}$ 表示 POI 的影响强度。因此，我们有带有时间权重的 POI 分布，形式化如下：</p>
+<p>$$<br>\mathbf{S} = \mathbf{X}^s \ast \mathbf{R} = \mathbf{X}^s \ast f_t(\mathbf{I})<br>$$</p>
+<p>函数 $f_t()$ 将时间向量转换为表示 POI 影响强度的向量。$\ast$ 表示每个 POI 分布地图会被附上一个权重，表示 POI 的影响强度。我们假设同一类在不同的区域的 POI 有相同的时间模式。因此，一个类别的 POI 分布地图会有相同的权重。图 6 展示了娱乐和居住区的影响强度。影响强度在一周内随时间的变化而变化，每天存在着一些典型的模式。很多人早上去上班，工作结束后回家，所以每天早上和下午住宅区有明显的两个峰。对比居住区，娱乐区的影响相对稳定。</p>
+<center><img src="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig6.JPG" alt="Figure6"></center>
       
 
       
