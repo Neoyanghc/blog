@@ -23,7 +23,9 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig5.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Fig6.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Alg1.JPG">
-<meta property="og:updated_time" content="2019-05-23T05:56:47.576Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Table1.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Table2.JPG">
+<meta property="og:updated_time" content="2019-05-23T06:29:08.606Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow Prediction in Metropolis">
 <meta name="twitter:description" content="AAAI 2019，对比ST-ResNet，抛出三个问题，卷积捕获的空间范围小、人口流动和区域的功能相关、之前的融合机制不好。原文链接：DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow  Prediction in Metropolis">
@@ -76,7 +78,7 @@
 		</nav>
 		<nav>
 			总文章数 68<br>
-			总字数 <span class="post-count">200.4k</span>
+			总字数 <span class="post-count">200.6k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -187,7 +189,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：3.5k字 | 预计阅读时长：12分钟
+        字数：3.8k字 | 预计阅读时长：13分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -244,7 +246,18 @@
 <h2 id="Training"><a href="#Training" class="headerlink" title="Training"></a>Training</h2><p>算法 1 描述了训练过程。前 7 行是构建训练集和 POI 信息，模型通过 Adam 训练（8-12 行）</p>
 <center><img src="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Alg1.JPG" alt="Alg1"></center>
 
+<h1 id="Performance-Evaluation"><a href="#Performance-Evaluation" class="headerlink" title="Performance Evaluation"></a>Performance Evaluation</h1><p>这部分，我们在两个数据集上不同城市的不同类型的流量上做了大量的实验，为了回答三个研究问题：</p>
+<ul>
+<li>我们的提出的 DeepSTN+ 是否比现存的方法好？</li>
+<li>ResPlus, SemanticPlus, 早融合是怎么提升预测结果的？</li>
+<li>DeepSTN+ 的超参数如何影响预测结果？</li>
+</ul>
+<h2 id="Datasets"><a href="#Datasets" class="headerlink" title="Datasets"></a>Datasets</h2><p>表 1 包含了数据。每个数据有两个子集：流量轨迹和 POI 信息。</p>
+<center><img src="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Table1.JPG" alt="Table1"></center>
 
+<p><strong><em>MobileBJ:</em></strong> 数据是中国一个很流行的社交网络应用商提供的，时间范围是4 月 1 日到 4 月 30 日。记录了用户请求区域服务时的位置。我们用定义 2 转换成了网格流量。我们选择最后一周的数据作为测试集，前面的作为训练集。表 2 展示了这个数据集的 17 类 POI 信息。</p>
+<p><strong><em>BikeNYC:</em></strong> NYC 的自行车数据，2014 年，4 月 1 日到 9 月 30 日。数据包含了旅途时长，出发和到达站的 ID，起始和结束时间。最后 14 天的数据用来测试，其他的训练。我们选了 9 类 POI 信息。</p>
+<center><img src="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/Table2.JPG" alt="Table2"></center>
       
 
       
