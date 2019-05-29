@@ -17,7 +17,7 @@
 <meta property="og:description" content="WSDM 2019，原文链接：Session-based Social Recommendation via Dynamic Graph Attention Networks">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/29/session-based-social-recommendation-via-dynamic-graph-attention-networks/Fig1.JPG">
-<meta property="og:updated_time" content="2019-05-29T06:13:45.326Z">
+<meta property="og:updated_time" content="2019-05-29T07:54:10.840Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Session-based Social Recommendation via Dynamic Graph Attention Networks">
 <meta name="twitter:description" content="WSDM 2019，原文链接：Session-based Social Recommendation via Dynamic Graph Attention Networks">
@@ -70,7 +70,7 @@
 		</nav>
 		<nav>
 			总文章数 69<br>
-			总字数 <span class="post-count">202.2k</span>
+			总字数 <span class="post-count">203k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -181,7 +181,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.4k字 | 预计阅读时长：4分钟
+        字数：2.2k字 | 预计阅读时长：8分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -204,7 +204,13 @@
 <li>提出了基于动态图注意力网络的推荐方法。在大数据集上也有效。</li>
 <li>实验结果比 state-of-the-art 好很多。</li>
 </ul>
-<h1 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2 Related Work"></a>2 Related Work</h1>
+<h1 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2 Related Work"></a>2 Related Work</h1><p>讨论三条路线：1. 对动态用户行为建模的推荐系统，2. 考虑社交影响的推荐系统，3. 图卷积网络。</p>
+<h2 id="2-1-Dynamic-Recommendation"><a href="#2-1-Dynamic-Recommendation" class="headerlink" title="2.1 Dynamic Recommendation"></a>2.1 Dynamic Recommendation</h2><h2 id="2-2-Social-Recommendation"><a href="#2-2-Social-Recommendation" class="headerlink" title="2.2 Social Recommendation"></a>2.2 Social Recommendation</h2><h2 id="2-3-Graph-Convolutional-Networks"><a href="#2-3-Graph-Convolutional-Networks" class="headerlink" title="2.3 Graph Convolutional Networks"></a>2.3 Graph Convolutional Networks</h2><h1 id="3-Problem-Definition"><a href="#3-Problem-Definition" class="headerlink" title="3 Problem Definition"></a>3 Problem Definition</h1><p>推荐系统根据历史行为推荐相关的物品。传统的推荐模型，如矩阵分解，忽略了用户的消费顺序。在线社区中，用户兴趣是快速变化的，用户偏好顺序必须要考虑，以便对用户的动态兴趣建模。实际上，因为用户全部的历史记录可以很长（有些社区存在好多年了），用户兴趣切换的很快，一个常用的方法是将用户的偏好分成不同的 session，（使用时间戳，以一个星期为时间段考虑每个用户的行为）并以 session 为级别提供推荐。定义如下：</p>
+<p>DEFINITION 1. (<strong>Session-based Recommendation</strong>)，$U$ 表示用户的集合，$I$ 表示物品集。每个用户 $u$ 和一组带有时间步 $T$ 的 session 相关，$I^u_T = \lbrace \vec{S}^u_1, \vec{S}^u_2, \dots \vec{S}^u_T \rbrace$，其中 $\vec{S}^u_t$ 是用户 $u$ 的第 $t$ 个 session。在每个 session 内，$\vec{S}^u_t$ 由一个用户行为的序列 $\lbrace i^u_{t,1}, i^u_{t,2}, \dots, i^u_{t,N_{u,t}} \rbrace$ 组成，其中 $i^u_{t,p}$ 是在第 $t$ 个 session 中用户消费的第 $p$ 个物品，$N_{u,t}$ 是 session 中物品的总数。对于每个用户 $u$，给定一个 session $\vec{S}^u_{T+1} = \lbrace i^u_{T+1,1}, \dots i^u_{T+1,n} \rbrace$，基于 session 的推荐系统的目标是从 $I$ 中推荐一组用户可能在下来的 $n+1$ 步时感兴趣的物品，即 $i^u_{T+1, n+1}$。</p>
+<p>在在线社区中，用户的兴趣不仅与他们的历史行为相关，也受他们的朋友的影响。举个例子，一个朋友看电影，我也可能会感兴趣。这就叫社交影响。此外，从朋友那里来的影响是跟环境有关的。换句话说，从朋友那里来的影响是不一样的。如果一个用户想买个笔记本电脑，她可能更倾向于问问她喜欢高科技产品的朋友；如果她要买相机，她可能会被她的摄影师朋友影响。就像图 1，一个用户可能被她朋友的长期兴趣和短期兴趣影响。</p>
+<p>为了提供一个有效的推荐结果，我们提出对动态的用户兴趣和依赖于环境的社交影响建模。我们定义了如下的问题：</p>
+<p>DEFINITION 2. (<strong>Session-based Social Recommendation</strong>) $U$ 表示用户集，$I$ 表示物品集合，$G=(U, E)$ 是社交网络，$E$ 是社交网络的边。给定用户 $u$ 的一个 session $\vec{S}^u_{T+1} = \lbrace i^u_{T+1,1}, \dots i^u_{T+1,n} \rbrace$，目标是利用她的动态兴趣（$\cup^{T+1}_{t=1} \vec{S}^u_t$）和社交影响（$\cup^{N(u)}_{k=1} \cup^T_{t=1} \vec{S}^k_t$，其中 $N(u)$ 是用户 $u$ 的邻居），从 $I$ 中推荐一组用户 $u$ 可能在下来的 $n+1$ 步时感兴趣的物品，即 $i^u_{T+1, n+1}$。</p>
+<h1 id="4-Dynamic-Social-Recommender-Systems"><a href="#4-Dynamic-Social-Recommender-Systems" class="headerlink" title="4 Dynamic Social Recommender Systems"></a>4 Dynamic Social Recommender Systems</h1>
       
 
       
