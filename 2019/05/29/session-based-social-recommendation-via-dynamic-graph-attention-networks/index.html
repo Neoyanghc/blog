@@ -17,7 +17,7 @@
 <meta property="og:description" content="WSDM 2019，原文链接：Session-based Social Recommendation via Dynamic Graph Attention Networks">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/29/session-based-social-recommendation-via-dynamic-graph-attention-networks/Fig1.JPG">
-<meta property="og:updated_time" content="2019-05-29T08:04:30.226Z">
+<meta property="og:updated_time" content="2019-05-29T08:08:34.113Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Session-based Social Recommendation via Dynamic Graph Attention Networks">
 <meta name="twitter:description" content="WSDM 2019，原文链接：Session-based Social Recommendation via Dynamic Graph Attention Networks">
@@ -70,7 +70,7 @@
 		</nav>
 		<nav>
 			总文章数 69<br>
-			总字数 <span class="post-count">203k</span>
+			总字数 <span class="post-count">203.2k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -181,7 +181,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2.2k字 | 预计阅读时长：8分钟
+        字数：2.4k字 | 预计阅读时长：8分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -211,6 +211,7 @@
 <p>为了提供一个有效的推荐结果，我们提出对动态的用户兴趣和依赖于环境的社交影响建模。我们定义了如下的问题：</p>
 <p>DEFINITION 2. (<strong>Session-based Social Recommendation</strong>) $U$ 表示用户集，$I$ 表示物品集合，$G=(U, E)$ 是社交网络，$E$ 是社交网络的边。给定用户 $u$ 的一个 session $\vec{S}^u_{T+1} = \lbrace i^u_{T+1,1}, \dots i^u_{T+1,n} \rbrace$，目标是利用她的动态兴趣（$\cup^{T+1}_{t=1} \vec{S}^u_t$）和社交影响（$\cup^{N(u)}_{k=1} \cup^T_{t=1} \vec{S}^k_t$，其中 $N(u)$ 是用户 $u$ 的邻居），从 $I$ 中推荐一组用户 $u$ 可能在下来的 $n+1$ 步时感兴趣的物品，即 $i^u_{T+1, n+1}$。</p>
 <h1 id="4-Dynamic-Social-Recommender-Systems"><a href="#4-Dynamic-Social-Recommender-Systems" class="headerlink" title="4 Dynamic Social Recommender Systems"></a>4 Dynamic Social Recommender Systems</h1><p>我们提出的模型 Dynamic Graph Recommendation (DGREC) 是个动态图注意力模型，可以对用户近期的偏好和他的朋友的偏好建模。</p>
+<p>DGREC 有 4 个模块（图 2）。首先，一个 RNN 对用户当前 session 中的物品序列建模。她朋友的偏好使用长期偏好和短期偏好融合来建模。短期偏好，或是最近一次 session 中的物品也使用 RNN 来编码。朋友的长期偏好通过一个独立的嵌入层编码。模型使用 GAT 融合当前用户的表示和她朋友的表示。这是我们模型的关键：我们提出了基于用户当前的兴趣学习每个朋友的权重的机制。最后一步，模型通过融合用户当前偏好和她的社交影响得到推荐结果。</p>
 
       
 
