@@ -9,7 +9,7 @@
   <title>Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="TKDE 2019，网格流量预测，用一个模型同时预测每个网格的流入/流出流量和网格之间的转移流量，分别称为顶点流量和边流量，同时预测这两类流量是本文所解决的多任务预测问题。本文提出的是个框架，所以里面用什么组件应该都是可以的，文章中使用了 FCN。使用两个子模型分别处理顶点流量和边流量预测问题，使用两个子模型的输出作为隐藏状态表示，通过拼接或加和的方式融合，融合后的新表示再分别输出顶点流量和边流量">
-<meta name="keywords" content="deep learning,STDM,graph convolutional network,Graph,Time Series,ResNet">
+<meta name="keywords" content="deep learning,Graph,graph convolutional network,STDM,ResNet,Time Series">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Flow Prediction in Spatio-Temporal Networks Based on Multitask Deep Learning">
 <meta property="og:url" content="https://davidham3.github.io/2019/04/19/flow-prediction-in-spatio-temporal-networks-based-on-multitask-deep-learning/index.html">
@@ -87,8 +87,8 @@
 			</ul>
 		</nav>
 		<nav>
-			总文章数 68<br>
-			总字数 <span class="post-count">200.8k</span>
+			总文章数 69<br>
+			总字数 <span class="post-count">202.2k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -384,7 +384,7 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">STDM</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Graph</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -392,15 +392,15 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Graph</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Time Series</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">STDM</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">ResNet</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Time Series</a>
         		</li>
       		
 		</ul>
@@ -679,15 +679,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">deep learning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">STDM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">graph convolutional network</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -695,15 +695,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">dataset</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">graph</a>
+                <a href="javascript:void(0)" class="js-tag color3">graph convolutional network</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -731,6 +723,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Attention</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">vscode</a>
               </li>
              
@@ -743,7 +739,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">STDM</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ResNet</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Time Series</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -792,10 +796,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">machine translation</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Attention</a>
               </li>
             
             <div class="clearfix"></div>

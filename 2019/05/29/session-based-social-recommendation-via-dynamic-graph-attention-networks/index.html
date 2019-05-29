@@ -6,18 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://davidham3.github.io">
-  <title>Archives: 2019/1 | Davidham&#39;s blog</title>
+  <title>Session-based Social Recommendation via Dynamic Graph Attention Networks | Davidham&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Davidham的博客，写点学习笔记啥的，邮箱chaosong@bjtu.edu.cn">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Davidham&#39;s blog">
-<meta property="og:url" content="https://davidham3.github.io/archives/2019/01/index.html">
+  <meta name="description" content="WSDM 2019，原文链接：Session-based Social Recommendation via Dynamic Graph Attention Networks">
+<meta name="keywords" content="deep learning,Graph,Attention">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Session-based Social Recommendation via Dynamic Graph Attention Networks">
+<meta property="og:url" content="https://davidham3.github.io/2019/05/29/session-based-social-recommendation-via-dynamic-graph-attention-networks/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="Davidham的博客，写点学习笔记啥的，邮箱chaosong@bjtu.edu.cn">
+<meta property="og:description" content="WSDM 2019，原文链接：Session-based Social Recommendation via Dynamic Graph Attention Networks">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/05/29/session-based-social-recommendation-via-dynamic-graph-attention-networks/Fig1.JPG">
+<meta property="og:updated_time" content="2019-05-29T06:13:45.326Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Davidham&#39;s blog">
-<meta name="twitter:description" content="Davidham的博客，写点学习笔记啥的，邮箱chaosong@bjtu.edu.cn">
+<meta name="twitter:title" content="Session-based Social Recommendation via Dynamic Graph Attention Networks">
+<meta name="twitter:description" content="WSDM 2019，原文链接：Session-based Social Recommendation via Dynamic Graph Attention Networks">
+<meta name="twitter:image" content="https://davidham3.github.io/blog/2019/05/29/session-based-social-recommendation-via-dynamic-graph-attention-networks/Fig1.JPG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
   
@@ -159,36 +163,86 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-session-based-social-recommendation-via-dynamic-graph-attention-networks" class="article article-type-post " itemscope="" itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/blog/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/" class="archive-article-date">
-  	<time datetime="2019-01-21T07:17:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-21</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/blog/2019/01/21/multistep-speed-prediction-on-traffic-networks-a-graph-convolutional-sequence-to-sequence-learning-approach-with-attention-mechanism/">Multistep Speed Prediction on Traffic Networks: A Graph Convolutional Sequence-to-Sequence Learning Approach with Attention Mechanism</a>
+    <h1 class="article-title" itemprop="name">
+      Session-based Social Recommendation via Dynamic Graph Attention Networks
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/blog/2019/05/29/session-based-social-recommendation-via-dynamic-graph-attention-networks/" class="archive-article-date">
+  	<time datetime="2019-05-29T05:37:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-29</time>
+</a>
+        
+      </header>
+      <div align="center" class="post-count">
+        字数：1.4k字 | 预计阅读时长：4分钟
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>WSDM 2019，原文链接：<a href="https://arxiv.org/abs/1902.09362" target="_blank" rel="noopener">Session-based Social Recommendation via Dynamic Graph Attention Networks</a></p>
+<a id="more"></a>
+<h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>像 Facebook 和 Twitter 这样的在线社区很流行，已经成为很多用户生活中的重要部分。通过这些平台，用户可以发掘并创建信息，其他人会消费这些信息。在这种环境下，给用户推荐相关信息变得很重要。然而，在线社区的推荐是一个难题：1. 用户兴趣是动态的，2. 用户会受其朋友的影响。此外，影响者与环境相依。不同的朋友可能关注不同的话题。对两者建模对推荐来说是重要的。</p>
+<p>我们提出了一个基于动态图注意力机制的在线社区推荐系统。我们用一个 RNN 对动态的用户行为建模，用一个图卷积对依赖环境的社会影响建模，可以动态地根据用户当前的兴趣推测影响者。整个模型可以高效地用于大规模的数据。几个真实数据集上的实验结果显示我们的方法很好，源码在：<a href="https://github.com/DeepGraphLearning/RecommenderSystems" target="_blank" rel="noopener">https://github.com/DeepGraphLearning/RecommenderSystems</a></p>
+<h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h1><p>在线社区已经成为今天在线体验的重要组成部分。Facebook, Twitter, 豆瓣可以让用户创建、分享、消费信息。因此这些平台的推荐系统对平台上的表面信息和维持用户活跃度来说很重要。然而，在线社区对推荐系统提出了一些挑战。</p>
+<p>首先，用户兴趣本质上来说是动态的。一个用户可能一段时间对体育感兴趣，之后呢对音乐感兴趣。其次，因为在线社区里面的用户经常给朋友分享信息，用户也会被他们的朋友影响。举个例子，一个找电影的用户可能会被她的朋友喜欢的电影影响。此外，施加影响的一方组成的集合是动态的，因为这和环境有关。举个例子，一个用户在找一个搞笑电影的时候会相信一群喜欢喜剧的朋友，在找动作电影的时候，会受到另一组朋友的影响。</p>
+<p><strong>Motivating Example.</strong> 图 1 展示了 Alice 和 她的朋友在一个在线社区的行为。行为通过一个动作（比如点击操作）序列描述。为了捕获用户的动态刑曲，她们的行为被分成了不同的子序列，表示 <em>sessions</em>。我们感兴趣的是基于 <em>session</em> 的推荐：我们根据当前情境下 Alice 已经消费过的东西给她推荐下一个她可能消费的东西。图 1 展示出两个情景，a 和 b。此外，Alice 朋友们的消费信息也是可获得的。我们会利用这些信息生成更好的推荐。因此我们在一个基于 session 的社交推荐情境下。</p>
+<center><img src="/blog/2019/05/29/session-based-social-recommendation-via-dynamic-graph-attention-networks/Fig1.JPG" alt="Figure1"></center>
+
+<p>session a 中，Alice 浏览了体育的物品。她的两个朋友：Bob 和 Eva，是出了名的体育粉丝（长期兴趣），他们最近正好浏览了体育相关的物品（短期兴趣）。考虑到两个事实，Alice 可能被他们两个影响，比如说接下来她可能会学习乒乓球。在 session b 中，Alice 对文学艺术物品感兴趣。这个环境和刚才不一样了因为她没有最近正在消费这样物品的朋友。但是 David 一直对这个话题感兴趣（长期兴趣）。在这种情况下，对 Alice 来说可能会被 David 影响，可能会被推荐一本 David 喜欢的书。这些例子表明了一个用户当前的兴趣是如何与他不同的朋友的兴趣相融合来提供基于情景的推荐的。我们提出了一个推荐模型来处理这两种情况。</p>
+<p>当前的推荐系统要么对用户的动态兴趣建模，要么对他们的社交影响建模，但是，据我们所知，还没有融合过他们。最近的一个研究对 session 级别的用户行为使用 RNN 建模，护额了社会影响。其他的研究仅考虑社会影响。举个例子，Ma et al. 探索了朋友的长期兴趣产生的社会影响。但是，不同用户的影响是静态的，没有描绘出每个用户当前的兴趣。</p>
+<p>我们提出了一个方法对用户基于 session 的兴趣和动态社会影响同时建模。也就是说，考虑了基于当前用户的 session，他的朋友的哪个子集影响了他。我们的推荐模型基于动态注意力网络。我们的方法先用一个 RNN 对一个 session 内的用户行为建模。根据用户当前兴趣——通过 RNN 的隐藏表示捕获到的——我们使用 GAT 捕获了他的朋友的影响。为了提供 session 级别的推荐，我们区分了短期兴趣和长期兴趣。在给定用户当前兴趣的基础上，每个朋友的影响通过注意力机制自动地决定。</p>
+<p>我们做了大量实验，效果比很多方法好。贡献如下：</p>
+<ul>
+<li>提出了同时对动态用户兴趣和依赖环境的社交影响学习后对在线社区进行推荐的方法。</li>
+<li>提出了基于动态图注意力网络的推荐方法。在大数据集上也有效。</li>
+<li>实验结果比 state-of-the-art 好很多。</li>
+</ul>
+<h1 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2 Related Work"></a>2 Related Work</h1>
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/blog/img/alipay.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/blog/img/wx_pay.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -198,21 +252,17 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">graph convolutional network</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Graph</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">STDM</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Time Series</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Attention</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -225,17 +275,128 @@
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+        <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://davidham3.github.io/2019/05/29/session-based-social-recommendation-via-dynamic-graph-attention-networks/" alt="微信分享二维码">
+      <!-- <img src="//pan.baidu.com/share/qrcode?url=https://davidham3.github.io/2019/05/29/session-based-social-recommendation-via-dynamic-graph-attention-networks/" alt="微信分享二维码"> -->
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/blog/2019/05/08/deepstn-context-aware-spatial-temporal-neural-network-for-crowd-flow-prediction-in-metropolis/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">DeepSTN+: Context-aware Spatial-Temporal Neural Network for Crowd Flow Prediction in Metropolis</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+  <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zNzEwMS8xMzYzNw==">
+<script type="text/javascript">
+    (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+
+        if (typeof LivereTower === 'function') { return; }
+
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+
+        e.parentNode.insertBefore(j, e);
+    })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
   
 
-    
+  
+  
+  
+
+  
+
+  
+
+  
 
 
           </div>
@@ -265,8 +426,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,
