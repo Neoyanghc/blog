@@ -17,7 +17,7 @@
 <meta property="og:description" content="WSDM 2019，原文链接：Session-based Social Recommendation via Dynamic Graph Attention Networks">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/05/29/session-based-social-recommendation-via-dynamic-graph-attention-networks/Fig1.JPG">
-<meta property="og:updated_time" content="2019-05-29T07:54:10.840Z">
+<meta property="og:updated_time" content="2019-05-29T08:04:30.226Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Session-based Social Recommendation via Dynamic Graph Attention Networks">
 <meta name="twitter:description" content="WSDM 2019，原文链接：Session-based Social Recommendation via Dynamic Graph Attention Networks">
@@ -210,7 +210,8 @@
 <p>在在线社区中，用户的兴趣不仅与他们的历史行为相关，也受他们的朋友的影响。举个例子，一个朋友看电影，我也可能会感兴趣。这就叫社交影响。此外，从朋友那里来的影响是跟环境有关的。换句话说，从朋友那里来的影响是不一样的。如果一个用户想买个笔记本电脑，她可能更倾向于问问她喜欢高科技产品的朋友；如果她要买相机，她可能会被她的摄影师朋友影响。就像图 1，一个用户可能被她朋友的长期兴趣和短期兴趣影响。</p>
 <p>为了提供一个有效的推荐结果，我们提出对动态的用户兴趣和依赖于环境的社交影响建模。我们定义了如下的问题：</p>
 <p>DEFINITION 2. (<strong>Session-based Social Recommendation</strong>) $U$ 表示用户集，$I$ 表示物品集合，$G=(U, E)$ 是社交网络，$E$ 是社交网络的边。给定用户 $u$ 的一个 session $\vec{S}^u_{T+1} = \lbrace i^u_{T+1,1}, \dots i^u_{T+1,n} \rbrace$，目标是利用她的动态兴趣（$\cup^{T+1}_{t=1} \vec{S}^u_t$）和社交影响（$\cup^{N(u)}_{k=1} \cup^T_{t=1} \vec{S}^k_t$，其中 $N(u)$ 是用户 $u$ 的邻居），从 $I$ 中推荐一组用户 $u$ 可能在下来的 $n+1$ 步时感兴趣的物品，即 $i^u_{T+1, n+1}$。</p>
-<h1 id="4-Dynamic-Social-Recommender-Systems"><a href="#4-Dynamic-Social-Recommender-Systems" class="headerlink" title="4 Dynamic Social Recommender Systems"></a>4 Dynamic Social Recommender Systems</h1>
+<h1 id="4-Dynamic-Social-Recommender-Systems"><a href="#4-Dynamic-Social-Recommender-Systems" class="headerlink" title="4 Dynamic Social Recommender Systems"></a>4 Dynamic Social Recommender Systems</h1><p>我们提出的模型 Dynamic Graph Recommendation (DGREC) 是个动态图注意力模型，可以对用户近期的偏好和他的朋友的偏好建模。</p>
+
       
 
       
