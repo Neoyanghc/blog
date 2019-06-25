@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="ICML 2019，原文地址：Self-Attention Graph Pooling">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-06-25T09:32:48.816Z">
+<meta property="og:updated_time" content="2019-06-25T11:26:53.194Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Self-Attention Graph Pooling">
 <meta name="twitter:description" content="ICML 2019，原文地址：Self-Attention Graph Pooling">
@@ -68,7 +68,7 @@
 		</nav>
 		<nav>
 			总文章数 70<br>
-			总字数 <span class="post-count">204.9k</span>
+			总字数 <span class="post-count">205.1k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -179,7 +179,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.7k字 | 预计阅读时长：6分钟
+        字数：1.9k字 | 预计阅读时长：7分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -213,8 +213,12 @@
 <p>在论文中，式 7，8，9 的模型分别记为 $\rm {SAGPool}_{augmentation}$，$\rm {SAGPool}_{serial}$，$\rm {SAGPool}_{parallel}$。</p>
 <h2 id="3-2-Model-Architecture"><a href="#3-2-Model-Architecture" class="headerlink" title="3.2 Model Architecture"></a>3.2 Model Architecture</h2><p>根据 Lipton &amp; Steinhardt 的研究，如果对一个模型做很多修改，那很难知道是哪部分改进起的作用。为了一个公平的对比，我们使用了 Zhang et al. 和 Cangea et al. 的模型来对比我们的方法。</p>
 <p><strong>Convolution layer</strong> 如 2.1 节提到的，有很多图卷积的定义。其他类型的图卷积可能也能提升性能，但是我们利用的是 Kipf &amp; Welling 提出的广泛使用的图卷积。式 10 和式3 一样，除了 $\Theta$ 的维度：</p>
-<p>$$\tag{10}</p>
-<p>$$</p>
+<p>$$\tag{10}<br>h^{(l+1)} = \sigma(\tilde{D}^{-\frac{1}{2}} \tilde{A} \tilde{D}^{-\frac{1}{2}} h^{(l)} \Theta)<br>$$</p>
+<p>其中 $h^{(l)}$ 是第 $l$ 层的节点表示，$\Theta \in \mathbb{R}^{F \times F’}$ 是卷积核。使用 ReLU 作为激活函数。</p>
+<p><strong>Readout layer</strong> 受 JK-net 的启发，Cangea et al. 提出了一个 readout 层，聚合结点的特征生成一个固定大小的表示。readout 层的聚合特征如下：</p>
+<p>$$\tag{11}<br>s = \frac{1}{N} \sum^N_{i=1} x_i \mid \mid \mathop{max}\limits^N_{i=1} x_i<br>$$</p>
+<p>$N$ 是结点数，$x_i$ 是第 $i$ 个结点的特征向量，$\mid \mid$ 表示拼接。</p>
+<p><strong>Global pooling architecture</strong> 我们实现了 Zhang et al. 提出的全局池化结构。如图 2 所示，全局池化结构由三层图卷积层组成，每层的输出拼接在一起。结点特征在 readout 层聚合，然后接一个池化层。图的特征表示传入线性层用来分类。</p>
 
       
 
