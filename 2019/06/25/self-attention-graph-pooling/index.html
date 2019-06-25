@@ -16,10 +16,13 @@
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="ICML 2019，原文地址：Self-Attention Graph Pooling">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-06-25T11:26:53.194Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Fig1.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Fig2.JPG">
+<meta property="og:updated_time" content="2019-06-25T11:32:20.287Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Self-Attention Graph Pooling">
 <meta name="twitter:description" content="ICML 2019，原文地址：Self-Attention Graph Pooling">
+<meta name="twitter:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Fig1.JPG">
   
     <link rel="alternative" href="/atom.xml" title="Davidham&#39;s blog" type="application/atom+xml">
   
@@ -179,7 +182,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.9k字 | 预计阅读时长：7分钟
+        字数：2k字 | 预计阅读时长：7分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -192,6 +195,10 @@
 <p>然而，上述的池化方法仍有提升空间。举个例子，Ying et al. 的可微层级池化方法有平方级别的空间复杂度，参数依赖于顶点数。Gao &amp; Ji; Cangea et al. 解决了复杂度的问题，但是没有考虑图的拓扑结构。</p>
 <p>我们提出的 SAGPool 是一个层次的自注意力图池化方法。我们的方法可以通过端到端的方式使用相对较少的参数学习到层次表示。自注意力机制用来区分结点是否丢弃掉还是保留。由于自注意力机制使用图卷积计算注意力分数，结点特征和图的拓扑结构可以被考虑其中。一句话，SAGPool 有前面方法的优点，是第一个使用自注意力用于池化的方法，并且获得了很好的性能。代码已经在 Github 上开源了。</p>
 <h1 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h1><h2 id="2-1-Graph-Convolution"><a href="#2-1-Graph-Convolution" class="headerlink" title="2.1. Graph Convolution"></a>2.1. Graph Convolution</h2><h2 id="2-2-Graph-Pooling"><a href="#2-2-Graph-Pooling" class="headerlink" title="2.2. Graph Pooling"></a>2.2. Graph Pooling</h2><h1 id="3-Proposed-Method"><a href="#3-Proposed-Method" class="headerlink" title="3. Proposed Method"></a>3. Proposed Method</h1><p>SAGPool 的关键是它使用了 GNN 得到的注意力分数。SAGPool 层和模型架构分别是图 1 和图 2.</p>
+<center><img src="/blog/2019/06/25/self-attention-graph-pooling/Fig1.JPG" alt="Figure1"></center>
+
+<center><img src="/blog/2019/06/25/self-attention-graph-pooling/Fig2.JPG" alt="Figure2"></center>
+
 <h2 id="3-1-Self-Attention-Graph-Pooling"><a href="#3-1-Self-Attention-Graph-Pooling" class="headerlink" title="3.1 Self-Attention Graph Pooling"></a>3.1 Self-Attention Graph Pooling</h2><p><strong>Self-attention mask</strong> 注意力机制广泛应用在最近的深度学习研究中。这样的机制使得模型可以更专注于重要的特征，不那么关注不重要的特征。特别来说，自注意力，一般称为内注意力，允许输入特征称为自身注意力的标准 (Vaswani et al., 2017)。我们使用图卷积获得自注意力分数。举个例子，如果图卷积的公式是 Kipf &amp; Welling 使用的，那么自注意力分数 $Z \in \mathbb{R}^{N \times 1}$ 通过下式计算：</p>
 <p>$$\tag{3}<br>Z = \sigma(\tilde{D}^{-\frac{1}{2}} \tilde{A} \tilde{D}^{-\frac{1}{2}} X \Theta_{att})<br>$$</p>
 <p>$\sigma$ 是激活函数，如 $tanh$，$\tilde{A} \in \mathbb{R}^{N \times N}$ 是有自连接的邻接矩阵，$\tilde{D} \in \mathbb{R}^{N \times N}$ 是度矩阵，$X \in \mathbb{R}^{N \times F}$ 是图的特征矩阵，$\Theta_{att} \in \mathbb{R}^{F \times 1}$ 是 SAGPool 层仅有的参数。通过利用图卷积获得自注意力分数，池化的结果是同时基于图的特征和拓扑结构的。我们利用 Gao &amp; Ji; Cangea et al. 的结点选择方法，保留了输入的图的一部分结点，甚至当图的尺寸和结构改变时。池化比例 $k \in (0, 1]$ 是一个超参数决定了保留多少结点。基于 $Z$ 的值选择最高的 $\lceil kN \rceil$ 个结点。</p>
@@ -219,6 +226,7 @@
 <p>$$\tag{11}<br>s = \frac{1}{N} \sum^N_{i=1} x_i \mid \mid \mathop{max}\limits^N_{i=1} x_i<br>$$</p>
 <p>$N$ 是结点数，$x_i$ 是第 $i$ 个结点的特征向量，$\mid \mid$ 表示拼接。</p>
 <p><strong>Global pooling architecture</strong> 我们实现了 Zhang et al. 提出的全局池化结构。如图 2 所示，全局池化结构由三层图卷积层组成，每层的输出拼接在一起。结点特征在 readout 层聚合，然后接一个池化层。图的特征表示传入线性层用来分类。</p>
+<p><strong>Hierarchical pooling architecture</strong> 在这部分设置中，我们实现了 Cangea et al. 的层次池化结构。如图 2 所示，</p>
 
       
 
