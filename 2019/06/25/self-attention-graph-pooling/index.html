@@ -19,7 +19,11 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Fig2.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Table1.JPG">
-<meta property="og:updated_time" content="2019-06-25T11:47:33.475Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Table2.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Table3.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Table4.JPG">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Fig4.JPG">
+<meta property="og:updated_time" content="2019-06-25T11:51:24.270Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Self-Attention Graph Pooling">
 <meta name="twitter:description" content="ICML 2019，原文地址：Self-Attention Graph Pooling">
@@ -183,7 +187,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：2k字 | 预计阅读时长：7分钟
+        字数：2.1k字 | 预计阅读时长：8分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -229,6 +233,16 @@
 <p><strong>Global pooling architecture</strong> 我们实现了 Zhang et al. 提出的全局池化结构。如图 2 所示，全局池化结构由三层图卷积层组成，每层的输出拼接在一起。结点特征在 readout 层聚合，然后接一个池化层。图的特征表示传入线性层用来分类。</p>
 <p><strong>Hierarchical pooling architecture</strong> 在这部分设置中，我们实现了 Cangea et al. 的层次池化结构。如图 2 所示，结构包含了三个块，每个块由一个卷积层和一个池化层组成。每个块的输出通过一个 readout 层聚合。每个 readout 层的输出之和放入线性层做分类。</p>
 <center><img src="/blog/2019/06/25/self-attention-graph-pooling/Table1.JPG" alt="Table1"></center>
+
+<h1 id="4-Experiments"><a href="#4-Experiments" class="headerlink" title="4. Experiments"></a>4. Experiments</h1><p>我们在图分类上评估了全局池化和层次池化。</p>
+<h2 id="4-1-Datasets"><a href="#4-1-Datasets" class="headerlink" title="4.1. Datasets"></a>4.1. Datasets</h2><p>5 个数据集。</p>
+<center><img src="/blog/2019/06/25/self-attention-graph-pooling/Table2.JPG" alt="Table2"></center>
+
+<center><img src="/blog/2019/06/25/self-attention-graph-pooling/Table3.JPG" alt="Table3"></center>
+
+<center><img src="/blog/2019/06/25/self-attention-graph-pooling/Table4.JPG" alt="Table4"></center>
+
+<center><img src="/blog/2019/06/25/self-attention-graph-pooling/Fig4.JPG" alt="Figure4"></center>
       
 
       
