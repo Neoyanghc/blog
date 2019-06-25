@@ -18,7 +18,8 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Fig1.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Fig2.JPG">
-<meta property="og:updated_time" content="2019-06-25T11:32:20.287Z">
+<meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Table1.JPG">
+<meta property="og:updated_time" content="2019-06-25T11:47:33.475Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Self-Attention Graph Pooling">
 <meta name="twitter:description" content="ICML 2019，原文地址：Self-Attention Graph Pooling">
@@ -71,7 +72,7 @@
 		</nav>
 		<nav>
 			总文章数 70<br>
-			总字数 <span class="post-count">205.1k</span>
+			总字数 <span class="post-count">205.2k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -226,8 +227,8 @@
 <p>$$\tag{11}<br>s = \frac{1}{N} \sum^N_{i=1} x_i \mid \mid \mathop{max}\limits^N_{i=1} x_i<br>$$</p>
 <p>$N$ 是结点数，$x_i$ 是第 $i$ 个结点的特征向量，$\mid \mid$ 表示拼接。</p>
 <p><strong>Global pooling architecture</strong> 我们实现了 Zhang et al. 提出的全局池化结构。如图 2 所示，全局池化结构由三层图卷积层组成，每层的输出拼接在一起。结点特征在 readout 层聚合，然后接一个池化层。图的特征表示传入线性层用来分类。</p>
-<p><strong>Hierarchical pooling architecture</strong> 在这部分设置中，我们实现了 Cangea et al. 的层次池化结构。如图 2 所示，</p>
-
+<p><strong>Hierarchical pooling architecture</strong> 在这部分设置中，我们实现了 Cangea et al. 的层次池化结构。如图 2 所示，结构包含了三个块，每个块由一个卷积层和一个池化层组成。每个块的输出通过一个 readout 层聚合。每个 readout 层的输出之和放入线性层做分类。</p>
+<center><img src="/blog/2019/06/25/self-attention-graph-pooling/Table1.JPG" alt="Table1"></center>
       
 
       
