@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="ICML 2019，原文地址：Self-Attention Graph Pooling">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-06-25T09:22:52.810Z">
+<meta property="og:updated_time" content="2019-06-25T09:32:48.816Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Self-Attention Graph Pooling">
 <meta name="twitter:description" content="ICML 2019，原文地址：Self-Attention Graph Pooling">
@@ -68,7 +68,7 @@
 		</nav>
 		<nav>
 			总文章数 70<br>
-			总字数 <span class="post-count">204.7k</span>
+			总字数 <span class="post-count">204.9k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -179,7 +179,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.6k字 | 预计阅读时长：6分钟
+        字数：1.7k字 | 预计阅读时长：6分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -211,6 +211,10 @@
 <p>另一个变体是平均多个注意力分数。平均注意力分数通过 $M$ 个 GNN 获得：</p>
 <p>$$\tag{9}<br>Z = \frac{1}{m} \sum_m \sigma(\text{GNN}_m (X, A))<br>$$</p>
 <p>在论文中，式 7，8，9 的模型分别记为 $\rm {SAGPool}_{augmentation}$，$\rm {SAGPool}_{serial}$，$\rm {SAGPool}_{parallel}$。</p>
+<h2 id="3-2-Model-Architecture"><a href="#3-2-Model-Architecture" class="headerlink" title="3.2 Model Architecture"></a>3.2 Model Architecture</h2><p>根据 Lipton &amp; Steinhardt 的研究，如果对一个模型做很多修改，那很难知道是哪部分改进起的作用。为了一个公平的对比，我们使用了 Zhang et al. 和 Cangea et al. 的模型来对比我们的方法。</p>
+<p><strong>Convolution layer</strong> 如 2.1 节提到的，有很多图卷积的定义。其他类型的图卷积可能也能提升性能，但是我们利用的是 Kipf &amp; Welling 提出的广泛使用的图卷积。式 10 和式3 一样，除了 $\Theta$ 的维度：</p>
+<p>$$\tag{10}</p>
+<p>$$</p>
 
       
 
