@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Davidham&#39;s blog">
 <meta property="og:description" content="ICML 2019，原文地址：Self-Attention Graph Pooling">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-06-25T09:12:19.464Z">
+<meta property="og:updated_time" content="2019-06-25T09:22:52.810Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Self-Attention Graph Pooling">
 <meta name="twitter:description" content="ICML 2019，原文地址：Self-Attention Graph Pooling">
@@ -68,7 +68,7 @@
 		</nav>
 		<nav>
 			总文章数 70<br>
-			总字数 <span class="post-count">204.5k</span>
+			总字数 <span class="post-count">204.7k</span>
 		</nav>
 		<nav class="header-smart-menu">
     		
@@ -179,7 +179,7 @@
         
       </header>
       <div align="center" class="post-count">
-        字数：1.4k字 | 预计阅读时长：5分钟
+        字数：1.6k字 | 预计阅读时长：6分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -202,6 +202,15 @@
 <p>其中 $X_{\text{idx,:}}$ 是指定行下标的特征矩阵，每行表示一个结点，$\odot$ 是 elementwise 乘积，$A_{\text{idx, idx}}$ 是指定行下标和列下标的邻接矩阵。$X_{out}$ 和 $A_{out}$ 是新的特征矩阵和对应的邻接矩阵。</p>
 <p><strong>Variation of SAGPool</strong> 使用图卷积的主要原因是为了反映图的特征和拓扑结构。可以使用不同的图卷积来替换式 3 中的图卷积。计算注意力机制 $Z \in \mathbb{R}^{N \times 1}$ 的泛化公式如下：</p>
 <p>$$\tag{6}<br>Z = \sigma(\text{GNN}(X, A))<br>$$</p>
+<p>$X$ 和 $A$ 是特征矩阵和邻接矩阵。</p>
+<p>除了使用邻接结点还可以使用多跳结点来计算注意力分数。式 7 和式 8 分别使用了两跳连接和堆叠 GNN 层。增加邻接矩阵的平方增加了两条邻居：</p>
+<p>$$\tag{7}<br>Z = \sigma(\text{GNN}(X, A + A^2))<br>$$</p>
+<p>堆叠 GNN 层可以间接的聚合两跳结点。这样的话，非线性层和参数的数量就增加了：</p>
+<p>$$\tag{8}<br>Z = \sigma(\text{GNN}_2 (\sigma(\text{GNN}_1 (X, A)), A))<br>$$</p>
+<p>式 7 和式 8 可以利用多跳连接。</p>
+<p>另一个变体是平均多个注意力分数。平均注意力分数通过 $M$ 个 GNN 获得：</p>
+<p>$$\tag{9}<br>Z = \frac{1}{m} \sum_m \sigma(\text{GNN}_m (X, A))<br>$$</p>
+<p>在论文中，式 7，8，9 的模型分别记为 $\rm {SAGPool}_{augmentation}$，$\rm {SAGPool}_{serial}$，$\rm {SAGPool}_{parallel}$。</p>
 
       
 
