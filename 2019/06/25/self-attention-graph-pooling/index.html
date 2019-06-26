@@ -23,7 +23,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Table3.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Table4.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Fig3.JPG">
-<meta property="og:updated_time" content="2019-06-25T13:27:06.212Z">
+<meta property="og:updated_time" content="2019-06-26T06:41:21.376Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Self-Attention Graph Pooling">
 <meta name="twitter:description" content="ICML 2019，原文地址：Self-Attention Graph Pooling">
@@ -193,7 +193,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>ICML 2019，原文地址：<a href="https://arxiv.org/abs/1904.08082" target="_blank" rel="noopener">Self-Attention Graph Pooling</a><br><a id="more"></a></p>
-<h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>这些年有一些高级的方法将深度学习应用到了图数据上。研究专注于将卷积神经网络泛化到图数据上，包括重新定义图上的卷积和下采样（池化）。泛化的卷积方法已经被证明有性能提升且被广泛使用。但是，下采样的方法仍然是一个难题且有提升空间。我们提出了一个基于自注意力的图的池化方法。使用图卷积的自注意力使得我们的池化方法可以同时考虑顶点特征和图的拓扑结构。为了确保一个公平的对比，我们使用了相同的训练步骤和模型架构。实验结果显示我们的方法有更高的分类精度。</p>
+<h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>这些年有一些先进的方法将深度学习应用到了图数据上。研究专注于将卷积神经网络泛化到图数据上，包括重新定义图上的卷积和下采样（池化）。泛化的卷积方法已经被证明有性能提升且被广泛使用。但是，下采样的方法仍然是一个难题且有提升空间。我们提出了一个基于自注意力的图的池化方法。使用图卷积的自注意力使得我们的池化方法可以同时考虑顶点特征和图的拓扑结构。为了确保一个公平的对比，我们使用了相同的训练步骤和模型架构。实验结果显示我们的方法有更高的分类精度。</p>
 <h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h1><p>CNN 成功利用了图像、语音、视频数据中的欧氏空间（网格结构）。CNN 由卷积层和下采样层（池化层）组成。卷积层和池化层挖掘了网格数据的平移不变性和compositionality（这个我不知道是什么。。。）。结果是，CNN 用少量的参数就可以表现的很好。</p>
 <p>然而，很多数据是非欧空间上的。社交网络、生物蛋白质网络、分子网络可以表示成网络。尝试将 CNN 应用在非欧空间上已经获得了成功。很多研究重新定义了图上的卷积和池化。</p>
 <p>对于图卷积的池化操作现在比较少。之前图的池化的研究只考虑图的拓扑结构 (Defferrard et al., 2016; Rhee et al., 2018)。一些方法利用了结点的特征获得一个小图的表示。最近，Ying et al.; Gao &amp; Ji; Cangea et al. 提出了创新的池化方法，可以层级的表示图。这些方法使得图神经网络可以通过端到端的形式，在池化后获得尺寸缩减的图。</p>
