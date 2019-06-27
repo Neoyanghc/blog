@@ -23,7 +23,7 @@
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Table3.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Table4.JPG">
 <meta property="og:image" content="https://davidham3.github.io/blog/2019/06/25/self-attention-graph-pooling/Fig3.JPG">
-<meta property="og:updated_time" content="2019-06-27T12:47:46.758Z">
+<meta property="og:updated_time" content="2019-06-27T12:48:47.145Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Self-Attention Graph Pooling">
 <meta name="twitter:description" content="ICML 2019，原文地址：Self-Attention Graph Pooling">
@@ -217,7 +217,7 @@
 
 <center><img src="/blog/2019/06/25/self-attention-graph-pooling/Fig2.JPG" alt="Figure2"></center>
 
-<h2 id="3-1-Self-Attention-Graph-Pooling"><a href="#3-1-Self-Attention-Graph-Pooling" class="headerlink" title="3.1 Self-Attention Graph Pooling"></a>3.1 Self-Attention Graph Pooling</h2><p><strong>Self-attention mask</strong> 注意力机制广泛应用在最近的深度学习研究中。这样的机制使得模型可以更专注于重要的特征，不那么关注不重要的特征。特别来说，自注意力，一般称为内注意力，允许输入特征称为自身注意力的标准 (Vaswani et al., 2017)。我们使用图卷积获得自注意力分数。举个例子，如果图卷积的公式是 Kipf &amp; Welling 使用的，那么自注意力分数 $Z \in \mathbb{R}^{N \times 1}$ 通过下式计算：</p>
+<h2 id="3-1-Self-Attention-Graph-Pooling"><a href="#3-1-Self-Attention-Graph-Pooling" class="headerlink" title="3.1 Self-Attention Graph Pooling"></a>3.1 Self-Attention Graph Pooling</h2><p><strong>Self-attention mask</strong> 注意力机制广泛应用在最近的深度学习研究中。这样的机制使得模型可以更专注于重要的特征，不那么关注不重要的特征。自注意力一般称为内注意力，允许输入特征作为自身注意力的标准 (Vaswani et al., 2017)。我们使用图卷积获得自注意力分数。举个例子，如果图卷积的公式是 Kipf &amp; Welling 使用的，那么自注意力分数 $Z \in \mathbb{R}^{N \times 1}$ 通过下式计算：</p>
 <p>$$\tag{3}<br>Z = \sigma(\tilde{D}^{-\frac{1}{2}} \tilde{A} \tilde{D}^{-\frac{1}{2}} X \Theta_{att})<br>$$</p>
 <p>$\sigma$ 是激活函数，如 $tanh$，$\tilde{A} \in \mathbb{R}^{N \times N}$ 是有自连接的邻接矩阵，$\tilde{D} \in \mathbb{R}^{N \times N}$ 是度矩阵，$X \in \mathbb{R}^{N \times F}$ 是图的特征矩阵，$\Theta_{att} \in \mathbb{R}^{F \times 1}$ 是 SAGPool 层仅有的参数。通过利用图卷积获得自注意力分数，池化的结果是同时基于图的特征和拓扑结构的。我们利用 Gao &amp; Ji; Cangea et al. 的结点选择方法，保留了输入的图的一部分结点，甚至当图的尺寸和结构改变时。池化比例 $k \in (0, 1]$ 是一个超参数决定了保留多少结点。基于 $Z$ 的值选择最高的 $\lceil kN \rceil$ 个结点。</p>
 <p>$$\tag{4}<br>\text{idx = top-rank}(Z, \lceil kN \rceil), Z_{mask} = Z_{\text{idx}}<br>$$</p>
