@@ -16,7 +16,7 @@
 <meta property="og:description" content="WSDM 2019，原文链接：Session-based Social Recommendation via Dynamic Graph Attention Networks">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2019-07-08T11:48:24.913Z">
+<meta property="og:updated_time" content="2019-07-08T11:50:30.216Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Session-based Social Recommendation via Dynamic Graph Attention Networks">
 <meta name="twitter:description" content="WSDM 2019，原文链接：Session-based Social Recommendation via Dynamic Graph Attention Networks">
@@ -146,7 +146,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    17 minutes read (About 2607 words)
+                    17 minutes read (About 2613 words)
                 </span>
                 
                 
@@ -165,11 +165,11 @@
 <p>我们提出了一个基于动态图注意力机制的在线社区推荐系统。我们用一个 RNN 对动态的用户行为建模，用图卷积对依赖环境的社会影响建模，可以动态地根据用户当前的兴趣推测影响者。整个模型可以高效地用于大规模的数据。几个真实数据集上的实验结果显示我们的方法很好，源码在：<a href="https://github.com/DeepGraphLearning/RecommenderSystems" target="_blank" rel="noopener">https://github.com/DeepGraphLearning/RecommenderSystems</a></p>
 <h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h1><p>在线社区已经成为今天在线体验的重要组成部分。Facebook, Twitter, 豆瓣可以让用户创建、分享、消费信息。因此这些平台的推荐系统对平台上的表层信息和维持用户活跃度来说很重要。然而，在线社区对推荐系统提出了一些挑战。</p>
 <p>首先，用户兴趣本质上来说是动态的。一个用户可能一段时间对体育感兴趣，之后呢对音乐感兴趣。其次，因为在线社区里面的用户经常给朋友分享信息，用户也会被他们的朋友影响。举个例子，一个找电影的用户可能会被她的朋友喜欢的电影影响。此外，施加影响的一方组成的集合是动态的，因为这和环境有关。举个例子，一个用户在找一个搞笑电影的时候会听取一群喜欢喜剧的朋友的意见，在找动作电影的时候，会受到另一组朋友的影响。</p>
-<p><strong>Motivating Example.</strong> 图 1 展示了 Alice 和 她的朋友在一个在线社区的行为。行为通过一个动作（比如点击操作）序列描述。为了捕获用户的动态兴趣，她们的行为被分成了不同的子序列，表示 <em>sessions</em>。我们感兴趣的是基于 <em>session</em> 的推荐：我们根据当前情境下 Alice 已经消费过的东西给她推荐下一个她可能消费的东西。图 1 展示出两个情景，a 和 b。此外，Alice 朋友们的消费信息也是可获得的。我们会利用这些信息生成更好的推荐。因此我们在一个基于 session 的社交推荐情境下。</p>
+<p><strong>Motivating Example.</strong> 图 1 展示了 Alice 和 她的朋友在一个在线社区的行为。行为通过一个动作（比如点击操作）序列描述。为了捕获用户的动态兴趣，她们的行为被分成了不同的子序列，表示 <em>sessions</em>。我们感兴趣的是基于 <em>session</em> 的推荐：我们根据当前情境下 Alice 已经消费过的东西给她推荐下一个她可能消费的东西。图 1 展示出两个情景，a 和 b。此外，Alice 朋友们的消费信息也是可获得的。我们会利用这些信息生成更好的推荐。因此我们在一个基于 session 的社交推荐情景下。</p>
 <center><img src="/blog/2019/05/29/session-based-social-recommendation-via-dynamic-graph-attention-networks/Fig1.JPG" alt="Figure1"></center>
 
-<p>session a 中，Alice 浏览了体育的物品。她的两个朋友：Bob 和 Eva，是出了名的体育粉丝（长期兴趣），他们最近正好浏览了体育相关的物品（短期兴趣）。考虑到两个事实，Alice 可能被他们两个影响，比如说接下来她可能会学习乒乓球。在 session b 中，Alice 对文学艺术物品感兴趣。这个环境和刚才不一样了因为她没有最近正在消费这样物品的朋友。但是 David 一直对这个话题感兴趣（长期兴趣）。在这种情况下，对 Alice 来说可能会被 David 影响，可能会被推荐一本 David 喜欢的书。这些例子表明了一个用户当前的兴趣是如何与他不同的朋友的兴趣相融合来提供基于情景的推荐的。我们提出了一个推荐模型来处理这两种情况。</p>
-<p>当前的推荐系统要么对用户的动态兴趣建模，要么对他们的社交影响建模，但是，据我们所知，还没有融合过他们。最近的一个研究对 session 级别的用户行为使用 RNN 建模，护额了社会影响。其他的研究仅考虑社会影响。举个例子，Ma et al. 探索了朋友的长期兴趣产生的社会影响。但是，不同用户的影响是静态的，没有描绘出每个用户当前的兴趣。</p>
+<p>在 session a 中，Alice 浏览了体育的物品。她的两个朋友：Bob 和 Eva，是出了名的体育粉丝（长期兴趣），他们最近正好浏览了体育相关的物品（短期兴趣）。考虑到这个情况，Alice 可能被他们两个影响，比如说接下来她可能会学习乒乓球。在 session b 中，Alice 对文学艺术物品感兴趣。这个环境和刚才不一样了因为她没有最近正在消费这样物品的朋友。但是 David 一直对这个话题感兴趣（长期兴趣）。在这种情况下，对 Alice 来说可能会被 David 影响，可能会被推荐一本 David 喜欢的书。这些例子表明了一个用户当前的兴趣是如何与他不同的朋友的兴趣相融合来提供基于情景的推荐的。我们提出了一个推荐模型来处理这两种情况。</p>
+<p>当前的推荐系统要么对用户的动态兴趣建模，要么对他们的社交影响建模，但是，据我们所知，现存的方法还没有融合过他们。最近的一个研究对 session 级别的用户行为使用 RNN 建模，护额了社会影响。其他的研究仅考虑社会影响。举个例子，Ma et al. 探索了朋友的长期兴趣产生的社会影响。但是，不同用户的影响是静态的，没有描绘出每个用户当前的兴趣。</p>
 <p>我们提出了一个方法对用户基于 session 的兴趣和动态社会影响同时建模。也就是说，考虑了基于当前用户的 session，他的朋友的哪个子集影响了他。我们的推荐模型基于动态注意力网络。我们的方法先用一个 RNN 对一个 session 内的用户行为建模。根据用户当前兴趣——通过 RNN 的隐藏表示捕获到的——我们使用 GAT 捕获了他的朋友的影响。为了提供 session 级别的推荐，我们区分了短期兴趣和长期兴趣。在给定用户当前兴趣的基础上，每个朋友的影响通过注意力机制自动地决定。</p>
 <p>我们做了大量实验，效果比很多方法好。贡献如下：</p>
 <ul>
