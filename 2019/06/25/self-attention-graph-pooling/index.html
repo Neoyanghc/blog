@@ -16,7 +16,7 @@
 <meta property="og:description" content="ICML 2019，原文地址：Self-Attention Graph Pooling">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2019-06-27T12:48:47.145Z">
+<meta property="og:updated_time" content="2019-07-08T05:42:57.989Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Self-Attention Graph Pooling">
 <meta name="twitter:description" content="ICML 2019，原文地址：Self-Attention Graph Pooling">
@@ -171,9 +171,7 @@
 <p><strong>Topology based pooling</strong> 早期的工作使用图的缩减算法，而不是神经网络。谱聚类算法使用特征值分解获得缩减的图。然而，特征值分解的时间复杂度高。Graclus (Dhillon et al., 2007) 不使用特征向量计算给定图的聚类结果，而是通过一个谱聚类的目标函数与一个带权的核 k-means 目标函数的等价性。即便在最近的 GNN 模型中，Graclus 也被使用作为一个池化单元。</p>
 <p><strong>Global pooling</strong> 不像之前的方法，全局池化方法考虑图的特征。全局池化方法在每层聚合表示的时候使用加和的方式而不是用神经网络。这个方法可以处理不同结构的图，因为它获得了所有的表示。Gilmer et al. 将 GNN 看作是一种信息的传递规则，提出了一个通用框架用于图分类，整个图的表示可以通过使用 Set2Set (Vinyals et al., 2015) 来获得。SortPool (Zhang et al., 2018b) 根据一个图的结构角色对结点嵌入排序，将排序后的表示传入下一层。</p>
 <p><strong>Hierarchical pooling</strong> 全局池化方法不学习层次表示，但是对于捕获图的结构信息来说，层次表示很关键。层次池化的动机在于在每层构建一个模型，这个模型可以学习基于特征的或基于拓扑的顶点分配。Ying et al. 提出了 DiffPool，这是一种可微的图的池化方法，可以以端到端的形式学习分配矩阵。在层 $l$ 学习到的分配矩阵 $S^{(l)} \in \mathbb{R}^{n_l \times n_{l+1}}$ 包含了层 $l$ 中的结点在 $l + 1$ 层被分配到类簇的概率。$n_l$ 表示层 $l$ 的结点数。结点通过下式来分配：</p>
-<p>$$\tag{1}</p>
-<p>S^{(l)} = \text{softmax}(\text{GNN}_l (A^{(l)}, X^{(l)})) \\</p>
-<p>A^{(l+1)} = S^{(l)\text{T}} A^{(l)} S^{(l)}<br>$$</p>
+<p>$$\tag{1}<br>S^{(l)} = \text{softmax}(\text{GNN}_l (A^{(l)}, X^{(l)})) \\<br>A^{(l+1)} = S^{(l)\text{T}} A^{(l)} S^{(l)}<br>$$</p>
 <p>$X$ 表示矩阵的结点特征，$A$ 是邻接矩阵。</p>
 <p>Cangea et al. 使用 gPool (Gao &amp; Ji, 2019) 获得了和 DiffPool 相当的性能。gPool 需要 $\mathcal{O}(\vert V \vert + \vert E \vert)$ 的空间复杂度，DiffPool 需要 $\mathcal{O}(k \vert V \vert^2)$ 的空间复杂度。$V$，<br>$E$，$k$ 分别表示顶点、边、池化比例。gPool 使用一个可学习的向量 $p$ 计算投影分数，然后使用这个分数选择最高的结点。投影分数通过 $p$ 和所有结点的特征向量的内积获得。分数表示结点可以获得的信息量。下面的式子大体的描述了 gPool 中的池化步骤：</p>
 <p>$$\tag{2}<br>y = X^{(l)} \mathbf{p}^{(l)} / \Vert \mathbf{p}^{(l)} \Vert, \text{idx=top-rank}(y, \lceil kN \rceil) \\<br>A^{(l+1)} = A^{(l)}_{\text{idx,idx}}<br>$$</p>
@@ -1653,7 +1651,7 @@
 
     
     
-<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     MathJax.Hub.Config({
