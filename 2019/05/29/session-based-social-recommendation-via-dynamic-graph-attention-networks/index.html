@@ -16,7 +16,7 @@
 <meta property="og:description" content="WSDM 2019，原文链接：Session-based Social Recommendation via Dynamic Graph Attention Networks">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2019-07-08T11:50:30.216Z">
+<meta property="og:updated_time" content="2019-07-08T12:15:19.227Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Session-based Social Recommendation via Dynamic Graph Attention Networks">
 <meta name="twitter:description" content="WSDM 2019，原文链接：Session-based Social Recommendation via Dynamic Graph Attention Networks">
@@ -162,15 +162,15 @@
             <p>WSDM 2019，原文链接：<a href="https://arxiv.org/abs/1902.09362" target="_blank" rel="noopener">Session-based Social Recommendation via Dynamic Graph Attention Networks</a></p>
 <a id="more"></a>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>像 Facebook 和 Twitter 这样的在线社区很流行，已经成为很多用户生活中的重要部分。通过这些平台，用户可以发掘并创建信息，其他人会消费这些信息。在这种环境下，给用户推荐相关信息变得很重要。然而，在线社区的推荐是一个难题：1. 用户兴趣是动态的，2. 用户会受其朋友的影响。此外，影响者与环境相依。不同的朋友可能关注不同的话题。对两者建模对推荐来说是重要的。</p>
-<p>我们提出了一个基于动态图注意力机制的在线社区推荐系统。我们用一个 RNN 对动态的用户行为建模，用图卷积对依赖环境的社会影响建模，可以动态地根据用户当前的兴趣推测影响者。整个模型可以高效地用于大规模的数据。几个真实数据集上的实验结果显示我们的方法很好，源码在：<a href="https://github.com/DeepGraphLearning/RecommenderSystems" target="_blank" rel="noopener">https://github.com/DeepGraphLearning/RecommenderSystems</a></p>
+<p>我们提出了一个基于动态图注意力机制的在线社区推荐系统。我们用一个 RNN 对动态的用户行为建模，用图卷积对依赖环境的社交影响建模，可以动态地根据用户当前的兴趣推测影响者。整个模型可以高效地用于大规模的数据。几个真实数据集上的实验结果显示我们的方法很好，源码在：<a href="https://github.com/DeepGraphLearning/RecommenderSystems" target="_blank" rel="noopener">https://github.com/DeepGraphLearning/RecommenderSystems</a></p>
 <h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h1><p>在线社区已经成为今天在线体验的重要组成部分。Facebook, Twitter, 豆瓣可以让用户创建、分享、消费信息。因此这些平台的推荐系统对平台上的表层信息和维持用户活跃度来说很重要。然而，在线社区对推荐系统提出了一些挑战。</p>
 <p>首先，用户兴趣本质上来说是动态的。一个用户可能一段时间对体育感兴趣，之后呢对音乐感兴趣。其次，因为在线社区里面的用户经常给朋友分享信息，用户也会被他们的朋友影响。举个例子，一个找电影的用户可能会被她的朋友喜欢的电影影响。此外，施加影响的一方组成的集合是动态的，因为这和环境有关。举个例子，一个用户在找一个搞笑电影的时候会听取一群喜欢喜剧的朋友的意见，在找动作电影的时候，会受到另一组朋友的影响。</p>
 <p><strong>Motivating Example.</strong> 图 1 展示了 Alice 和 她的朋友在一个在线社区的行为。行为通过一个动作（比如点击操作）序列描述。为了捕获用户的动态兴趣，她们的行为被分成了不同的子序列，表示 <em>sessions</em>。我们感兴趣的是基于 <em>session</em> 的推荐：我们根据当前情境下 Alice 已经消费过的东西给她推荐下一个她可能消费的东西。图 1 展示出两个情景，a 和 b。此外，Alice 朋友们的消费信息也是可获得的。我们会利用这些信息生成更好的推荐。因此我们在一个基于 session 的社交推荐情景下。</p>
 <center><img src="/blog/2019/05/29/session-based-social-recommendation-via-dynamic-graph-attention-networks/Fig1.JPG" alt="Figure1"></center>
 
 <p>在 session a 中，Alice 浏览了体育的物品。她的两个朋友：Bob 和 Eva，是出了名的体育粉丝（长期兴趣），他们最近正好浏览了体育相关的物品（短期兴趣）。考虑到这个情况，Alice 可能被他们两个影响，比如说接下来她可能会学习乒乓球。在 session b 中，Alice 对文学艺术物品感兴趣。这个环境和刚才不一样了因为她没有最近正在消费这样物品的朋友。但是 David 一直对这个话题感兴趣（长期兴趣）。在这种情况下，对 Alice 来说可能会被 David 影响，可能会被推荐一本 David 喜欢的书。这些例子表明了一个用户当前的兴趣是如何与他不同的朋友的兴趣相融合来提供基于情景的推荐的。我们提出了一个推荐模型来处理这两种情况。</p>
-<p>当前的推荐系统要么对用户的动态兴趣建模，要么对他们的社交影响建模，但是，据我们所知，现存的方法还没有融合过他们。最近的一个研究对 session 级别的用户行为使用 RNN 建模，护额了社会影响。其他的研究仅考虑社会影响。举个例子，Ma et al. 探索了朋友的长期兴趣产生的社会影响。但是，不同用户的影响是静态的，没有描绘出每个用户当前的兴趣。</p>
-<p>我们提出了一个方法对用户基于 session 的兴趣和动态社会影响同时建模。也就是说，考虑了基于当前用户的 session，他的朋友的哪个子集影响了他。我们的推荐模型基于动态注意力网络。我们的方法先用一个 RNN 对一个 session 内的用户行为建模。根据用户当前兴趣——通过 RNN 的隐藏表示捕获到的——我们使用 GAT 捕获了他的朋友的影响。为了提供 session 级别的推荐，我们区分了短期兴趣和长期兴趣。在给定用户当前兴趣的基础上，每个朋友的影响通过注意力机制自动地决定。</p>
+<p>当前的推荐系统要么对用户的动态兴趣建模，要么对他们的社交影响建模，但是，据我们所知，现存的方法还没有融合过他们。最近的一个研究对 session 级别的用户行为使用 RNN 建模，忽略了社交影响。其他的研究仅考虑社交影响。举个例子，Ma et al. 探索了朋友的长期兴趣产生的社交影响。但是，不同用户的影响是静态的，没有描绘出每个用户当前的兴趣。</p>
+<p>我们提出了一个方法对用户基于 session 的兴趣和动态社交影响同时建模。也就是说，考虑了基于当前用户的 session，他的朋友的哪个子集影响了他。我们的推荐模型基于动态注意力网络。我们的方法先用一个 RNN 对一个 session 内的用户行为建模。根据用户当前兴趣——通过 RNN 的隐藏表示捕获到的——我们使用 GAT 捕获了他的朋友的影响。为了提供 session 级别的推荐，我们区分了短期兴趣和长期兴趣。在给定用户当前兴趣的基础上，每个朋友的影响通过注意力机制自动地决定。</p>
 <p>我们做了大量实验，效果比很多方法好。贡献如下：</p>
 <ul>
 <li>提出了同时对动态用户兴趣和依赖环境的社交影响学习后对在线社区进行推荐的方法。</li>
@@ -178,7 +178,7 @@
 <li>实验结果比 state-of-the-art 好很多。</li>
 </ul>
 <h1 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2 Related Work"></a>2 Related Work</h1><p>讨论三条路线：1. 对动态用户行为建模的推荐系统，2. 考虑社交影响的推荐系统，3. 图卷积网络。</p>
-<h2 id="2-1-Dynamic-Recommendation"><a href="#2-1-Dynamic-Recommendation" class="headerlink" title="2.1 Dynamic Recommendation"></a>2.1 Dynamic Recommendation</h2><h2 id="2-2-Social-Recommendation"><a href="#2-2-Social-Recommendation" class="headerlink" title="2.2 Social Recommendation"></a>2.2 Social Recommendation</h2><h2 id="2-3-Graph-Convolutional-Networks"><a href="#2-3-Graph-Convolutional-Networks" class="headerlink" title="2.3 Graph Convolutional Networks"></a>2.3 Graph Convolutional Networks</h2><h1 id="3-Problem-Definition"><a href="#3-Problem-Definition" class="headerlink" title="3 Problem Definition"></a>3 Problem Definition</h1><p>推荐系统根据历史行为推荐相关的物品。传统的推荐模型，如矩阵分解，忽略了用户的消费顺序。在线社区中，用户兴趣是快速变化的，用户偏好顺序必须要考虑，以便对用户的动态兴趣建模。实际上，因为用户全部的历史记录可以很长（有些社区存在好多年了），用户兴趣切换的很快，一个常用的方法是将用户的偏好分成不同的 session，（使用时间戳，以一个星期为时间段考虑每个用户的行为）并以 session 为级别提供推荐。定义如下：</p>
+<h2 id="2-1-Dynamic-Recommendation"><a href="#2-1-Dynamic-Recommendation" class="headerlink" title="2.1 Dynamic Recommendation"></a>2.1 Dynamic Recommendation</h2><h2 id="2-2-Social-Recommendation"><a href="#2-2-Social-Recommendation" class="headerlink" title="2.2 Social Recommendation"></a>2.2 Social Recommendation</h2><h2 id="2-3-Graph-Convolutional-Networks"><a href="#2-3-Graph-Convolutional-Networks" class="headerlink" title="2.3 Graph Convolutional Networks"></a>2.3 Graph Convolutional Networks</h2><h1 id="3-Problem-Definition"><a href="#3-Problem-Definition" class="headerlink" title="3 Problem Definition"></a>3 Problem Definition</h1><p>推荐系统根据历史行为推荐相关的物品。传统的推荐模型，如矩阵分解，忽略了用户的消费顺序。在线社区中，用户兴趣是快速变化的，必须要考虑用户偏好顺序，以便对用户的动态兴趣建模。实际上，因为用户全部的历史记录可以很长（有些社区存在好多年了），用户兴趣切换的很快，一个常用的方法是将用户的偏好分成不同的 session，（使用时间戳，以一个星期为时间段考虑每个用户的行为）并以 session 为级别提供推荐。定义如下：</p>
 <p>DEFINITION 1. (<strong>Session-based Recommendation</strong>)，$U$ 表示用户的集合，$I$ 表示物品集。每个用户 $u$ 和一组带有时间步 $T$ 的 session 相关，$I^u_T = \lbrace \vec{S}^u_1, \vec{S}^u_2, \dots \vec{S}^u_T \rbrace$，其中 $\vec{S}^u_t$ 是用户 $u$ 的第 $t$ 个 session。在每个 session 内，$\vec{S}^u_t$ 由一个用户行为的序列 $\lbrace i^u_{t,1}, i^u_{t,2}, \dots, i^u_{t,N_{u,t}} \rbrace$ 组成，其中 $i^u_{t,p}$ 是在第 $t$ 个 session 中用户消费的第 $p$ 个物品，$N_{u,t}$ 是 session 中物品的总数。对于每个用户 $u$，给定一个 session $\vec{S}^u_{T+1} = \lbrace i^u_{T+1,1}, \dots i^u_{T+1,n} \rbrace$，基于 session 的推荐系统的目标是从 $I$ 中推荐一组用户可能在下来的 $n+1$ 步时感兴趣的物品，即 $i^u_{T+1, n+1}$。</p>
 <p>在在线社区中，用户的兴趣不仅与他们的历史行为相关，也受他们的朋友的影响。举个例子，一个朋友看电影，我也可能会感兴趣。这就叫社交影响。此外，从朋友那里来的影响是跟环境有关的。换句话说，从朋友那里来的影响是不一样的。如果一个用户想买个笔记本电脑，她可能更倾向于问问她喜欢高科技产品的朋友；如果她要买相机，她可能会被她的摄影师朋友影响。就像图 1，一个用户可能被她朋友的长期兴趣和短期兴趣影响。</p>
 <p>为了提供一个有效的推荐结果，我们提出对动态的用户兴趣和依赖于环境的社交影响建模。我们定义了如下的问题：</p>
@@ -299,17 +299,17 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Posts
+                        Entradas
                     </p>
                     <p class="title has-text-weight-normal">
-                        70
+                        71
                     </p>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categories
+                        Categorias
                     </p>
                     <p class="title has-text-weight-normal">
                         8
@@ -319,17 +319,17 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Tags
+                        Etiquetas
                     </p>
                     <p class="title has-text-weight-normal">
-                        33
+                        34
                     </p>
                 </div>
             </div>
         </nav>
         <div class="level">
             <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                Follow</a>
+                SEGUIR</a>
         </div>
         
         
@@ -364,9 +364,9 @@
 <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Tag Cloud
+            Nube de etiquetas
         </h3>
-        <a href="/blog/tags/attention/" style="font-size: 13px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 12px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 13px;">ResNet</a> <a href="/blog/tags/stdm/" style="font-size: 17px;">STDM</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 11px;">Spark</a> <a href="/blog/tags/time-series/" style="font-size: 16px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 14px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 12px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 11px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph/" style="font-size: 13px;">graph</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 11px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 11px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 18px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 12px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 12px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 17px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 11px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 15px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
+        <a href="/blog/tags/attention/" style="font-size: 12px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 12px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 13px;">ResNet</a> <a href="/blog/tags/stdm/" style="font-size: 10px;">STDM</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 11px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 17px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 16px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 14px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 12px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 11px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph/" style="font-size: 13px;">graph</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 19px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 11px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 11px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 18px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 12px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 12px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 17px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 11px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 15px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
 </div>
 
@@ -376,7 +376,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categories
+                Categorias
             </h3>
             <ul class="menu-list">
             <li>
@@ -433,7 +433,7 @@
                 <span class="level-item">论文阅读笔记</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">40</span>
+                <span class="level-item tag">41</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/blog/categories/随笔/">
@@ -456,8 +456,21 @@
 <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recent
+            Recientes
         </h3>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-07-12T11:57:39.000Z">2019-07-12</time></div>
+                    <a href="/blog/2019/07/12/stg2seq-spatial-temporal-graph-to-sequence-model-for-multi-step-passenger-demand-forecasting/" class="has-link-black-ter is-size-6">STG2Seq: Spatial-temporal Graph to Sequence Model for Multi-step Passenger Demand Forecasting</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/blog/categories/论文阅读笔记/">论文阅读笔记</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -511,19 +524,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-04-19T07:02:46.000Z">2019-04-19</time></div>
-                    <a href="/blog/2019/04/19/ubuntu-boot-满了怎么办/" class="has-link-black-ter is-size-6">ubuntu /boot 满了怎么办</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/blog/categories/software/">software</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
 
@@ -532,9 +532,20 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archives
+            Archivos
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/blog/archives/2019/07/">
+                <span class="level-start">
+                    <span class="level-item">July 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/blog/archives/2019/06/">
@@ -743,21 +754,21 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Tags
+                Etiquetas
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/attention/">
                         <span class="tag">Attention</span>
-                        <span class="tag is-grey">4</span>
+                        <span class="tag is-grey">3</span>
                     </a>
                 </div>
                 
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/graph/">
                         <span class="tag">Graph</span>
-                        <span class="tag is-grey">19</span>
+                        <span class="tag is-grey">20</span>
                     </a>
                 </div>
                 
@@ -792,7 +803,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/stdm/">
                         <span class="tag">STDM</span>
-                        <span class="tag is-grey">12</span>
+                        <span class="tag is-grey">1</span>
                     </a>
                 </div>
                 
@@ -807,6 +818,13 @@
                     <a class="tags has-addons" href="/blog/tags/spark/">
                         <span class="tag">Spark</span>
                         <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/blog/tags/spatial-temporal/">
+                        <span class="tag">Spatial-temporal</span>
+                        <span class="tag is-grey">12</span>
                     </a>
                 </div>
                 
@@ -841,7 +859,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/deep-learning/">
                         <span class="tag">deep learning</span>
-                        <span class="tag is-grey">37</span>
+                        <span class="tag is-grey">38</span>
                     </a>
                 </div>
                 
@@ -855,7 +873,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/graph-convolutional-network/">
                         <span class="tag">graph convolutional network</span>
-                        <span class="tag is-grey">18</span>
+                        <span class="tag is-grey">20</span>
                     </a>
                 </div>
                 
@@ -998,8 +1016,21 @@
 <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recent
+            Recientes
         </h3>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-07-12T11:57:39.000Z">2019-07-12</time></div>
+                    <a href="/blog/2019/07/12/stg2seq-spatial-temporal-graph-to-sequence-model-for-multi-step-passenger-demand-forecasting/" class="has-link-black-ter is-size-6">STG2Seq: Spatial-temporal Graph to Sequence Model for Multi-step Passenger Demand Forecasting</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/blog/categories/论文阅读笔记/">论文阅读笔记</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -1053,19 +1084,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-04-19T07:02:46.000Z">2019-04-19</time></div>
-                    <a href="/blog/2019/04/19/ubuntu-boot-满了怎么办/" class="has-link-black-ter is-size-6">ubuntu /boot 满了怎么办</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/blog/categories/software/">software</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
 
@@ -1074,9 +1092,20 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archives
+            Archivos
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/blog/archives/2019/07/">
+                <span class="level-start">
+                    <span class="level-item">July 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/blog/archives/2019/06/">
@@ -1285,21 +1314,21 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Tags
+                Etiquetas
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/attention/">
                         <span class="tag">Attention</span>
-                        <span class="tag is-grey">4</span>
+                        <span class="tag is-grey">3</span>
                     </a>
                 </div>
                 
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/graph/">
                         <span class="tag">Graph</span>
-                        <span class="tag is-grey">19</span>
+                        <span class="tag is-grey">20</span>
                     </a>
                 </div>
                 
@@ -1334,7 +1363,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/stdm/">
                         <span class="tag">STDM</span>
-                        <span class="tag is-grey">12</span>
+                        <span class="tag is-grey">1</span>
                     </a>
                 </div>
                 
@@ -1349,6 +1378,13 @@
                     <a class="tags has-addons" href="/blog/tags/spark/">
                         <span class="tag">Spark</span>
                         <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/blog/tags/spatial-temporal/">
+                        <span class="tag">Spatial-temporal</span>
+                        <span class="tag is-grey">12</span>
                     </a>
                 </div>
                 
@@ -1383,7 +1419,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/deep-learning/">
                         <span class="tag">deep learning</span>
-                        <span class="tag is-grey">37</span>
+                        <span class="tag is-grey">38</span>
                     </a>
                 </div>
                 
@@ -1397,7 +1433,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/graph-convolutional-network/">
                         <span class="tag">graph convolutional network</span>
-                        <span class="tag is-grey">18</span>
+                        <span class="tag is-grey">20</span>
                     </a>
                 </div>
                 
@@ -1695,10 +1731,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Posts',
+                POSTS: 'Entradas',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categories',
-                TAGS: 'Tags',
+                CATEGORIES: 'Categorias',
+                TAGS: 'Etiquetas',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',
