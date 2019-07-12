@@ -16,7 +16,7 @@
 <meta property="og:description" content="IJCAI 2019. 原文链接：STG2Seq: Spatial-temporal Graph to Sequence Model for Multi-step Passenger  Demand Forecasting">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2019-07-12T12:53:19.607Z">
+<meta property="og:updated_time" content="2019-07-12T13:02:38.371Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="STG2Seq: Spatial-temporal Graph to Sequence Model for Multi-step Passenger Demand Forecasting">
 <meta name="twitter:description" content="IJCAI 2019. 原文链接：STG2Seq: Spatial-temporal Graph to Sequence Model for Multi-step Passenger  Demand Forecasting">
@@ -146,7 +146,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    5 minutes read (About 790 words)
+                    6 minutes read (About 944 words)
                 </span>
                 
                 
@@ -167,7 +167,10 @@
 <h1 id="3-Methodology"><a href="#3-Methodology" class="headerlink" title="3. Methodology"></a>3. Methodology</h1><p>STG2Seq 的架构有三个组件：1. 长期编码器，2. 短期编码器，3.基于注意力的输出模块。长期和短期编码器由多个序列时空门控图卷积模块 (GGCM) 组成，通过在时间维度使用 GCN 可以同时捕获时间和空间相关性。</p>
 <center><img src="/blog/2019/07/12/stg2seq-spatial-temporal-graph-to-sequence-model-for-multi-step-passenger-demand-forecasting/Fig2.JPG" alt="Figure2"></center>
 
-<h2 id="3-1-Passenger-Demand-on-Graph"><a href="#3-1-Passenger-Demand-on-Graph" class="headerlink" title="3.1 Passenger Demand on Graph"></a>3.1 Passenger Demand on Graph</h2><p>我们先介绍如何将城市范围的旅客需求在图上描述出来。之前的工作假设一个区域的旅客需求会被近邻的区域影响。然而，我们认为空间关系并不是仅依赖空间位置。如果遥远的区域和当前区域有相似的地方，比如具有相似的 POI，那么也可能拥有相同的旅客需求模式。因此，我们将城市看作一个图 $G = (v, \xi, A)$，$v$ 是区域的集合 $v = \lbrace r_i \mid i=1,2,\dots,N \rbrace$，$\xi$ 表示边的集合，$A$ 是邻接矩阵。</p>
+<h2 id="3-1-Passenger-Demand-on-Graph"><a href="#3-1-Passenger-Demand-on-Graph" class="headerlink" title="3.1 Passenger Demand on Graph"></a>3.1 Passenger Demand on Graph</h2><p>我们先介绍如何将城市范围的旅客需求在图上描述出来。之前的工作假设一个区域的旅客需求会被近邻的区域影响。然而，我们认为空间关系并不是仅依赖空间位置。如果遥远的区域和当前区域有相似的地方，比如具有相似的 POI，那么也可能拥有相同的旅客需求模式。因此，我们将城市看作一个图 $G = (v, \xi, A)$，$v$ 是区域的集合 $v = \lbrace r_i \mid i=1,2,\dots,N \rbrace$，$\xi$ 表示边的集合，$A$ 是邻接矩阵。我们根据区域间旅客需求模式的相似性定义图的边。</p>
+<p>$$\tag{2}<br>A_{i, j} = \begin{cases}<br>1, \quad \text{if} \quad Similarity_{r_i, r_j} &gt; \epsilon\\<br>0, \quad \text{otherwise}<br>\end{cases}<br>$$</p>
+<p>其中 $\epsilon$ 是阈值，控制 $A$ 的稀疏程度。为了定量区域间的旅客需求模式的相似性，我们使用皮尔逊相关系数。$D_{0\text{\textasciitilde}t}(r_i)$ 表示时间从 0 到 $t$ 的区域 $r_i$ 历史旅客需求序列。$r_i$ 和 $r_j$ 之间的相似度可以定义为：</p>
+<p>$$\tag{3}<br>Similarity_{r_i, r_j} = Pearson(D_{0\text{\textasciitilde}t}(r_i), D_{0\text{\textasciitilde}t}(r_j))<br>$$</p>
 
         </div>
         
