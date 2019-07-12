@@ -16,7 +16,7 @@
 <meta property="og:description" content="IJCAI 2019. 原文链接：STG2Seq: Spatial-temporal Graph to Sequence Model for Multi-step Passenger  Demand Forecasting">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2019-07-12T13:02:38.371Z">
+<meta property="og:updated_time" content="2019-07-12T14:44:59.496Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="STG2Seq: Spatial-temporal Graph to Sequence Model for Multi-step Passenger Demand Forecasting">
 <meta name="twitter:description" content="IJCAI 2019. 原文链接：STG2Seq: Spatial-temporal Graph to Sequence Model for Multi-step Passenger  Demand Forecasting">
@@ -146,7 +146,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    6 minutes read (About 944 words)
+                    8 minutes read (About 1271 words)
                 </span>
                 
                 
@@ -171,6 +171,7 @@
 <p>$$\tag{2}<br>A_{i, j} = \begin{cases}<br>1, \quad \text{if} \quad Similarity_{r_i, r_j} &gt; \epsilon\\<br>0, \quad \text{otherwise}<br>\end{cases}<br>$$</p>
 <p>其中 $\epsilon$ 是阈值，控制 $A$ 的稀疏程度。为了定量区域间的旅客需求模式的相似性，我们使用皮尔逊相关系数。$D_{0\text{\textasciitilde}t}(r_i)$ 表示时间从 0 到 $t$ 的区域 $r_i$ 历史旅客需求序列。$r_i$ 和 $r_j$ 之间的相似度可以定义为：</p>
 <p>$$\tag{3}<br>Similarity_{r_i, r_j} = Pearson(D_{0\text{\textasciitilde}t}(r_i), D_{0\text{\textasciitilde}t}(r_j))<br>$$</p>
+<h2 id="3-2-Long-term-and-Short-term-Encoders"><a href="#3-2-Long-term-and-Short-term-Encoders" class="headerlink" title="3.2 Long-term and Short-term Encoders"></a>3.2 Long-term and Short-term Encoders</h2><p>很多之前的工作只考虑下一步预测，即预测下一时间步的旅客需求。在训练过程中通过减少下一时间步预测值的误差而不考虑后续时间步的误差来优化模型。因此，这些方法在多步预测的问题上会退化。仅有一些工作考虑了多步预测的问题 [Xingjian et al., 2015; Li et al., 2018]。这些工作采用了基于 RNN 的编码解码器的架构，或是它的变体，比如 ConvLSTM 这样的作为编码解码器。这些方法有两个劣势：1. 链状结构的 RNN 在编码的时候需要遍历输入的时间步。因此他们需要与输入序列等长的 RNN 单元个数（序列多长，RNN单元就有多少个）。在目标需求和前一个需求上的长距离计算会导致一些信息的遗忘。2. 在解码部分，为了预测时间步 $T$ 的需求，RNN 将隐藏状态和前一时间步 $T-1$ 作为输入。因此，前一时间步带来的误差会直接影响到预测，导致未来时间步误差的累积。</p>
 
         </div>
         
