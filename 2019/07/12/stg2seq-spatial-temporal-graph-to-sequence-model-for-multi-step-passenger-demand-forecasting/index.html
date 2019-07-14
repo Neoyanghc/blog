@@ -16,7 +16,7 @@
 <meta property="og:description" content="IJCAI 2019. 原文链接：STG2Seq: Spatial-temporal Graph to Sequence Model for Multi-step Passenger  Demand Forecasting">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2019-07-12T14:44:59.496Z">
+<meta property="og:updated_time" content="2019-07-14T10:34:00.354Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="STG2Seq: Spatial-temporal Graph to Sequence Model for Multi-step Passenger Demand Forecasting">
 <meta name="twitter:description" content="IJCAI 2019. 原文链接：STG2Seq: Spatial-temporal Graph to Sequence Model for Multi-step Passenger  Demand Forecasting">
@@ -146,7 +146,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    8 minutes read (About 1271 words)
+                    16 minutes read (About 2456 words)
                 </span>
                 
                 
@@ -172,6 +172,19 @@
 <p>其中 $\epsilon$ 是阈值，控制 $A$ 的稀疏程度。为了定量区域间的旅客需求模式的相似性，我们使用皮尔逊相关系数。$D_{0\text{\textasciitilde}t}(r_i)$ 表示时间从 0 到 $t$ 的区域 $r_i$ 历史旅客需求序列。$r_i$ 和 $r_j$ 之间的相似度可以定义为：</p>
 <p>$$\tag{3}<br>Similarity_{r_i, r_j} = Pearson(D_{0\text{\textasciitilde}t}(r_i), D_{0\text{\textasciitilde}t}(r_j))<br>$$</p>
 <h2 id="3-2-Long-term-and-Short-term-Encoders"><a href="#3-2-Long-term-and-Short-term-Encoders" class="headerlink" title="3.2 Long-term and Short-term Encoders"></a>3.2 Long-term and Short-term Encoders</h2><p>很多之前的工作只考虑下一步预测，即预测下一时间步的旅客需求。在训练过程中通过减少下一时间步预测值的误差而不考虑后续时间步的误差来优化模型。因此，这些方法在多步预测的问题上会退化。仅有一些工作考虑了多步预测的问题 [Xingjian et al., 2015; Li et al., 2018]。这些工作采用了基于 RNN 的编码解码器的架构，或是它的变体，比如 ConvLSTM 这样的作为编码解码器。这些方法有两个劣势：1. 链状结构的 RNN 在编码的时候需要遍历输入的时间步。因此他们需要与输入序列等长的 RNN 单元个数（序列多长，RNN单元就有多少个）。在目标需求和前一个需求上的长距离计算会导致一些信息的遗忘。2. 在解码部分，为了预测时间步 $T$ 的需求，RNN 将隐藏状态和前一时间步 $T-1$ 作为输入。因此，前一时间步带来的误差会直接影响到预测，导致未来时间步误差的累积。</p>
+<p>不同于之前所有的工作，我们引入了一个依赖于同时使用长期和短期编码器的架构，不用 RNN 做多步预测。长期编码器取最近的 $h$ 个时间步的城市历史旅客需求序列 $\lbrace \bm{D_{t-h+1}}, \bm{D_{t-h+2}}, \dots, \bm{D_t} \rbrace$ 作为输入来学习历史的时空模式。这 $h$ 步需求合并后组织成三维矩阵，$h \times N \times d_{in}$。长期编码器由一些 GGCM 组成，每个 GCGGM 捕获在所有的 $N$ 个区域上捕获空间关联性，在 $k$ 个时间步上捕获时间关联性。$k$ 是超参数，我们会在 3.3 节讨论。因此，只需要 $\frac{h-1}{k-1}$ 个迭代的步数就可以捕获 $h$ 个时间步上的时间关联性。对比 RNN 结构，我们的基于 GGCM 的长期编码器显著的降低了遍历长度，进一步减少了信息的损失。长期编码器的输出 $Y_h$ 的维数是 $h \times N \times d_{out}$，是输入的编码表示。</p>
+<p>短期编码器用来集成已经预测的需求，用于多步预测。它使用一个长度为 $q$ 的滑动窗来捕获近期的时空关联性。当预测在 $T(T \in [t+1,t+\tau])$ 步的旅客需求时，它取最近的 $q$ 个时间步的旅客需求，即 $\lbrace \bm{D_{T-q}}, \bm{D_{T-q+1}}, \dots, \bm{D_{T-1}} \rbrace$ 作为输入。除了时间步的长度以外，短期编码器和长期编码器一样。短期编码器生成一个维数为 $q \times N \times d_{out}$ 的矩阵 $Y^T_q$ 作为近期趋势表示。和基于 RNN 的解码器不同的是，RNN的解码器只将最后一个时间步的预测结果输入回去。因此，预测误差会被长期编码器小柔，减轻基于 RNN 的解码器会导致误差累积的问题。</p>
+<h2 id="3-3-Gated-Graph-Convolutional-Module"><a href="#3-3-Gated-Graph-Convolutional-Module" class="headerlink" title="3.3 Gated Graph Convolutional Module"></a>3.3 Gated Graph Convolutional Module</h2><p>门控图卷积模块是长期编码器和短期编码器的核心。每个 GGCM 由几个 GCN 层组成，沿着时间轴并行。为了捕获时空关联性，每个 GCN 在一定长度的时间窗内操作($k$)。它可以提取 $k$ 个时间步内所有区域的空间关联性。通过堆叠多个 GGCM，我们的模型形成了一个层次结构，可以捕获整个输入的时空关联性。图 3 展示了只使用 GCN 捕获时空关联性，为了简化我们忽略了通道维。Yu et al., 2018 的工作和我们的 GGCM 模块很像。他们的工作首先使用 CNN 捕获时间关联性，然后使用 GCN 捕获空间关联性。我们的方法对比他们的方法极大的简化了，因为我们可以同时捕获时空关联性。</p>
+<center><img src="/blog/2019/07/12/stg2seq-spatial-temporal-graph-to-sequence-model-for-multi-step-passenger-demand-forecasting/Fig3.JPG" alt="Figure3"></center>
+
+<center><img src="/blog/2019/07/12/stg2seq-spatial-temporal-graph-to-sequence-model-for-multi-step-passenger-demand-forecasting/Fig4.JPG" alt="Figure4"></center>
+
+<p>GGCM 模块的详细设计如图 4。第 $l$ 个 GGCM 的输入是一个矩阵，维数为 $h \times N \times C^l$。在第一个 GGCM 模块，$C^l$ 是 $d_{in}$ 维的。第 $l$ 个 GGCM 的输出是 $h \times N \times C^{l+1}$。我们先拼接一个 zero padding，维数为 $(k-1) \times N \times C^l$，得到新的输入 $(h+k-1) \times N \times C^l$，确保变换不会减少序列的长度。接下来，GGCM 中的每个 GCN 取 $k$ 个时间步的数据 $k \times N \times C^l$ 作为输入来提取时空关联性，然后 reshape 成一个二维矩阵 $N \times (k \cdot C^l)$。根据 Kipf &amp; Welling 的 GCN，GCN 层可以描述如下：</p>
+<p>$$\tag{4}<br>X^{l+1} = (\tilde{P}^{-\frac{1}{2}} \tilde{A} \tilde{P}^{-\frac{1}{2}}) X^l W<br>$$<br>。</p>
+<p>除此以外，我们使用了门控机制对旅客需求预测的复杂非线性建模。式 4 重新描述如下：</p>
+<p>$$\tag{5}<br>X^{l+1} = ((\tilde{P}^{-\frac{1}{2}} \tilde{A} \tilde{P}^{-\frac{1}{2}}) X^l W_1 + X^l) \otimes \sigma((\tilde{P}^{-\frac{1}{2}} \tilde{A} \tilde{P}^{-\frac{1}{2}}) X^l W_2)<br>$$</p>
+<p>$\otimes$ 是对应元素相乘，$\sigma$是 sigmoid 激活函数。因此输出是一个非线性门 $\sigma((\tilde{P}^{-\frac{1}{2}} \tilde{A} \tilde{P}^{-\frac{1}{2}}) X^l W_2)$ 控制的线性变换 $((\tilde{P}^{-\frac{1}{2}} \tilde{A} \tilde{P}^{-\frac{1}{2}}) X^l W_1 + X^l)$。非线性门控制线性变换的哪个部分可以通过门影响预测。此外，我们使用残差连接来避免式 5 中的网络退化。</p>
+<p>最后，门控机制产生的 $h$ 个输出沿时间轴合并，生成 GGCM 模块的输出 $h \times N \times C^{l+1}$。</p>
 
         </div>
         
@@ -279,7 +292,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Posts
+                        Entradas
                     </p>
                     <p class="title has-text-weight-normal">
                         71
@@ -289,7 +302,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categories
+                        Categorias
                     </p>
                     <p class="title has-text-weight-normal">
                         8
@@ -299,7 +312,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Tags
+                        Etiquetas
                     </p>
                     <p class="title has-text-weight-normal">
                         33
@@ -309,7 +322,7 @@
         </nav>
         <div class="level">
             <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                Follow</a>
+                SEGUIR</a>
         </div>
         
         
@@ -344,7 +357,7 @@
 <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Tag Cloud
+            Nube de etiquetas
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 11.82px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.09px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.82px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.73px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.91px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 17.27px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15.45px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.64px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.82px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.91px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph/" style="font-size: 12.73px;">graph</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 19.09px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.91px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.91px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 18.18px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.82px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.82px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.36px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.91px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.55px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -356,7 +369,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categories
+                Categorias
             </h3>
             <ul class="menu-list">
             <li>
@@ -436,7 +449,7 @@
 <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recent
+            Recientes
         </h3>
         
         <article class="media">
@@ -512,7 +525,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archives
+            Archivos
         </h3>
         <ul class="menu-list">
         
@@ -734,7 +747,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Tags
+                Etiquetas
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -989,7 +1002,7 @@
 <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recent
+            Recientes
         </h3>
         
         <article class="media">
@@ -1065,7 +1078,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archives
+            Archivos
         </h3>
         <ul class="menu-list">
         
@@ -1287,7 +1300,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Tags
+                Etiquetas
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1697,10 +1710,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Posts',
+                POSTS: 'Entradas',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categories',
-                TAGS: 'Tags',
+                CATEGORIES: 'Categorias',
+                TAGS: 'Etiquetas',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',
