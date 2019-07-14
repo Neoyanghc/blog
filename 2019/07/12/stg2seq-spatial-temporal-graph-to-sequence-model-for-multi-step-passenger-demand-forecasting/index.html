@@ -16,7 +16,7 @@
 <meta property="og:description" content="IJCAI 2019. 原文链接：STG2Seq: Spatial-temporal Graph to Sequence Model for Multi-step Passenger  Demand Forecasting">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2019-07-14T10:34:00.354Z">
+<meta property="og:updated_time" content="2019-07-14T10:52:07.586Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="STG2Seq: Spatial-temporal Graph to Sequence Model for Multi-step Passenger Demand Forecasting">
 <meta name="twitter:description" content="IJCAI 2019. 原文链接：STG2Seq: Spatial-temporal Graph to Sequence Model for Multi-step Passenger  Demand Forecasting">
@@ -146,7 +146,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    16 minutes read (About 2456 words)
+                    21 minutes read (About 3124 words)
                 </span>
                 
                 
@@ -180,11 +180,21 @@
 <center><img src="/blog/2019/07/12/stg2seq-spatial-temporal-graph-to-sequence-model-for-multi-step-passenger-demand-forecasting/Fig4.JPG" alt="Figure4"></center>
 
 <p>GGCM 模块的详细设计如图 4。第 $l$ 个 GGCM 的输入是一个矩阵，维数为 $h \times N \times C^l$。在第一个 GGCM 模块，$C^l$ 是 $d_{in}$ 维的。第 $l$ 个 GGCM 的输出是 $h \times N \times C^{l+1}$。我们先拼接一个 zero padding，维数为 $(k-1) \times N \times C^l$，得到新的输入 $(h+k-1) \times N \times C^l$，确保变换不会减少序列的长度。接下来，GGCM 中的每个 GCN 取 $k$ 个时间步的数据 $k \times N \times C^l$ 作为输入来提取时空关联性，然后 reshape 成一个二维矩阵 $N \times (k \cdot C^l)$。根据 Kipf &amp; Welling 的 GCN，GCN 层可以描述如下：</p>
-<p>$$\tag{4}<br>X^{l+1} = (\tilde{P}^{-\frac{1}{2}} \tilde{A} \tilde{P}^{-\frac{1}{2}}) X^l W<br>$$<br>。</p>
+<p>$$\tag{4}<br>X^{l+1} = (\tilde{P}^{-\frac{1}{2}} \tilde{A} \tilde{P}^{-\frac{1}{2}}) X^l W<br>$$</p>
+<p>$\tilde{A} = A + I_n$，$\tilde{P}_{ii} = \sum_j \tilde{A}_{ij}$，$X \in \mathbb{R}^{N \times (k \cdot C^l)}$，$W \in \mathbb{R}^{(k \cdot C^l) \times C^{l+1}}$，$X^{l+1} \in \mathbb{R}^{N \times C^{l+1}}$<br>。</p>
 <p>除此以外，我们使用了门控机制对旅客需求预测的复杂非线性建模。式 4 重新描述如下：</p>
 <p>$$\tag{5}<br>X^{l+1} = ((\tilde{P}^{-\frac{1}{2}} \tilde{A} \tilde{P}^{-\frac{1}{2}}) X^l W_1 + X^l) \otimes \sigma((\tilde{P}^{-\frac{1}{2}} \tilde{A} \tilde{P}^{-\frac{1}{2}}) X^l W_2)<br>$$</p>
 <p>$\otimes$ 是对应元素相乘，$\sigma$是 sigmoid 激活函数。因此输出是一个非线性门 $\sigma((\tilde{P}^{-\frac{1}{2}} \tilde{A} \tilde{P}^{-\frac{1}{2}}) X^l W_2)$ 控制的线性变换 $((\tilde{P}^{-\frac{1}{2}} \tilde{A} \tilde{P}^{-\frac{1}{2}}) X^l W_1 + X^l)$。非线性门控制线性变换的哪个部分可以通过门影响预测。此外，我们使用残差连接来避免式 5 中的网络退化。</p>
 <p>最后，门控机制产生的 $h$ 个输出沿时间轴合并，生成 GGCM 模块的输出 $h \times N \times C^{l+1}$。</p>
+<h2 id="3-4-Attention-based-Output-Module"><a href="#3-4-Attention-based-Output-Module" class="headerlink" title="3.4 Attention-based Output Module"></a>3.4 Attention-based Output Module</h2><p>如 3.2 描述的那样，长期时空依赖和 $T$ 时间步的近期时空依赖通过两个矩阵描述 $Y_h$ 和 $Y^T_q$。我们拼接。我们拼接他们形成联合表示 $Y_{h+q} \in \mathbb{R}^{(h+q) \times N \times d_{out}}$，通过一个基于注意力机制的模块解码获得预测值。这里为了简便忽略 $T$。$Y_{h+q}$ 的三个轴分别是时间、空间、通道。</p>
+<p>我们先引入一个时间注意力机制来解码 $Y_{h+q}$。旅客需求是一个典型的时间序列，前一时刻的需求对后一时刻有影响。然而，之前的每一步对预测目标的影响是不同的，影响随时间变化。我们设计了一个时间注意力机制对每个历史时间步增加注意力分数衡量其影响。分数通过 $Y_{h+q} = <a href="y_i \in \mathbb{R}^{N \times d_{out}}">y_1, y_2, \dots, y_{h+q}</a>$ 和目标时间步的时间特征 $\bm{E}_T$ 生成，这个分数可以自适应地学习之前的时间步随时间的动态影响。我们定义时间注意力分数如下：</p>
+<p>$$\tag{6}<br>\bm{\alpha} = softmax(tanh(Y_{h+q} W^Y_3 + E_T W^E_4 + b_1))<br>$$</p>
+<p>$W^Y_3 \in \mathbb{R}^{(h+q) \times (N \times d_{out}) \times 1}$，$W^E_4 \in \mathbb{R}^{d_e \times (h+q)}$，$b_1 \in \mathbb{R}^{(h+q)}$。联合表示 $Y_{h+q}$ 通过注意力分数 $\bm{\alpha}$ 转换：</p>
+<p>$$\tag{7}<br>Y_{\alpha} = \sum^{h+q}_{i=1} \alpha^i y_i \quad \in \mathbb{R}^{N \times d_{out}}<br>$$</p>
+<p>受到 [Chen et al., 2017] 的启发，每个通道的重要性是不同的，我们在时间注意力后面加了一个通道注意力模块来找到 $Y_\alpha = [y_1, y_2, \dots, y_{d_{out}}]$ 中最重要的那个。计算如下：</p>
+<p>$$\tag{8}<br>\bm\beta = softmax(tanh(Y_\alpha W^Y_5 + E_T W^E_6 + b_2))<br>$$</p>
+<p>$$\tag{9}<br>Y_{\beta} = \sum^{d_{out}}_{i=1} \beta^i y_i \quad \mathbb{R}^N<br>$$</p>
+<p>其中，$W^Y_5 \in \mathbb{R}^{d_{out} \times N \times 1}$，$W^E_6 \in \mathbb{R}^{d_e \times d_{out}}$；$\bm\beta \in \mathbb{R}^{d_{out}}$ 是每个通道的注意力分数。当预测的维度是1时，$Y_\beta$ 就是我们预测的旅客需求 $\bm{D’_T}$。当预测维度是 2 时（预测起止需求），我们给每个通道计算注意力分数，将他们拼接起来得到最后的预测值。</p>
 
         </div>
         
@@ -292,7 +302,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
                     <p class="title has-text-weight-normal">
                         71
@@ -302,7 +312,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorias
+                        Categories
                     </p>
                     <p class="title has-text-weight-normal">
                         8
@@ -312,7 +322,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
                     <p class="title has-text-weight-normal">
                         33
@@ -322,7 +332,7 @@
         </nav>
         <div class="level">
             <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                SEGUIR</a>
+                Follow</a>
         </div>
         
         
@@ -357,7 +367,7 @@
 <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 11.82px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.09px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.82px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.73px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.91px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 17.27px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15.45px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.64px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.82px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.91px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph/" style="font-size: 12.73px;">graph</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 19.09px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.91px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.91px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 18.18px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.82px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.82px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.36px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.91px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.55px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -369,7 +379,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorias
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -449,7 +459,7 @@
 <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -525,7 +535,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -747,7 +757,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1002,7 +1012,7 @@
 <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -1078,7 +1088,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -1300,7 +1310,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1710,10 +1720,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
+                POSTS: 'Posts',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categorias',
-                TAGS: 'Etiquetas',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',
