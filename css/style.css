@@ -142,6 +142,9 @@ img.thumbnail {
 .widget .menu-list a.level {
   display: flex;
 }
+.widget .has-text-centered figure.image {
+  margin: auto;
+}
 .pagination .pagination-link:not(.is-current),
 .pagination .pagination-previous,
 .pagination .pagination-next {
@@ -205,6 +208,9 @@ img.thumbnail {
   max-width: 50%;
   font-size: 1.15rem;
   position: relative;
+}
+.article .content a {
+  word-wrap: break-word;
 }
 .rtl {
   direction: rtl;
@@ -405,6 +411,9 @@ figure.highlight {
   position: relative;
   margin: 1em 0 1em !important;
 }
+figure.highlight.folded .highlight-body {
+  height: 0;
+}
 figure.highlight pre,
 figure.highlight table tr:hover {
   color: inherit;
@@ -430,13 +439,29 @@ figure.highlight figcaption {
   font-style: normal;
   font-size: 0.8em;
 }
+figure.highlight figcaption:after {
+  clear: both;
+  content: " ";
+  display: table;
+}
 figure.highlight figcaption span {
   font-weight: 500;
   font-family: "Source Code Pro", monospace, "Microsoft YaHei";
 }
+figure.highlight figcaption .fold,
+figure.highlight figcaption a {
+  color: #9a9a9a;
+}
 figure.highlight figcaption a {
   float: right;
-  color: #9a9a9a;
+  margin-left: 0.5em;
+}
+figure.highlight figcaption .fold {
+  margin-right: 0.5em;
+  cursor: pointer;
+}
+figure.highlight .highlight-body {
+  overflow: auto;
 }
 figure.highlight .gutter {
   text-align: right;
@@ -455,17 +480,6 @@ figure.highlight .section {
   vertical-align: inherit;
   min-width: inherit;
   border-radius: inherit;
-}
-figure.highlight .copy {
-  display: none;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  color: #fff;
-  background: rgba(0,0,0,0.5);
-}
-figure.highlight:hover .copy {
-  display: block;
 }
 /* ---------------------------------
  *          Overflow Table
