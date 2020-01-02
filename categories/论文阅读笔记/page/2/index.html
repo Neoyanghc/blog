@@ -7,7 +7,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-<title>Categoria: 论文阅读笔记 - Davidham&#39;s blog</title>
+<title>Category: 论文阅读笔记 - Davidham&#39;s blog</title>
 
 
     <meta name="description" content="Davidham的博客，写点学习笔记啥的，邮箱chaosong@bjtu.edu.cn">
@@ -121,13 +121,66 @@
     <div class="card-content">
         <nav class="breadcrumb" aria-label="breadcrumbs">
         <ul>
-            <li><a href="/blog/categories">Categorias</a></li>
+            <li><a href="/blog/categories">Categories</a></li>
             
             <li class="is-active"><a href="#" aria-current="page">论文阅读笔记</a></li>
         </ul>
         </nav>
     </div>
 </div>
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-02-28T13:12:58.000Z">2019-02-28</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/blog/categories/论文阅读笔记/">论文阅读笔记</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    41 minutes read (About 6203 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/">Spatiotemporal Multi-Graph Convolution Network for Ride-hailing Demand Forecasting</a>
+            
+        </h1>
+        <div class="content">
+            <p>AAAI 2019，滴滴的网约车需求预测，5个点预测1个点。空间依赖建模上：以图的形式表示数据，从空间地理关系、区域功能相似度、区域交通连通性三个角度构造了三个不同的图，提出了多图卷积，分别用 k 阶 ChebNet 对每个图做图卷积，然后将多个图的卷积结果进行聚合(sum, average 等)成一个图；时间依赖建模上：提出了融合背景信息的 Contextual Gated RNN (CGRNN)，用 ChebNet 对每个结点卷积后，得到他们的邻居表示，即每个结点的背景信息表示，与原结点特征拼接，用一个两层全连接神经网络计算出 T 个权重，将权重乘到历史 T 个时刻的图上，对历史值进行缩放，然后用一个共享的 RNN，针对每个结点形成的长度为 T 的时间序列建模，得到每个结点新的时间表示。最后预测每个点的网约车需求。原文地址：<a href="http://www-scf.usc.edu/~yaguang/papers/aaai19_multi_graph_convolution.pdf" target="_blank" rel="noopener">Spatiotemporal Multi-Graph Convolution Network for Ride-hailing Demand Forecasting</a></p>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/blog/2019/02/28/spatiotemporal-multi-graph-convolution-network-for-ride-hailing-demand-forecasting/#more">Read More</a>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
 
     
 <div class="card">
@@ -606,68 +659,15 @@
 
 
 
-    
-<div class="card">
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2018-08-03T03:06:12.000Z">2018-08-03</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/blog/categories/论文阅读笔记/">论文阅读笔记</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    42 minutes read (About 6373 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/blog/2018/08/03/the-emerging-field-of-signal-processing-on-graphs/">The Emerging Field of Signal Processing on Graphs</a>
-            
-        </h1>
-        <div class="content">
-            <p>IEEE Signal Processing Magazine 2013, 原文链接：<a href="https://arxiv.org/abs/1211.0053" target="_blank" rel="noopener">The Emerging Field of Signal Processing on Graphs: Extending High-Dimensional Data Analysis to Networks and Other Irregular Domains</a><br></p>
-        </div>
-        
-        
-        <div class="level is-mobile">
-            <div class="level-start">
-                <div class="level-item">
-                <a class="button is-size-7 is-light" href="/blog/2018/08/03/the-emerging-field-of-signal-processing-on-graphs/#more">Read More</a>
-                </div>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
 
     
 <div class="card card-transparent">
     <nav class="pagination is-centered" role="navigation" aria-label="pagination">
         <div class="pagination-previous">
-            <a class="is-flex-grow has-text-black-ter" href="/blog/categories/论文阅读笔记/">Anterior</a>
+            <a class="is-flex-grow has-text-black-ter" href="/blog/categories/论文阅读笔记/">Previous</a>
         </div>
         <div class="pagination-next">
-            <a class="is-flex-grow has-text-black-ter" href="/blog/categories/论文阅读笔记/page/3/">Siguiente</a>
+            <a class="is-flex-grow has-text-black-ter" href="/blog/categories/论文阅读笔记/page/3/">Next</a>
         </div>
         <ul class="pagination-list is-hidden-mobile">
             
@@ -725,17 +725,17 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
                     <p class="title has-text-weight-normal">
-                        74
+                        75
                     </p>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorias
+                        Categories
                     </p>
                     <p class="title has-text-weight-normal">
                         8
@@ -745,7 +745,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
                     <p class="title has-text-weight-normal">
                         33
@@ -756,7 +756,7 @@
         
         <div class="level">
             <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                SEGUIR</a>
+                Follow</a>
         </div>
         
         
@@ -822,9 +822,9 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
-        <a href="/blog/tags/attention/" style="font-size: 11.82px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.09px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.82px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.73px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.91px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 16.36px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15.45px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.64px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.82px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.91px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph/" style="font-size: 12.73px;">graph</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 19.09px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.91px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.91px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 18.18px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.82px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.82px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 17.27px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.91px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.55px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
+        <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph/" style="font-size: 10.83px;">graph</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
 </div>
     
@@ -833,7 +833,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorias
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -890,7 +890,7 @@
                 <span class="level-item">论文阅读笔记</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">41</span>
+                <span class="level-item tag">42</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/blog/categories/随笔/">
@@ -912,8 +912,21 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-01-02T09:03:30.000Z">2020-01-02</time></div>
+                    <a href="/blog/2020/01/02/gman-a-graph-multi-attention-network-for-traffic-prediction/" class="title has-link-black-ter is-size-6 has-text-weight-normal">GMAN: A Graph Multi-Attention Network for Traffic Prediction</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/blog/categories/论文阅读笔记/">论文阅读笔记</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -967,19 +980,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-02T12:22:10.000Z">2019-08-02</time></div>
-                    <a href="/blog/2019/08/02/mxnet-与-cuda-版本兼容的问题/" class="title has-link-black-ter is-size-6 has-text-weight-normal">MXNet 与 cuda 版本兼容的问题</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/blog/categories/software/">software</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
         
@@ -987,9 +987,20 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/blog/archives/2020/01/">
+                <span class="level-start">
+                    <span class="level-item">January 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/blog/archives/2019/12/">
@@ -1242,21 +1253,21 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/attention/">
                         <span class="tag">Attention</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">4</span>
                     </a>
                 </div>
                 
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/graph/">
                         <span class="tag">Graph</span>
-                        <span class="tag is-grey">20</span>
+                        <span class="tag is-grey">23</span>
                     </a>
                 </div>
                 
@@ -1305,14 +1316,14 @@
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/spatial-temporal/">
                         <span class="tag">Spatial-temporal</span>
-                        <span class="tag is-grey">13</span>
+                        <span class="tag is-grey">14</span>
                     </a>
                 </div>
                 
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/time-series/">
                         <span class="tag">Time Series</span>
-                        <span class="tag is-grey">10</span>
+                        <span class="tag is-grey">11</span>
                     </a>
                 </div>
                 
@@ -1340,14 +1351,14 @@
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/deep-learning/">
                         <span class="tag">deep learning</span>
-                        <span class="tag is-grey">39</span>
+                        <span class="tag is-grey">40</span>
                     </a>
                 </div>
                 
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/graph/">
                         <span class="tag">graph</span>
-                        <span class="tag is-grey">4</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
@@ -1496,8 +1507,21 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-01-02T09:03:30.000Z">2020-01-02</time></div>
+                    <a href="/blog/2020/01/02/gman-a-graph-multi-attention-network-for-traffic-prediction/" class="title has-link-black-ter is-size-6 has-text-weight-normal">GMAN: A Graph Multi-Attention Network for Traffic Prediction</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/blog/categories/论文阅读笔记/">论文阅读笔记</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -1551,19 +1575,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-02T12:22:10.000Z">2019-08-02</time></div>
-                    <a href="/blog/2019/08/02/mxnet-与-cuda-版本兼容的问题/" class="title has-link-black-ter is-size-6 has-text-weight-normal">MXNet 与 cuda 版本兼容的问题</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/blog/categories/software/">software</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -1571,9 +1582,20 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/blog/archives/2020/01/">
+                <span class="level-start">
+                    <span class="level-item">January 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/blog/archives/2019/12/">
@@ -1826,21 +1848,21 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/attention/">
                         <span class="tag">Attention</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">4</span>
                     </a>
                 </div>
                 
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/graph/">
                         <span class="tag">Graph</span>
-                        <span class="tag is-grey">20</span>
+                        <span class="tag is-grey">23</span>
                     </a>
                 </div>
                 
@@ -1889,14 +1911,14 @@
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/spatial-temporal/">
                         <span class="tag">Spatial-temporal</span>
-                        <span class="tag is-grey">13</span>
+                        <span class="tag is-grey">14</span>
                     </a>
                 </div>
                 
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/time-series/">
                         <span class="tag">Time Series</span>
-                        <span class="tag is-grey">10</span>
+                        <span class="tag is-grey">11</span>
                     </a>
                 </div>
                 
@@ -1924,14 +1946,14 @@
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/deep-learning/">
                         <span class="tag">deep learning</span>
-                        <span class="tag is-grey">39</span>
+                        <span class="tag is-grey">40</span>
                     </a>
                 </div>
                 
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/graph/">
                         <span class="tag">graph</span>
-                        <span class="tag is-grey">4</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
@@ -2232,10 +2254,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
+                POSTS: 'Posts',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categorias',
-                TAGS: 'Etiquetas',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',
