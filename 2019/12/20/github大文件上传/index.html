@@ -19,7 +19,7 @@
 <meta property="og:description" content="刚才开源了我们组在AAAI 2020上一篇论文的代码和数据，上传数据的时候超了GitHub的100M大小限制，GitHub说让我用lfs解决，研究了一下怎么传，记录一下，以后说不定还会用到。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2019-12-20T03:20:46.776Z">
+<meta property="og:updated_time" content="2020-01-02T09:00:52.111Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="github大文件上传">
 <meta name="twitter:description" content="刚才开源了我们组在AAAI 2020上一篇论文的代码和数据，上传数据的时候超了GitHub的100M大小限制，GitHub说让我用lfs解决，研究了一下怎么传，记录一下，以后说不定还会用到。">
@@ -136,7 +136,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    a minute read (About 128 words)
+                    4 minutes read (About 551 words)
                 </span>
                 
                 
@@ -152,6 +152,13 @@
             <p>刚才开源了我们组在AAAI 2020上一篇论文的代码和数据，上传数据的时候超了GitHub的100M大小限制，GitHub说让我用lfs解决，研究了一下怎么传，记录一下，以后说不定还会用到。<br><a id="more"></a></p>
 <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">git lfs install</span><br><span class="line"></span><br><span class="line">git lfs track &quot;data.tar.gz&quot;</span><br><span class="line"></span><br><span class="line">git add .gitattributes</span><br><span class="line"></span><br><span class="line">git commit -m &quot;Updated attributes&quot;</span><br><span class="line"></span><br><span class="line">git push</span><br><span class="line"></span><br><span class="line">git add data.tar.gz</span><br><span class="line"></span><br><span class="line">git lfs ls-files</span><br><span class="line"></span><br><span class="line">git commit -m &quot;Add file&quot;</span><br><span class="line"></span><br><span class="line">git push</span><br></pre></td></tr></table></figure>
 <p>原理还不太懂，这几天太忙了，过几天看看。</p>
+<p>2020.1.2 更新一下：</p>
+<p>最近收到了GitHub的邮件，说这个LFS是有限额的。。。然后我的已经超额了。。。</p>
+<p>这个东西是分storage和bandwidth两个额度，两个额度都是1个月1G。存储的话，如果你存储一次，就会占一次的容量，如果你修改了里面的内容，再push一次，就会再占一次这么大的空间，比如有一个100M的文件，我push上去，占100M，我改了一下，再push，那我就使用了200M空间。。。这个空间是这么计算的。。。</p>
+<p>带宽的计算是，你上传文件不算流量。但是只要有人下载，那就走这个流量，一个月1G免费流量。。。我这个数据集，一天就超了。。。</p>
+<p>解决方法是什么呢？进入GitHub的help page里面，可以找到删除文件的方法。</p>
+<p>但是，即便你想办法删了，如果你的仓库之前被别人fork过了，那他们那边的下载，也会占用你的bandwidth，得知这点后我真的好无语。。。主要另一个坑爹的事情是，这个storage和bandwidth是按账户记得，不是按仓库，即一个账户1月1G。。。</p>
+<p>最后我把仓库删了，想着去联系那几个fork过的人，让他们删除他们的仓库，但是他们竟然没有留下邮箱。。。所以我根本联系不上他们。。。简直了。。。</p>
 
         </div>
         
@@ -258,7 +265,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Posts
+                        Entradas
                     </p>
                     <p class="title has-text-weight-normal">
                         74
@@ -268,7 +275,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categories
+                        Categorias
                     </p>
                     <p class="title has-text-weight-normal">
                         8
@@ -278,7 +285,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Tags
+                        Etiquetas
                     </p>
                     <p class="title has-text-weight-normal">
                         33
@@ -289,7 +296,7 @@
         
         <div class="level">
             <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                Follow</a>
+                SEGUIR</a>
         </div>
         
         
@@ -355,7 +362,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Tag Cloud
+            Nube de etiquetas
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 11.82px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.09px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.82px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.73px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.91px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 16.36px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15.45px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.64px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.82px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.91px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph/" style="font-size: 12.73px;">graph</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 19.09px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.91px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.91px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 18.18px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.82px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.82px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 17.27px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.91px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.55px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -366,7 +373,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categories
+                Categorias
             </h3>
             <ul class="menu-list">
             <li>
@@ -445,7 +452,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recent
+            Recientes
         </h3>
         
         <article class="media">
@@ -520,7 +527,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archives
+            Archivos
         </h3>
         <ul class="menu-list">
         
@@ -775,7 +782,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Tags
+                Etiquetas
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1029,7 +1036,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recent
+            Recientes
         </h3>
         
         <article class="media">
@@ -1104,7 +1111,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archives
+            Archivos
         </h3>
         <ul class="menu-list">
         
@@ -1359,7 +1366,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Tags
+                Etiquetas
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1615,7 +1622,7 @@
                 
                 </a>
                 <p class="is-size-7">
-                &copy; 2019 Davidham&nbsp;
+                &copy; 2020 Davidham&nbsp;
                 Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
                         href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
                 
@@ -1765,10 +1772,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Posts',
+                POSTS: 'Entradas',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categories',
-                TAGS: 'Tags',
+                CATEGORIES: 'Categorias',
+                TAGS: 'Etiquetas',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',
