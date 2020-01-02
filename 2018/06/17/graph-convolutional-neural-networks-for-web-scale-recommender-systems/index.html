@@ -11,7 +11,7 @@
 
 
     <meta name="description" content="KDD 2018。使用图卷积对顶点进行表示，学习顶点的 embedding ，通过卷积将该顶点的邻居信息融入到向量中。原文链接：Graph Convolutional Neural Networks for Web-Scale Recommender Systems。">
-<meta name="keywords" content="recommender system,deep learning,Graph,graph convolutional network,large-scale learning">
+<meta name="keywords" content="deep learning,Graph,graph convolutional network,recommender system,large-scale learning">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Graph Convolutional Neural Networks for Web-Scale Recommender Systems">
 <meta property="og:url" content="https://davidham3.github.io/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/index.html">
@@ -149,7 +149,7 @@
             
         </h1>
         <div class="content">
-            <p>KDD 2018。使用图卷积对顶点进行表示，学习顶点的 embedding ，通过卷积将该顶点的邻居信息融入到向量中。原文链接：<a href="https://arxiv.org/abs/1806.01973v1" target="_blank" rel="noopener">Graph Convolutional Neural Networks for Web-Scale Recommender Systems</a>。</p>
+            <p>KDD 2018。使用图卷积对顶点进行表示，学习顶点的 embedding ，通过卷积将该顶点的邻居信息融入到向量中。原文链接：<a href="https://arxiv.org/abs/1806.01973v1">Graph Convolutional Neural Networks for Web-Scale Recommender Systems</a>。</p>
 <a id="more"></a>
 <h1 id="ABSTRACT"><a href="#ABSTRACT" class="headerlink" title="ABSTRACT"></a>ABSTRACT</h1><p>最近在图数据上的深度神经网络在推荐系统上表现的很好。然而，把这些算法应用到数十亿的物品和数百亿的用户上仍然是个挑战。</p>
 <p>我们提出了一种在 Pinterest 上的大规模深度推荐引擎，开发了一种高效的图卷积算法 PinSage，融合了随机游走和图卷积，来生成顶点（物品）的表示，同时整合了顶点信息和图结构。对比之前的 GCN 方法，我们研究的模型基于高效的随机游走来结构化卷积操作，而且还设计了一个新型的训练策略，这个策略依赖于 harder-and-harder 训练样本，来提高模型的鲁棒性和收敛能力。</p>
@@ -171,7 +171,7 @@
 <center><img src="/blog/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/algo1.PNG" alt="Algorithm 1"></center>
 
 <p>我们的 PinSage 算法是一个局部卷积操作，我们可以通过这个局部卷积操作学到如何从 $u$ 的邻居聚合信息（图1）。这个步骤在算法1 CONVOLVE 中有所描述。从本质上来说，我们通过一个全连接神经网络对 $\forall{v} \in \mathcal{N}(u)$，也就是 $u$ 的邻居的表示 $z_v$ 进行了变换，之后在结果向量集合上用一个聚合/池化函数（例如：一个 element-wise mean 或是加权求和，表示为 $\gamma$）（Line 1）。这个聚合步骤生成了一个 $u$ 的邻居$\mathcal{N}(u)$ 的表示 $n_u$。之后我们将这个聚集邻居向量 $n_u$ 和 $u$ 的当前表示向量进行拼接后，输入到一个全连接神经网络做变换（Line 2）。通过实验我们发现使用拼接操作会获得比平均操作[21]好很多的结果。除此以外，第三行的 normalization 使训练更稳定，而且对近似最近邻搜索来说归一化的 embeddings 更高效（Section 3.5）。算法的输出是集成了 $u$ 自身和他的局部邻域信息的表示。</p>
-<p><strong>Importance-based neighborhoods.</strong> 我们方法中的一个重要创新是如何定义的顶点邻居 $\mathcal{N}(u)$，也就是我们在算法1中是如何选择卷积的邻居集合。尽管之前的 GCN 方法简单地检验了 k-hop 邻居，在 PinSage 中我们定义了基于重要性的邻域，顶点 $u$ 的邻居定义为 $T$ 个顶点，这 $T$ 个顶点对 $u$ 是最有影响力的。具体来说，我们模拟了从顶点 $u$ 开始的随机游走，并且计算了通过随机游走<a href="https://arxiv.org/abs/1711.07601" target="_blank" rel="noopener">[14]</a>对顶点的访问次数的 $L_1$ 归一化值。$u$ 的邻居因此定义为针对顶点 $u$ 来说 $T$ 个最高的归一化的访问数量的顶点。</p>
+<p><strong>Importance-based neighborhoods.</strong> 我们方法中的一个重要创新是如何定义的顶点邻居 $\mathcal{N}(u)$，也就是我们在算法1中是如何选择卷积的邻居集合。尽管之前的 GCN 方法简单地检验了 k-hop 邻居，在 PinSage 中我们定义了基于重要性的邻域，顶点 $u$ 的邻居定义为 $T$ 个顶点，这 $T$ 个顶点对 $u$ 是最有影响力的。具体来说，我们模拟了从顶点 $u$ 开始的随机游走，并且计算了通过随机游走<a href="https://arxiv.org/abs/1711.07601">[14]</a>对顶点的访问次数的 $L_1$ 归一化值。$u$ 的邻居因此定义为针对顶点 $u$ 来说 $T$ 个最高的归一化的访问数量的顶点。</p>
 <p>这个基于重要性的邻域定义的优点有两点。第一点是选择一个固定数量的邻居顶点来聚集可以在训练过程中控制内存开销[18]。第二，在算法1中聚集邻居的向量表示时可以考虑邻居的重要性。特别地，我们在算法1中实现的 $\gamma$ 是一个加权求均值的操作，权重就是 $L_1$ 归一化访问次数。我们将这个新的方法称为重要度池化(<em>importance pooling</em>)。</p>
 <p><strong>Stacking convolutions.</strong> 每次使用算法1的 CONVOLVE 操作都会得到一个顶点的新的表示，我们可以在每个顶点上堆叠卷积来获得更多表示顶点 $u$ 的局部邻域结构的信息。特别地，我们使用多层卷积，其中对第 $k$ 层卷积的输入依赖于 $k-1$ 层的输出（图1），最初的表示（”layer 0”）等价于顶点的输入特征。需要注意的是，算法1中的模型参数（$Q$, $q$, $W$ 和 $w$）在顶点间是共享的，但层与层之间不共享。</p>
 <center><img src="/blog/2018/06/17/graph-convolutional-neural-networks-for-web-scale-recommender-systems/algo2.PNG" alt=""></center>
@@ -313,87 +313,93 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
-                    <p class="title has-text-weight-normal">
-                        75
-                    </p>
+                    <a href="/blog/archives">
+                        <p class="title has-text-weight-normal">
+                            75
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorias
+                        Categories
                     </p>
-                    <p class="title has-text-weight-normal">
-                        8
-                    </p>
+                    <a href="/blog/categories">
+                        <p class="title has-text-weight-normal">
+                            8
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
-                    <p class="title has-text-weight-normal">
-                        32
-                    </p>
+                    <a href="/blog/tags">
+                        <p class="title has-text-weight-normal">
+                            32
+                        </p>
+                    </a>
                 </div>
             </div>
         </nav>
         
         <div class="level">
-            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                SEGUIR</a>
+            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
+                Follow</a>
         </div>
         
         
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Github" href="https://github.com/Davidham3">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Email" href="/blog/chaosong@bjtu.edu.cn">
                 
                 <i class="fa fa-envelope"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Weibo" href="http://weibo.com/Davidham3">
                 
                 <i class="fab fa-weibo"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Facebook" href="https://facebook.com">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Twitter" href="https://twitter.com">
                 
                 <i class="fab fa-twitter"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Dribbble" href="https://dribbble.com">
                 
                 <i class="fab fa-dribbble"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="RSS" href="/blog/">
                 
                 <i class="fas fa-rss"></i>
@@ -410,7 +416,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -421,7 +427,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorias
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -500,7 +506,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -575,7 +581,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -841,7 +847,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1088,7 +1094,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -1163,7 +1169,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -1429,7 +1435,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1679,8 +1685,8 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Davidham&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
                 
                 </p>
             </div>
@@ -1689,7 +1695,7 @@
                 <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
                         
                         <i class="fab fa-creative-commons"></i>
                         
@@ -1697,7 +1703,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
                         
                         <i class="fab fa-creative-commons-by"></i>
                         
@@ -1705,7 +1711,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
                         
                         <i class="fab fa-github"></i>
                         
@@ -1722,8 +1728,13 @@
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
 <script>moment.locale("zh-Hans");</script>
 
+
 <script>
 var IcarusThemeSettings = {
+    site: {
+        url: 'https://davidham3.github.io',
+        external_link: {"enable":true,"exclude":[]}
+    },
     article: {
         highlight: {
             clipboard: true,
@@ -1734,22 +1745,22 @@ var IcarusThemeSettings = {
 </script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
 
 
 
-    
-    
+
+
 <script src="/blog/js/animation.js"></script>
 
-    
-    
+
+
 <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
 <script src="/blog/js/gallery.js" defer></script>
 
-    
-    
+
+
 <div id="outdated">
     <h6>Your browser is out-of-date!</h6>
     <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
@@ -1767,8 +1778,8 @@ var IcarusThemeSettings = {
     });
 </script>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     MathJax.Hub.Config({
@@ -1790,24 +1801,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-    
-    
+
+
 <a id="back-to-top" title="Back to Top" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/blog/js/back-to-top.js" defer></script>
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
 
 
 <script src="/blog/js/main.js" defer></script>
@@ -1828,10 +1839,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
+                POSTS: 'Posts',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categorias',
-                TAGS: 'Etiquetas',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',

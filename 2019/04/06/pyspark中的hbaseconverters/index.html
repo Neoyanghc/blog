@@ -154,22 +154,22 @@
 <p>最近甲方让我们写一个 pyspark 的教程，他们以后打算使用 pyspark 开发。他们的数据是那种精度要求比较高的数据，我们使用 java.math.BigDecimal 表示数字，然后转成 byte[] 后存入了 HBase，但是 python 是没法直接读取这个 BigDecimal，所以需要使用 spark-examples 中 HBaseConverters.scala 读取。</p>
 <p>我们讨论的 spark 版本是 1.6，因为用的是 CDH 5，所以是这个版本。</p>
 <p>原理实际上是，pyspark 在读取 HBase 的时候需要借助 org.apache.spark.examples.pythonconverters 这么一个类，这个类实际上是 scala 将 HBase 中的数据读取后，转换成 json 字符串返回，这样 pyspark 可以通过这个类从 HBase 中直接获取到 json 字符串这样的返回值。</p>
-<p>可以从 <a href="https://github.com/apache/spark/blob/branch-1.6/examples/src/main/scala/org/apache/spark/examples/pythonconverters/HBaseConverters.scala" target="_blank" rel="noopener">HBaseConverters.scala</a> 这里看到 HBaseConverters.scala 的源码，我们感兴趣的是从 HBase 中查询 value 这一部分：</p>
-<figure class="highlight scala hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">package</span> org.apache.spark.examples.pythonconverters</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> scala.collection.<span class="hljs-type">JavaConverters</span>._</span><br><span class="line"><span class="hljs-keyword">import</span> scala.util.parsing.json.<span class="hljs-type">JSONObject</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.spark.api.python.<span class="hljs-type">Converter</span></span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.hadoop.hbase.client.&#123;<span class="hljs-type">Put</span>, <span class="hljs-type">Result</span>&#125;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.hadoop.hbase.io.<span class="hljs-type">ImmutableBytesWritable</span></span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.hadoop.hbase.util.<span class="hljs-type">Bytes</span></span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.hadoop.hbase.<span class="hljs-type">KeyValue</span>.<span class="hljs-type">Type</span></span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.hadoop.hbase.<span class="hljs-type">CellUtil</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">/**</span></span><br><span class="line"><span class="hljs-comment"> * Implementation of [[org.apache.spark.api.python.Converter]] that converts all</span></span><br><span class="line"><span class="hljs-comment"> * the records in an HBase Result to a String</span></span><br><span class="line"><span class="hljs-comment"> */</span></span><br><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HBaseResultToStringConverter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Converter</span>[<span class="hljs-type">Any</span>, <span class="hljs-type">String</span>] </span>&#123;</span><br><span class="line">  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">convert</span></span>(obj: <span class="hljs-type">Any</span>): <span class="hljs-type">String</span> = &#123;</span><br><span class="line">    <span class="hljs-keyword">val</span> result = obj.asInstanceOf[<span class="hljs-type">Result</span>]</span><br><span class="line">    <span class="hljs-keyword">val</span> output = result.listCells.asScala.map(cell =&gt;</span><br><span class="line">        <span class="hljs-type">Map</span>(</span><br><span class="line">          <span class="hljs-string">"row"</span> -&gt; <span class="hljs-type">Bytes</span>.toStringBinary(<span class="hljs-type">CellUtil</span>.cloneRow(cell)),</span><br><span class="line">          <span class="hljs-string">"columnFamily"</span> -&gt; <span class="hljs-type">Bytes</span>.toStringBinary(<span class="hljs-type">CellUtil</span>.cloneFamily(cell)),</span><br><span class="line">          <span class="hljs-string">"qualifier"</span> -&gt; <span class="hljs-type">Bytes</span>.toStringBinary(<span class="hljs-type">CellUtil</span>.cloneQualifier(cell)),</span><br><span class="line">          <span class="hljs-string">"timestamp"</span> -&gt; cell.getTimestamp.toString,</span><br><span class="line">          <span class="hljs-string">"type"</span> -&gt; <span class="hljs-type">Type</span>.codeToType(cell.getTypeByte).toString,</span><br><span class="line">          <span class="hljs-string">"value"</span> -&gt; <span class="hljs-type">Bytes</span>.toStringBinary(<span class="hljs-type">CellUtil</span>.cloneValue(cell))</span><br><span class="line">        )</span><br><span class="line">    )</span><br><span class="line">    output.map(<span class="hljs-type">JSONObject</span>(_).toString()).mkString(<span class="hljs-string">"\n"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以从 <a href="https://github.com/apache/spark/blob/branch-1.6/examples/src/main/scala/org/apache/spark/examples/pythonconverters/HBaseConverters.scala">HBaseConverters.scala</a> 这里看到 HBaseConverters.scala 的源码，我们感兴趣的是从 HBase 中查询 value 这一部分：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.apache.spark.examples.pythonconverters</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> scala.collection.<span class="type">JavaConverters</span>._</span><br><span class="line"><span class="keyword">import</span> scala.util.parsing.json.<span class="type">JSONObject</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.api.python.<span class="type">Converter</span></span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.client.&#123;<span class="type">Put</span>, <span class="type">Result</span>&#125;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.io.<span class="type">ImmutableBytesWritable</span></span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.util.<span class="type">Bytes</span></span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.<span class="type">KeyValue</span>.<span class="type">Type</span></span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.<span class="type">CellUtil</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Implementation of [[org.apache.spark.api.python.Converter]] that converts all</span></span><br><span class="line"><span class="comment"> * the records in an HBase Result to a String</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HBaseResultToStringConverter</span> <span class="keyword">extends</span> <span class="title">Converter</span>[<span class="type">Any</span>, <span class="type">String</span>] </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">convert</span></span>(obj: <span class="type">Any</span>): <span class="type">String</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> result = obj.asInstanceOf[<span class="type">Result</span>]</span><br><span class="line">    <span class="keyword">val</span> output = result.listCells.asScala.map(cell =&gt;</span><br><span class="line">        <span class="type">Map</span>(</span><br><span class="line">          <span class="string">"row"</span> -&gt; <span class="type">Bytes</span>.toStringBinary(<span class="type">CellUtil</span>.cloneRow(cell)),</span><br><span class="line">          <span class="string">"columnFamily"</span> -&gt; <span class="type">Bytes</span>.toStringBinary(<span class="type">CellUtil</span>.cloneFamily(cell)),</span><br><span class="line">          <span class="string">"qualifier"</span> -&gt; <span class="type">Bytes</span>.toStringBinary(<span class="type">CellUtil</span>.cloneQualifier(cell)),</span><br><span class="line">          <span class="string">"timestamp"</span> -&gt; cell.getTimestamp.toString,</span><br><span class="line">          <span class="string">"type"</span> -&gt; <span class="type">Type</span>.codeToType(cell.getTypeByte).toString,</span><br><span class="line">          <span class="string">"value"</span> -&gt; <span class="type">Bytes</span>.toStringBinary(<span class="type">CellUtil</span>.cloneValue(cell))</span><br><span class="line">        )</span><br><span class="line">    )</span><br><span class="line">    output.map(<span class="type">JSONObject</span>(_).toString()).mkString(<span class="string">"\n"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这段代码很简单，实际上就是使用 java HBase 的 API 读取 HBase 中的值，将所有的值转换为 String 返回，我需要做的，只是将 value 这个字段的值，先从 byte[] 转到 BigDecimal，再转换为 String 即可。</p>
-<figure class="highlight scala hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyHBaseResultToStringConverter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Converter</span>[<span class="hljs-type">Any</span>, <span class="hljs-type">String</span>] </span>&#123;</span><br><span class="line">  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">convert</span></span>(obj: <span class="hljs-type">Any</span>): <span class="hljs-type">String</span> = &#123;</span><br><span class="line">    <span class="hljs-keyword">val</span> result = obj.asInstanceOf[<span class="hljs-type">Result</span>]</span><br><span class="line">    <span class="hljs-keyword">val</span> output = result.listCells.asScala.map(cell =&gt;</span><br><span class="line">        <span class="hljs-type">Map</span>(</span><br><span class="line">          <span class="hljs-string">"row"</span> -&gt; <span class="hljs-type">Bytes</span>.toStringBinary(<span class="hljs-type">CellUtil</span>.cloneRow(cell)),</span><br><span class="line">          <span class="hljs-string">"columnFamily"</span> -&gt; <span class="hljs-type">Bytes</span>.toStringBinary(<span class="hljs-type">CellUtil</span>.cloneFamily(cell)),</span><br><span class="line">          <span class="hljs-string">"qualifier"</span> -&gt; <span class="hljs-type">Bytes</span>.toStringBinary(<span class="hljs-type">CellUtil</span>.cloneQualifier(cell)),</span><br><span class="line">          <span class="hljs-string">"timestamp"</span> -&gt; cell.getTimestamp.toString,</span><br><span class="line">          <span class="hljs-string">"type"</span> -&gt; <span class="hljs-type">Type</span>.codeToType(cell.getTypeByte).toString,</span><br><span class="line">          <span class="hljs-string">"value"</span> -&gt; <span class="hljs-type">Bytes</span>.toBigDecimal(<span class="hljs-type">CellUtil</span>.cloneValue(cell)).toString()</span><br><span class="line">        )</span><br><span class="line">    )</span><br><span class="line">    output.map(<span class="hljs-type">JSONObject</span>(_).toString()).mkString(<span class="hljs-string">"\n"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyHBaseResultToStringConverter</span> <span class="keyword">extends</span> <span class="title">Converter</span>[<span class="type">Any</span>, <span class="type">String</span>] </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">convert</span></span>(obj: <span class="type">Any</span>): <span class="type">String</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> result = obj.asInstanceOf[<span class="type">Result</span>]</span><br><span class="line">    <span class="keyword">val</span> output = result.listCells.asScala.map(cell =&gt;</span><br><span class="line">        <span class="type">Map</span>(</span><br><span class="line">          <span class="string">"row"</span> -&gt; <span class="type">Bytes</span>.toStringBinary(<span class="type">CellUtil</span>.cloneRow(cell)),</span><br><span class="line">          <span class="string">"columnFamily"</span> -&gt; <span class="type">Bytes</span>.toStringBinary(<span class="type">CellUtil</span>.cloneFamily(cell)),</span><br><span class="line">          <span class="string">"qualifier"</span> -&gt; <span class="type">Bytes</span>.toStringBinary(<span class="type">CellUtil</span>.cloneQualifier(cell)),</span><br><span class="line">          <span class="string">"timestamp"</span> -&gt; cell.getTimestamp.toString,</span><br><span class="line">          <span class="string">"type"</span> -&gt; <span class="type">Type</span>.codeToType(cell.getTypeByte).toString,</span><br><span class="line">          <span class="string">"value"</span> -&gt; <span class="type">Bytes</span>.toBigDecimal(<span class="type">CellUtil</span>.cloneValue(cell)).toString()</span><br><span class="line">        )</span><br><span class="line">    )</span><br><span class="line">    output.map(<span class="type">JSONObject</span>(_).toString()).mkString(<span class="string">"\n"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这样代码就改完了，然后需要编译，打成 jar 包。</p>
 <p>装好 maven，我装的是 3.6.0，不需要配置什么。</p>
 <p>下载 spark 的源码，最开始我从 github 上面下载的，发现速度很慢，然后就去 spark 官网，找仓库中的源代码下载下来。</p>
 <p>编译 spark-examples 的时候需要先从根目录中把 scalastyle-config.xml 拷贝到 examples 目录下再进行编译</p>
 <p>cd 到 examples 目录下，使用以下命令编译 spark-examples</p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn clean install -pl :spark-examples_2.10</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn clean install -pl :spark-examples_2.10</span><br></pre></td></tr></table></figure>
 <center><img src="/blog/2019/04/06/pyspark中的hbaseconverters/Fig1.JPG" alt="Figure1"></center>
 
 <p>编译的时候没有遇到错误，编译好的包在同级目录下的 target 中，有个叫 spark-examples_2.10-1.6.0.jar 的文件。</p>
 <p>然后就是使用这个包读取 HBase 中的 BigDecimal了：</p>
-<p>我们使用 standalone 模式运行 pyspark：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyspark --master spark://host1:7077 --jars spark-examples_2.10-1.6.0.jar</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">import</span> json</span><br><span class="line"></span><br><span class="line">zookeeper_host = <span class="hljs-string">'host1'</span></span><br><span class="line">hbase_table_name = <span class="hljs-string">'testTable'</span></span><br><span class="line"></span><br><span class="line">conf = &#123;<span class="hljs-string">"hbase.zookeeper.quorum"</span>: zookeeper_host, <span class="hljs-string">"hbase.mapreduce.inputtable"</span>: hbase_table_name&#125;</span><br><span class="line">keyConv = <span class="hljs-string">"org.apache.spark.examples.pythonconverters.ImmutableBytesWritableToStringConverter"</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 注意这里，使用自己定义的Converter读取</span></span><br><span class="line">valueConv = <span class="hljs-string">"org.apache.spark.examples.pythonconverters.MyHBaseResultToStringConverter"</span></span><br><span class="line"></span><br><span class="line">hbase_rdd = sc.newAPIHadoopRDD(</span><br><span class="line">        <span class="hljs-string">"org.apache.hadoop.hbase.mapreduce.TableInputFormat"</span>,</span><br><span class="line">        <span class="hljs-string">"org.apache.hadoop.hbase.io.ImmutableBytesWritable"</span>,</span><br><span class="line">        <span class="hljs-string">"org.apache.hadoop.hbase.client.Result"</span>,</span><br><span class="line">        keyConverter=keyConv,</span><br><span class="line">        valueConverter=valueConv,</span><br><span class="line">        conf=conf)</span><br><span class="line">hbase_rdd = hbase_rdd.flatMapValues(<span class="hljs-keyword">lambda</span> v: v.split(<span class="hljs-string">"\n"</span>)).mapValues(json.loads)</span><br><span class="line"></span><br><span class="line">hbase_rdd.take(<span class="hljs-number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>我们使用 standalone 模式运行 pyspark：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyspark --master spark://host1:7077 --jars spark-examples_2.10-1.6.0.jar</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">zookeeper_host = <span class="string">'host1'</span></span><br><span class="line">hbase_table_name = <span class="string">'testTable'</span></span><br><span class="line"></span><br><span class="line">conf = &#123;<span class="string">"hbase.zookeeper.quorum"</span>: zookeeper_host, <span class="string">"hbase.mapreduce.inputtable"</span>: hbase_table_name&#125;</span><br><span class="line">keyConv = <span class="string">"org.apache.spark.examples.pythonconverters.ImmutableBytesWritableToStringConverter"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意这里，使用自己定义的Converter读取</span></span><br><span class="line">valueConv = <span class="string">"org.apache.spark.examples.pythonconverters.MyHBaseResultToStringConverter"</span></span><br><span class="line"></span><br><span class="line">hbase_rdd = sc.newAPIHadoopRDD(</span><br><span class="line">        <span class="string">"org.apache.hadoop.hbase.mapreduce.TableInputFormat"</span>,</span><br><span class="line">        <span class="string">"org.apache.hadoop.hbase.io.ImmutableBytesWritable"</span>,</span><br><span class="line">        <span class="string">"org.apache.hadoop.hbase.client.Result"</span>,</span><br><span class="line">        keyConverter=keyConv,</span><br><span class="line">        valueConverter=valueConv,</span><br><span class="line">        conf=conf)</span><br><span class="line">hbase_rdd = hbase_rdd.flatMapValues(<span class="keyword">lambda</span> v: v.split(<span class="string">"\n"</span>)).mapValues(json.loads)</span><br><span class="line"></span><br><span class="line">hbase_rdd.take(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
 <p>然后就可以看到结果了。</p>
 <p>以上就是如何通过修改 HBaseConverters.scala 让 pyspark 从 HBase 中读取 java 的特殊类型。</p>
 
@@ -285,87 +285,93 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
-                    <p class="title has-text-weight-normal">
-                        75
-                    </p>
+                    <a href="/blog/archives">
+                        <p class="title has-text-weight-normal">
+                            75
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorias
+                        Categories
                     </p>
-                    <p class="title has-text-weight-normal">
-                        8
-                    </p>
+                    <a href="/blog/categories">
+                        <p class="title has-text-weight-normal">
+                            8
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
-                    <p class="title has-text-weight-normal">
-                        32
-                    </p>
+                    <a href="/blog/tags">
+                        <p class="title has-text-weight-normal">
+                            32
+                        </p>
+                    </a>
                 </div>
             </div>
         </nav>
         
         <div class="level">
-            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                SEGUIR</a>
+            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
+                Follow</a>
         </div>
         
         
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Github" href="https://github.com/Davidham3">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Email" href="/blog/chaosong@bjtu.edu.cn">
                 
                 <i class="fa fa-envelope"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Weibo" href="http://weibo.com/Davidham3">
                 
                 <i class="fab fa-weibo"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Facebook" href="https://facebook.com">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Twitter" href="https://twitter.com">
                 
                 <i class="fab fa-twitter"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Dribbble" href="https://dribbble.com">
                 
                 <i class="fab fa-dribbble"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="RSS" href="/blog/">
                 
                 <i class="fas fa-rss"></i>
@@ -382,7 +388,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -393,7 +399,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorias
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -472,7 +478,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -547,7 +553,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -813,7 +819,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1060,7 +1066,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -1135,7 +1141,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -1401,7 +1407,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1651,8 +1657,8 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Davidham&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
                 
                 </p>
             </div>
@@ -1661,7 +1667,7 @@
                 <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
                         
                         <i class="fab fa-creative-commons"></i>
                         
@@ -1669,7 +1675,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
                         
                         <i class="fab fa-creative-commons-by"></i>
                         
@@ -1677,7 +1683,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
                         
                         <i class="fab fa-github"></i>
                         
@@ -1694,8 +1700,13 @@
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
 <script>moment.locale("zh-Hans");</script>
 
+
 <script>
 var IcarusThemeSettings = {
+    site: {
+        url: 'https://davidham3.github.io',
+        external_link: {"enable":true,"exclude":[]}
+    },
     article: {
         highlight: {
             clipboard: true,
@@ -1706,22 +1717,22 @@ var IcarusThemeSettings = {
 </script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
 
 
 
-    
-    
+
+
 <script src="/blog/js/animation.js"></script>
 
-    
-    
+
+
 <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
 <script src="/blog/js/gallery.js" defer></script>
 
-    
-    
+
+
 <div id="outdated">
     <h6>Your browser is out-of-date!</h6>
     <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
@@ -1739,8 +1750,8 @@ var IcarusThemeSettings = {
     });
 </script>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     MathJax.Hub.Config({
@@ -1762,24 +1773,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-    
-    
+
+
 <a id="back-to-top" title="Back to Top" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/blog/js/back-to-top.js" defer></script>
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
 
 
 <script src="/blog/js/main.js" defer></script>
@@ -1800,10 +1811,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
+                POSTS: 'Posts',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categorias',
-                TAGS: 'Etiquetas',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',

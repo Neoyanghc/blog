@@ -11,7 +11,7 @@
 
 
     <meta name="description" content="AAAI 2019。网格流量预测，两个问题：空间依赖动态性，另一个是周期平移。原文链接：Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
-<meta name="keywords" content="deep learning,Spatial-temporal,Graph,graph convolutional network,Time Series">
+<meta name="keywords" content="deep learning,Graph,graph convolutional network,Spatial-temporal,Time Series">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction">
 <meta property="og:url" content="https://davidham3.github.io/2019/03/21/revisiting-spatial-temporal-similarity-a-deep-learning-framework-for-traffic-prediction/index.html">
@@ -149,7 +149,7 @@
             
         </h1>
         <div class="content">
-            <p>AAAI 2019。网格流量预测，两个问题：空间依赖动态性，另一个是周期平移。原文链接：<a href="http://export.arxiv.org/abs/1803.01254" target="_blank" rel="noopener">Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction</a><br><a id="more"></a></p>
+            <p>AAAI 2019。网格流量预测，两个问题：空间依赖动态性，另一个是周期平移。原文链接：<a href="http://export.arxiv.org/abs/1803.01254">Revisiting Spatial-Temporal Similarity: A Deep Learning Framework for Traffic Prediction</a><br><a id="more"></a></p>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>由于大规模的交通数据越来越多，而且交通预测在实际中很重要，交通预测在 AI 领域引起越来越多的关注。举个例子，一个精确的出租车需求预测可以协助出租车公司预分配出租车。交通预测的关键在于如何对复杂的空间依赖和时间动态性建模。尽管两个因素在建模的时候都会考虑，当前的方法仍会做很强的假设，即空间依赖在时间上是平稳的，时间依赖是严格周期的。然而，实际中的空间依赖可能是动态的（即随时间的变化而变化），而且时间动态性可能从一个时段到另一个时段有波动。在这篇文章中，我们有两个重要发现：（1）区域间的空间依赖是动态的；（2）时间依赖虽说有天和周的模式，但因为有动态时间平移，它不是严格周期的。为了解决这两个问题，我们提出了一个新的时空动态网络（STDN），我们用一个门控机制学习区域间的动态相似性，用一个周期性平移的注意力机制来处理长期周期时间平移现象。据我们所知，这是第一个在一个统一的框架中解决这两个问题的工作。我们的实验结果证明了提出的方法是有效的。</p>
 <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>交通预测是一个时空预测问题。精确的预测模型对很多应用都很重要。在传统交通预测问题中，给定历史数据（比如一个区域的流量，或一个交叉卡前几个月每小时的流量），预测未来一段时间的数据。这方面的研究已经有几十年了。在时间序列社区，ARIMA 和 Kalman filtering被广泛地应用到这一领域。然而这些早期方法是针对每个区域分别预测，最近的方法考虑了空间信息（比如针对近邻区域增加正则项）和外部因素（如地点信息，天气状况，地区活动）。然而，这些方法仍基于机器学习中的传统时间序列模型，不能很好的捕获复杂的非线性时空依赖）。</p>
 <p>最近，深度学习方法在很多任务上取得了成功。比如，一些研究将城市交通看作是热力图的图片，使用 CNN 对非线性空间关系建模。为了对非线性时间关系建模，人们提出了基于 RNN 的框架。Yao et al。 更是提出了用 CNN 和 LSTM 同时处理时间和空间依赖的框架。</p>
@@ -327,87 +327,93 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
-                    <p class="title has-text-weight-normal">
-                        75
-                    </p>
+                    <a href="/blog/archives">
+                        <p class="title has-text-weight-normal">
+                            75
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorias
+                        Categories
                     </p>
-                    <p class="title has-text-weight-normal">
-                        8
-                    </p>
+                    <a href="/blog/categories">
+                        <p class="title has-text-weight-normal">
+                            8
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
-                    <p class="title has-text-weight-normal">
-                        32
-                    </p>
+                    <a href="/blog/tags">
+                        <p class="title has-text-weight-normal">
+                            32
+                        </p>
+                    </a>
                 </div>
             </div>
         </nav>
         
         <div class="level">
-            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                SEGUIR</a>
+            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
+                Follow</a>
         </div>
         
         
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Github" href="https://github.com/Davidham3">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Email" href="/blog/chaosong@bjtu.edu.cn">
                 
                 <i class="fa fa-envelope"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Weibo" href="http://weibo.com/Davidham3">
                 
                 <i class="fab fa-weibo"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Facebook" href="https://facebook.com">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Twitter" href="https://twitter.com">
                 
                 <i class="fab fa-twitter"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Dribbble" href="https://dribbble.com">
                 
                 <i class="fab fa-dribbble"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="RSS" href="/blog/">
                 
                 <i class="fas fa-rss"></i>
@@ -424,7 +430,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -435,7 +441,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorias
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -514,7 +520,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -589,7 +595,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -855,7 +861,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1102,7 +1108,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -1177,7 +1183,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -1443,7 +1449,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1693,8 +1699,8 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Davidham&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
                 
                 </p>
             </div>
@@ -1703,7 +1709,7 @@
                 <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
                         
                         <i class="fab fa-creative-commons"></i>
                         
@@ -1711,7 +1717,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
                         
                         <i class="fab fa-creative-commons-by"></i>
                         
@@ -1719,7 +1725,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
                         
                         <i class="fab fa-github"></i>
                         
@@ -1736,8 +1742,13 @@
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
 <script>moment.locale("zh-Hans");</script>
 
+
 <script>
 var IcarusThemeSettings = {
+    site: {
+        url: 'https://davidham3.github.io',
+        external_link: {"enable":true,"exclude":[]}
+    },
     article: {
         highlight: {
             clipboard: true,
@@ -1748,22 +1759,22 @@ var IcarusThemeSettings = {
 </script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
 
 
 
-    
-    
+
+
 <script src="/blog/js/animation.js"></script>
 
-    
-    
+
+
 <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
 <script src="/blog/js/gallery.js" defer></script>
 
-    
-    
+
+
 <div id="outdated">
     <h6>Your browser is out-of-date!</h6>
     <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
@@ -1781,8 +1792,8 @@ var IcarusThemeSettings = {
     });
 </script>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     MathJax.Hub.Config({
@@ -1804,24 +1815,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-    
-    
+
+
 <a id="back-to-top" title="Back to Top" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/blog/js/back-to-top.js" defer></script>
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
 
 
 <script src="/blog/js/main.js" defer></script>
@@ -1842,10 +1853,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
+                POSTS: 'Posts',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categorias',
-                TAGS: 'Etiquetas',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',

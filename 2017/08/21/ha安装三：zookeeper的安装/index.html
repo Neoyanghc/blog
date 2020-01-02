@@ -151,20 +151,20 @@
         <div class="content">
             <p>zookeeper通常以“复制模式”运行于一个计算机集群上，这个计算机集群被称为一个“集合体”。zookeeper通过复制来实现高可用性，只要集合体中半数以上的机器处于可用状态，它就可以提供服务。出于这个原因，一个集合体通常包含奇数台机器。<br><a id="more"></a></p>
 <h1 id="zookeeper的安装"><a href="#zookeeper的安装" class="headerlink" title="zookeeper的安装"></a>zookeeper的安装</h1><p>zookeeper通常以“复制模式”运行于一个计算机集群上，这个计算机集群被称为一个“集合体”。zookeeper通过复制来实现高可用性，只要集合体中半数以上的机器处于可用状态，它就可以提供服务。出于这个原因，一个集合体通常包含奇数台机器。</p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>本文选择了在cluster2，cluster3和cluster4三台机器上安装<br>将zookeeper解压到/usr/local目录下，并配置环境变量<br><code># vi /etc/profile</code><br>在最下面加上2行<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export ZOOKEEPER_HOME=/usr/local/zookeeper-3.4.6</span><br><span class="line">export PATH=$ZOOKEEPER_HOME/bin:$PATH</span><br></pre></td></tr></table></figure></p>
-<p>然后在conf中新建zoo.cfg文件，输入以下内容：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># 客户端心跳时间(毫秒)</span><br><span class="line">tickTime=2000</span><br><span class="line"># 允许心跳间隔的最大时间</span><br><span class="line">initLimit=10</span><br><span class="line"># 同步时限</span><br><span class="line">syncLimit=5</span><br><span class="line"># 数据存储目录</span><br><span class="line">dataDir=/home/hadoop_files/hadoop_data/zookeeper</span><br><span class="line"># 数据日志存储目录</span><br><span class="line">dataLogDir=/home/hadoop_files/hadoop_logs/zookeeper/dataLog</span><br><span class="line"># 端口号</span><br><span class="line">clientPort=2181</span><br><span class="line"># 集群节点和服务端口配置</span><br><span class="line">server.1=hadoop-cluster2:2888:3888</span><br><span class="line">server.2=hadoop-cluster3:2888:3888</span><br><span class="line">server.3=hadoop-cluster4:2888:3888</span><br></pre></td></tr></table></figure></p>
-<p>创建zookeeper的数据存储目录和日志存储目录<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># mkdir -p /home/hadoop_files/hadoop_data/zookeeper</span><br><span class="line"># mkdir -p /home/hadoop_files/hadoop_logs/zookeeper/dataLog</span><br><span class="line"># mkdir -p /home/hadoop_files/hadoop_logs/zookeeper/logs</span><br></pre></td></tr></table></figure></p>
-<p>修改文件夹的权限<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># chown -R hadoop:hadoop /home/hadoop_files</span><br><span class="line"># chown -R hadoop:hadoop /usr/local/zookeeper-3.4.6</span><br></pre></td></tr></table></figure></p>
-<p>在cluster2号服务器的data目录中创建一个文件myid，输入内容为1，myid应与zoo.cfg中的集群节点相匹配<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># echo &quot;1&quot; &gt;&gt; /home/hadoop_files/hadoop_data/zookeeper/myid</span><br></pre></td></tr></table></figure></p>
-<p>修改zookeeper的日志输出路径<br><code># vi bin/zkEnv.sh</code><br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">if [ &quot;x$&#123;ZOO_LOG_DIR&#125;&quot; = &quot;x&quot; ]</span><br><span class="line">then</span><br><span class="line">   ZOO_LOG_DIR=&quot;/home/hadoop_files/hadoop_logs/zookeeper/logs&quot;</span><br><span class="line">fi</span><br><span class="line">if [ &quot;x$&#123;ZOO_LOG4J_PROP&#125;&quot; = &quot;x&quot; ]</span><br><span class="line">then</span><br><span class="line">   ZOO_LOG4J_PROP=&quot;INFO,ROLLINGFILE&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure></p>
-<p>修改zookeeper的日志配置文件<br><code># vi conf/log4j.properties</code><br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zookeeper.root.logger=INFO,ROLLINGFILE</span><br><span class="line">log4j.appender.ROLLINGFILE=org.apache.log4j.DailyRollingFileAppender</span><br></pre></td></tr></table></figure></p>
-<p>将这个zookeeper-3.4.6的目录复制到其他的两个节点上<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># scp -r /usr/local/zookeeper-3.4.6 cluster3:/usr/local/</span><br><span class="line"># scp -r /usr/local/zookeeper-3.4.6 cluster4:/usr/local/</span><br></pre></td></tr></table></figure></p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>本文选择了在cluster2，cluster3和cluster4三台机器上安装<br>将zookeeper解压到/usr/local目录下，并配置环境变量<br><code># vi /etc/profile</code><br>在最下面加上2行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export ZOOKEEPER_HOME=/usr/local/zookeeper-3.4.6</span><br><span class="line">export PATH=$ZOOKEEPER_HOME/bin:$PATH</span><br></pre></td></tr></table></figure></p>
+<p>然后在conf中新建zoo.cfg文件，输入以下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># 客户端心跳时间(毫秒)</span><br><span class="line">tickTime=2000</span><br><span class="line"># 允许心跳间隔的最大时间</span><br><span class="line">initLimit=10</span><br><span class="line"># 同步时限</span><br><span class="line">syncLimit=5</span><br><span class="line"># 数据存储目录</span><br><span class="line">dataDir=/home/hadoop_files/hadoop_data/zookeeper</span><br><span class="line"># 数据日志存储目录</span><br><span class="line">dataLogDir=/home/hadoop_files/hadoop_logs/zookeeper/dataLog</span><br><span class="line"># 端口号</span><br><span class="line">clientPort=2181</span><br><span class="line"># 集群节点和服务端口配置</span><br><span class="line">server.1=hadoop-cluster2:2888:3888</span><br><span class="line">server.2=hadoop-cluster3:2888:3888</span><br><span class="line">server.3=hadoop-cluster4:2888:3888</span><br></pre></td></tr></table></figure></p>
+<p>创建zookeeper的数据存储目录和日志存储目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># mkdir -p /home/hadoop_files/hadoop_data/zookeeper</span><br><span class="line"># mkdir -p /home/hadoop_files/hadoop_logs/zookeeper/dataLog</span><br><span class="line"># mkdir -p /home/hadoop_files/hadoop_logs/zookeeper/logs</span><br></pre></td></tr></table></figure></p>
+<p>修改文件夹的权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># chown -R hadoop:hadoop /home/hadoop_files</span><br><span class="line"># chown -R hadoop:hadoop /usr/local/zookeeper-3.4.6</span><br></pre></td></tr></table></figure></p>
+<p>在cluster2号服务器的data目录中创建一个文件myid，输入内容为1，myid应与zoo.cfg中的集群节点相匹配<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># echo &quot;1&quot; &gt;&gt; /home/hadoop_files/hadoop_data/zookeeper/myid</span><br></pre></td></tr></table></figure></p>
+<p>修改zookeeper的日志输出路径<br><code># vi bin/zkEnv.sh</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">if [ &quot;x$&#123;ZOO_LOG_DIR&#125;&quot; = &quot;x&quot; ]</span><br><span class="line">then</span><br><span class="line">   ZOO_LOG_DIR=&quot;/home/hadoop_files/hadoop_logs/zookeeper/logs&quot;</span><br><span class="line">fi</span><br><span class="line">if [ &quot;x$&#123;ZOO_LOG4J_PROP&#125;&quot; = &quot;x&quot; ]</span><br><span class="line">then</span><br><span class="line">   ZOO_LOG4J_PROP=&quot;INFO,ROLLINGFILE&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure></p>
+<p>修改zookeeper的日志配置文件<br><code># vi conf/log4j.properties</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zookeeper.root.logger=INFO,ROLLINGFILE</span><br><span class="line">log4j.appender.ROLLINGFILE=org.apache.log4j.DailyRollingFileAppender</span><br></pre></td></tr></table></figure></p>
+<p>将这个zookeeper-3.4.6的目录复制到其他的两个节点上<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># scp -r /usr/local/zookeeper-3.4.6 cluster3:/usr/local/</span><br><span class="line"># scp -r /usr/local/zookeeper-3.4.6 cluster4:/usr/local/</span><br></pre></td></tr></table></figure></p>
 <p>复制后在那两台机器上使用root用户修改目录所有者为hadoop用户，并修改他们的myid为2和3。</p>
-<p>退回hadoop用户<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># exit</span><br></pre></td></tr></table></figure></p>
+<p>退回hadoop用户<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># exit</span><br></pre></td></tr></table></figure></p>
 <p>然后使用hadoop用户，使用<code>zkServer.sh start</code>分别启动三个zookeeper，顺序无所谓。三个都启动后，使用<code>jps</code>命令查看，若有QuorumPeerMain则说明服务正常启动，没有的话，使用<code>zkServer.sh start-foreground</code>查看一下哪里出了问题。</p>
 <h2 id="安装中遇到的问题"><a href="#安装中遇到的问题" class="headerlink" title="安装中遇到的问题"></a>安装中遇到的问题</h2><ol>
 <li><p>zookeeper启动不了<br>使用<code>zkServer.sh start-foreground</code>运行zookeeper，显示<code>line 131:exec java: not found</code><br>解决办法：</p>
- <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># cd /usr/local</span><br><span class="line"># chown –R hadoop:hadoop zookeeper-3.4.6</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># cd /usr/local</span><br><span class="line"># chown –R hadoop:hadoop zookeeper-3.4.6</span><br></pre></td></tr></table></figure>
 <p> 改一下用户权限即可</p>
 </li>
 <li>打开logs文件夹里面的zookeeper.log显示connection refused错误<br>原因：一般来说这是配置的问题，我出现这个问题的主要原因是，我在zoo.cfg中写了三个server，但是只在server1上启动zkServer.sh所以会出现connection refused。<br>事实上只在一个机器上启动zookeeper时，使用<code>zkServer.sh status</code>查看状态时，会显示zk可能没有运行，但是这并不是说明你的zookeeper有问题，只是那两个还没启动好而已，当3台机器的zookeeper都启动后，3台机器会自动进行投票，选出一个leader两个follower，此时再用<code>zkServer.sh status</code>查看状态的时候就可以看到这台机器是leader还是follower了。</li>
@@ -282,87 +282,93 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
-                    <p class="title has-text-weight-normal">
-                        75
-                    </p>
+                    <a href="/blog/archives">
+                        <p class="title has-text-weight-normal">
+                            75
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorias
+                        Categories
                     </p>
-                    <p class="title has-text-weight-normal">
-                        8
-                    </p>
+                    <a href="/blog/categories">
+                        <p class="title has-text-weight-normal">
+                            8
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
-                    <p class="title has-text-weight-normal">
-                        32
-                    </p>
+                    <a href="/blog/tags">
+                        <p class="title has-text-weight-normal">
+                            32
+                        </p>
+                    </a>
                 </div>
             </div>
         </nav>
         
         <div class="level">
-            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                SEGUIR</a>
+            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
+                Follow</a>
         </div>
         
         
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Github" href="https://github.com/Davidham3">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Email" href="/blog/chaosong@bjtu.edu.cn">
                 
                 <i class="fa fa-envelope"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Weibo" href="http://weibo.com/Davidham3">
                 
                 <i class="fab fa-weibo"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Facebook" href="https://facebook.com">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Twitter" href="https://twitter.com">
                 
                 <i class="fab fa-twitter"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Dribbble" href="https://dribbble.com">
                 
                 <i class="fab fa-dribbble"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="RSS" href="/blog/">
                 
                 <i class="fas fa-rss"></i>
@@ -379,7 +385,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -390,7 +396,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorias
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -469,7 +475,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -544,7 +550,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -810,7 +816,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1057,7 +1063,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -1132,7 +1138,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -1398,7 +1404,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1648,8 +1654,8 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Davidham&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
                 
                 </p>
             </div>
@@ -1658,7 +1664,7 @@
                 <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
                         
                         <i class="fab fa-creative-commons"></i>
                         
@@ -1666,7 +1672,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
                         
                         <i class="fab fa-creative-commons-by"></i>
                         
@@ -1674,7 +1680,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
                         
                         <i class="fab fa-github"></i>
                         
@@ -1691,8 +1697,13 @@
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
 <script>moment.locale("zh-Hans");</script>
 
+
 <script>
 var IcarusThemeSettings = {
+    site: {
+        url: 'https://davidham3.github.io',
+        external_link: {"enable":true,"exclude":[]}
+    },
     article: {
         highlight: {
             clipboard: true,
@@ -1703,22 +1714,22 @@ var IcarusThemeSettings = {
 </script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
 
 
 
-    
-    
+
+
 <script src="/blog/js/animation.js"></script>
 
-    
-    
+
+
 <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
 <script src="/blog/js/gallery.js" defer></script>
 
-    
-    
+
+
 <div id="outdated">
     <h6>Your browser is out-of-date!</h6>
     <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
@@ -1736,8 +1747,8 @@ var IcarusThemeSettings = {
     });
 </script>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     MathJax.Hub.Config({
@@ -1759,24 +1770,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-    
-    
+
+
 <a id="back-to-top" title="Back to Top" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/blog/js/back-to-top.js" defer></script>
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
 
 
 <script src="/blog/js/main.js" defer></script>
@@ -1797,10 +1808,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
+                POSTS: 'Posts',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categorias',
-                TAGS: 'Etiquetas',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',

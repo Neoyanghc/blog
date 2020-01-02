@@ -11,7 +11,7 @@
 
 
     <meta name="description" content="ICML 2017，大体思路：卷积+一个线性门控单元，替代了传统的RNN进行language modeling，后来的Facebook将这个用于机器翻译，提出了卷积版的seq2seq模型。原文链接：Language Modeling with Gated Convolutional Networks">
-<meta name="keywords" content="machine learning,deep learning,natural language processing,language modeling">
+<meta name="keywords" content="deep learning,machine learning,natural language processing,language modeling">
 <meta property="og:type" content="article">
 <meta property="og:title" content="门控卷积网络语言建模">
 <meta property="og:url" content="https://davidham3.github.io/2018/05/23/门控卷积网络语言建模/index.html">
@@ -149,7 +149,7 @@
             
         </h1>
         <div class="content">
-            <p>ICML 2017，大体思路：卷积+一个线性门控单元，替代了传统的RNN进行language modeling，后来的Facebook将这个用于机器翻译，提出了卷积版的seq2seq模型。原文链接：<a href="https://arxiv.org/abs/1612.08083" target="_blank" rel="noopener">Language Modeling with Gated Convolutional Networks</a><br><a id="more"></a></p>
+            <p>ICML 2017，大体思路：卷积+一个线性门控单元，替代了传统的RNN进行language modeling，后来的Facebook将这个用于机器翻译，提出了卷积版的seq2seq模型。原文链接：<a href="https://arxiv.org/abs/1612.08083">Language Modeling with Gated Convolutional Networks</a><br><a id="more"></a></p>
 <h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>当前流行的语言建模模型是基于RNN的。在这类任务上的成功经常和他们捕捉unbound context有关。这篇文章中我们提出了一个通过堆叠convolutions的finite context方法，卷积可以变得更有效因为他们可以在序列上并行。我们提出了一个新型的简单的门控机制，这个门控机制表现的要比Oord et al.(2016b)要好，我们也探究了关键架构决策的影响。我们提出的方法在WikiText-103上达到了最好的效果，even though it features long-term dependencies，在Google Billion Words上也达到了最好的效果。Our model reduces the latency to score a sentece by an order of magnitude compared to a recurrent baseline. 据我们所知，这是在大规模语言任务上第一次一个非循环结构的方法超越了强有力的循环模型。</p>
 <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>统计语言模型估计一个单词序列的概率分布，通过给定当前的单词序列，对下一个单词的概率进行建模<br>$$P(w_0, …, w_N) = P(w_0)\prod^N_{i=1}P(w_i \mid w_0, …, w_{i-1})$$<br>其中$w_i$是单词表中的单词下标。语言模型对语音识别(Yu &amp; Deng, 2014)和机器翻译(Koehn, 2010)来说是很重要的一部分。<br>最近，神经网络(Bengio et al., 2014; Mikolov et al., 2010; Jozefowicz et al., 2016)已经展示出了比传统n-gram模型(Kneser &amp; Ney, 1995; Chen &amp; Goodman, 1996)更好的语言模型。这些传统模型不能解决数据稀疏的问题，这个问题导致这些方法很难对大量的上下文进行表示，因此也不能回长范围的依赖进行表示。神经语言模型通过在连续空间中对词的嵌入解决了这个问题。当前最好的语言模型是基于LSTM（Hochreiter et al., 1997）的模型，LSTM理论上可以对任意长度的依赖进行建模。<br>在这篇文章中，我们引入了新的门控卷积网络，并且用它进行语言建模。卷积网络可以被堆叠起来来表示大量的上下文并且在越来越长的有着抽象特征（LeCun &amp; Bengio, 1995）的上下文中提取层次特征。这使得这些模型可以通过上下文为$N$，卷积核宽度为$k$，$O(\frac{N}{k})$的操作对长时间的依赖关系进行建模。相反，循环网络将输入看作是一个链式结构，因此需要一个线性时间$O(N)$的操作。<br>层次的分析输入与传统的语法分析相似，传统的语法分析建立粒度增加的语法树结构，比如，包含名词短语和动词短语的句子，短语中又包含了更内在的结构（Manning &amp; Schutze, 1999; Steedman, 2002）。层次结构也会让学习变得更简单，因为对于一个给定的上下文大小，相比链式结构，非线性单元的数量会减少，因此减轻了梯度消失的问题（Glorot &amp; Bengio, 2010）。<br>现代的硬件对高度并行的模型支持的很好。在循环神经网络中，下一个输出依赖于之前的隐藏状态，而之前的隐藏状态在序列中元素上是不能并行的。然而，卷积神经网络对这个计算流程支持的很好因为卷积是可以在输入元素上同时进行的。<br>对于RNN来说想要达到很好的效果（Jozefowicz et al., 2016），门的作用很重要。我们的门控线性单元为深层的结构对梯度提供了一条线性的通道，同时又保留了非线性的特性，减少了梯度消失的现象。<br>我们展示了门控卷积网络比其他的已经发表的语言模型都要好，比如在Google Billion Word Benchmark（Chelba et al., 2013）上的LSTM。我们也评估了我们的模型在处理长范围依赖关系WikiText-103上的能力，在这个数据集上，模型是以段落为条件进行输入的，而不是一个句子，我们在这个数据集（Merity et al., 2016）上获得了最好的效果。最后，我们展示了门控线性单元获得了更好的精度以及相比于Oord et al., 2016的LSTM门收敛的更快。</p>
 <h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>在这篇文章中我们引入了一种新的神经语言模型，这种模型使用门控时间卷积替代了使用在循环神经网络中使用的循环链接。神经语言模型（Bengio et al., 2003）提供了一种对每个单词$w_0, …, w_N$的上下文表示$H=[h_0, …, h_N]$用来预测下一个词的概率$P(w_i \mid h_i)$。循环神经网络$f$通过一个循环函数$h_i = f(h_{i-1}, w_{i-1})$计算$H$，这个循环函数本质上是一种不能并行处理的序列操作。<br>我们提出的方法使用函数$f$对输入进行卷积来获得$H = f \ast w$并且因此没有时间上的依赖，所以它能更好的在句子中的单词上并行计算。这个过程将会把许多前面出现的单词作为一个函数进行计算。对比卷积神经网络，上下文的大小是有限的，但是我们展示出了有限的上下文大小不是必须的，而且我们的模型可以表示足够大的上下文并表现的很好。<br><img src="/blog/2018/05/23/门控卷积网络语言建模/Fig1.PNG" alt="Fig1"><br>图1展示了模型的架构。词通过一个嵌入的向量进行表示，这些表示存储在lookup table$\mathbf{D}^{\vert \mathcal{V} \vert \times e}$中，其中$\vert \mathcal{V} \vert$是词库中单词的数量，$e$是嵌入的大小。我们模型的输入是一个词序列$w_0, …, w_N$，这个序列被词向量表示为$E = [D_{w_0}, …, D_{w_N}]$。我们将隐藏层$h_0, …, h_L$计算为<br>$$h_l(X) = (X \ast W + b) \otimes \sigma(X \ast V + c)$$<br>其中，$m$，$n$分别是输入和输出的feature map的数量，$k$是patch size，$X \in \mathbb{R}^{N \times m}$是层$h_l$的输入（要么是词嵌入，要么是前一层的输出）,$W \in \mathbb{R}^{k \times m \times n}$，$b \in \mathbb{R}^n$，$V \in \mathbb{R}^{k \times m \times n}$，$c \in \mathbb{R}^n$是学习到的参数，$\sigma$是sigmoid function，$\otimes$是矩阵间的element-wise product。<br>当卷积输入时，我们注意$h_i$不包含未来单词的信息。我们通过移动卷积输入来防止卷积核看到未来的上下文（Oord et al., 2016a）来解决这个问题。特别地，我们在序列的开始加入了$k-1$宽度的0作为padding补全，假设第一个输入的元素是序列的开始元素，起始的标记我们是不预测的，$k$是卷积核的宽度。<br>每层的输出是一个线性变换$X \ast W + b$通过门$\sigma(X \ast W + b)$调节。与LSTM相似的是，这些门乘以矩阵的每个元素$X \ast W + b$，并且以层次的形式控制信息的通过。我们称这种门控机制为Gated Linear Units(GLU)。通过在输入$E$上堆叠多个这样的层，可以得到每个词$H = h_L \circ … \circ h_0(E)$的上下文表示。我们将卷积和门控线性单元放在了一个preactivation residual block，这个块将输入与输出相加（He et al., 2015a）。这个块有个bottleneck结构，可以使计算更高效并且每个块有5层。<br>获得模型预测结果最简单的是使用softmax层，但是这个选择对于语料库很大和近似来说一般计算起来很慢，像noise contrastive estimation(Gutmann &amp; Hyvarinen)或层次softmax(Morin &amp; Bengio, 2005)一般更常用。我们选了后者的改良版adaptive softmax，这个算法将higher capacity分配给出现频率更高的单词，lower capacity分配给频率低的单词（Grave et al., 2016a）。这使得在训练和测试的时候内存占用更少且计算速度更快。</p>
@@ -267,87 +267,93 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
-                    <p class="title has-text-weight-normal">
-                        75
-                    </p>
+                    <a href="/blog/archives">
+                        <p class="title has-text-weight-normal">
+                            75
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorias
+                        Categories
                     </p>
-                    <p class="title has-text-weight-normal">
-                        8
-                    </p>
+                    <a href="/blog/categories">
+                        <p class="title has-text-weight-normal">
+                            8
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
-                    <p class="title has-text-weight-normal">
-                        32
-                    </p>
+                    <a href="/blog/tags">
+                        <p class="title has-text-weight-normal">
+                            32
+                        </p>
+                    </a>
                 </div>
             </div>
         </nav>
         
         <div class="level">
-            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                SEGUIR</a>
+            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
+                Follow</a>
         </div>
         
         
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Github" href="https://github.com/Davidham3">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Email" href="/blog/chaosong@bjtu.edu.cn">
                 
                 <i class="fa fa-envelope"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Weibo" href="http://weibo.com/Davidham3">
                 
                 <i class="fab fa-weibo"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Facebook" href="https://facebook.com">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Twitter" href="https://twitter.com">
                 
                 <i class="fab fa-twitter"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Dribbble" href="https://dribbble.com">
                 
                 <i class="fab fa-dribbble"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="RSS" href="/blog/">
                 
                 <i class="fas fa-rss"></i>
@@ -364,7 +370,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -375,7 +381,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorias
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -454,7 +460,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -529,7 +535,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -795,7 +801,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1042,7 +1048,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -1117,7 +1123,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -1383,7 +1389,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1633,8 +1639,8 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Davidham&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
                 
                 </p>
             </div>
@@ -1643,7 +1649,7 @@
                 <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
                         
                         <i class="fab fa-creative-commons"></i>
                         
@@ -1651,7 +1657,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
                         
                         <i class="fab fa-creative-commons-by"></i>
                         
@@ -1659,7 +1665,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
                         
                         <i class="fab fa-github"></i>
                         
@@ -1676,8 +1682,13 @@
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
 <script>moment.locale("zh-Hans");</script>
 
+
 <script>
 var IcarusThemeSettings = {
+    site: {
+        url: 'https://davidham3.github.io',
+        external_link: {"enable":true,"exclude":[]}
+    },
     article: {
         highlight: {
             clipboard: true,
@@ -1688,22 +1699,22 @@ var IcarusThemeSettings = {
 </script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
 
 
 
-    
-    
+
+
 <script src="/blog/js/animation.js"></script>
 
-    
-    
+
+
 <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
 <script src="/blog/js/gallery.js" defer></script>
 
-    
-    
+
+
 <div id="outdated">
     <h6>Your browser is out-of-date!</h6>
     <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
@@ -1721,8 +1732,8 @@ var IcarusThemeSettings = {
     });
 </script>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     MathJax.Hub.Config({
@@ -1744,24 +1755,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-    
-    
+
+
 <a id="back-to-top" title="Back to Top" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/blog/js/back-to-top.js" defer></script>
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
 
 
 <script src="/blog/js/main.js" defer></script>
@@ -1782,10 +1793,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
+                POSTS: 'Posts',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categorias',
-                TAGS: 'Etiquetas',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',

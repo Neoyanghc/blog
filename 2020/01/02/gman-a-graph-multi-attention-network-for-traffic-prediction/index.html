@@ -11,7 +11,7 @@
 
 
     <meta name="description" content="因为这篇论文的作者这两天要来我们学校做报告，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。">
-<meta name="keywords" content="deep learning,Spatial-temporal,Graph,Time Series,Attention">
+<meta name="keywords" content="deep learning,Graph,Spatial-temporal,Time Series,Attention">
 <meta property="og:type" content="article">
 <meta property="og:title" content="GMAN: A Graph Multi-Attention Network for Traffic Prediction">
 <meta property="og:url" content="https://davidham3.github.io/2020/01/02/gman-a-graph-multi-attention-network-for-traffic-prediction/index.html">
@@ -19,7 +19,7 @@
 <meta property="og:description" content="因为这篇论文的作者这两天要来我们学校做报告，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2020-01-02T12:54:11.297Z">
+<meta property="og:updated_time" content="2020-01-02T12:55:42.045Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GMAN: A Graph Multi-Attention Network for Traffic Prediction">
 <meta name="twitter:description" content="因为这篇论文的作者这两天要来我们学校做报告，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。">
@@ -136,7 +136,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    15 minutes read (About 2220 words)
+                    15 minutes read (About 2229 words)
                 </span>
                 
                 
@@ -151,7 +151,7 @@
         <div class="content">
             <p>因为这篇论文的作者这两天要来我们学校做报告，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。</p>
 <a id="more"></a>
-<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>长时间范围的交通流预测是个挑战，两方面原因：交通系统的复杂性，很多影响因素的持续变化性。我们在这篇论文中，专注于时空因素，提出了一个图多注意力机智网络（GMAN），预测路网上不同区域的交通状况。GMAN 使用一个编码解码结构，编码解码器都由多个时空注意力块组成，时空注意力块对交通状况上的时空因素的影响建模。编码器将输入的交通特征编码，解码器输出预测序列。编码解码器之间，有一个变换注意力层，用来把编码器编码后的交通特征生成成未来时间步的序列表示，然后把这个表示输入到解码器里面。变换注意力机制对历史和未来时间步的关系建模，可以减轻多步预测中的错误积累。两个真实数据集上的交通预测任务（一个是流量预测，一个是速度预测）显示 GMAN 的效果优越。在1小时的预测上，GMAN 在 MAE 比 state-of-the-art 好4%。源码在：<a href="https://github.com/zhengchuanpan/GMAN" target="_blank" rel="noopener">https://github.com/zhengchuanpan/GMAN</a></p>
+<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>长时间范围的交通流预测是个挑战，两方面原因：交通系统的复杂性，很多影响因素的持续变化性。我们在这篇论文中，专注于时空因素，提出了一个图多注意力机智网络（GMAN），预测路网上不同区域的交通状况。GMAN 使用一个编码解码结构，编码解码器都由多个时空注意力块组成，时空注意力块对交通状况上的时空因素的影响建模。编码器将输入的交通特征编码，解码器输出预测序列。编码解码器之间，有一个变换注意力层，用来把编码器编码后的交通特征生成成未来时间步的序列表示，然后把这个表示输入到解码器里面。变换注意力机制对历史和未来时间步的关系建模，可以减轻多步预测中的错误积累。两个真实数据集上的交通预测任务（一个是流量预测，一个是速度预测）显示 GMAN 的效果优越。在1小时的预测上，GMAN 在 MAE 比 state-of-the-art 好4%。源码在：<a href="https://github.com/zhengchuanpan/GMAN">https://github.com/zhengchuanpan/GMAN</a></p>
 <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>交通预测的目标是基于历史观测预测未来的交通状况。在很多应用中扮演着重要的角色。举个例子，精确的交通预测可以帮助交管部门更好的控制交通，减少拥堵。</p>
 <center><img src="/blog/2020/01/02/gman-a-graph-multi-attention-network-for-traffic-prediction/Fig1.PNG" alt="Figure1"></center>
 
@@ -177,6 +177,7 @@
 <h2 id="Spatio-Temporal-Embedding"><a href="#Spatio-Temporal-Embedding" class="headerlink" title="Spatio-Temporal Embedding"></a>Spatio-Temporal Embedding</h2><p>因为交通状况的变化受限于路网，集成路网信息到模型中很重要。为此，我们提出一个空间嵌入，把结点嵌入到向量中以此保存图结构信息。我们利用 node2vec 学习结点表示。此外，为了协同训练模型和预学习的向量，这些向量会放入一个两层全连接神经网络中。然后就可以拿到空间表示 $e^S_{v_i} \in \mathbb{R}^D$。</p>
 <p>空间嵌入只提供了固定的表示，不能表示路网中的传感器的动态关联性。我们提出了一个时间嵌入来把每个时间步编码到向量中。假设一天是 T 个时间步。我们使用 one-hot 编码星期、时间到 $\mathbb{R}^7$ 和 $\mathbb{R}^T$ 里面，然后拼接，得到 $\mathbb{R}^{T + 7}$。接下来，使用两层全连接映射到 $\mathbb{R}^D$。在我们的模型里面，给历史的 $P$ 个时间步和未来的 $Q$ 个时间步嵌入时间特征，表示为 $e^T_{t_j} \in \mathbb{R}^D$，$t_j = t_1, \dots, t_P, \dots, t_{P+Q}$。</p>
 <p>为了获得随时间变化的顶点表示，我们融合了上述的空间嵌入和时间嵌入，得到时空嵌入（STE），如图 2b 所示。结点 $v_i$ 在时间步 $t_j$，STE 定义为 $e_{v_i,t_j} = e^S_{v_i} + e^T_{t_j}$。因此，$N$ 个结点在 $P + Q$ 的时间步里的 STE 表示为 $E \in \mathbb{R}^{(P + Q) \times N \times D}$。STE 包含图结构和时间信息。它会用在空间、时间、变换注意力机制里面。</p>
+<h1 id="ST-Attention-Block"><a href="#ST-Attention-Block" class="headerlink" title="ST-Attention Block"></a>ST-Attention Block</h1><p>如图 2c 所示。</p>
 
         </div>
         
@@ -283,87 +284,93 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
-                    <p class="title has-text-weight-normal">
-                        75
-                    </p>
+                    <a href="/blog/archives">
+                        <p class="title has-text-weight-normal">
+                            75
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorias
+                        Categories
                     </p>
-                    <p class="title has-text-weight-normal">
-                        8
-                    </p>
+                    <a href="/blog/categories">
+                        <p class="title has-text-weight-normal">
+                            8
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
-                    <p class="title has-text-weight-normal">
-                        32
-                    </p>
+                    <a href="/blog/tags">
+                        <p class="title has-text-weight-normal">
+                            32
+                        </p>
+                    </a>
                 </div>
             </div>
         </nav>
         
         <div class="level">
-            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                SEGUIR</a>
+            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
+                Follow</a>
         </div>
         
         
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Github" href="https://github.com/Davidham3">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Email" href="/blog/chaosong@bjtu.edu.cn">
                 
                 <i class="fa fa-envelope"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Weibo" href="http://weibo.com/Davidham3">
                 
                 <i class="fab fa-weibo"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Facebook" href="https://facebook.com">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Twitter" href="https://twitter.com">
                 
                 <i class="fab fa-twitter"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Dribbble" href="https://dribbble.com">
                 
                 <i class="fab fa-dribbble"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="RSS" href="/blog/">
                 
                 <i class="fas fa-rss"></i>
@@ -380,7 +387,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -391,7 +398,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorias
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -470,7 +477,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -545,7 +552,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -811,7 +818,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1058,7 +1065,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -1133,7 +1140,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -1399,7 +1406,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1649,8 +1656,8 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Davidham&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
                 
                 </p>
             </div>
@@ -1659,7 +1666,7 @@
                 <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
                         
                         <i class="fab fa-creative-commons"></i>
                         
@@ -1667,7 +1674,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
                         
                         <i class="fab fa-creative-commons-by"></i>
                         
@@ -1675,7 +1682,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
                         
                         <i class="fab fa-github"></i>
                         
@@ -1692,8 +1699,13 @@
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
 <script>moment.locale("zh-Hans");</script>
 
+
 <script>
 var IcarusThemeSettings = {
+    site: {
+        url: 'https://davidham3.github.io',
+        external_link: {"enable":true,"exclude":[]}
+    },
     article: {
         highlight: {
             clipboard: true,
@@ -1704,22 +1716,22 @@ var IcarusThemeSettings = {
 </script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
 
 
 
-    
-    
+
+
 <script src="/blog/js/animation.js"></script>
 
-    
-    
+
+
 <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
 <script src="/blog/js/gallery.js" defer></script>
 
-    
-    
+
+
 <div id="outdated">
     <h6>Your browser is out-of-date!</h6>
     <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
@@ -1737,8 +1749,8 @@ var IcarusThemeSettings = {
     });
 </script>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     MathJax.Hub.Config({
@@ -1760,24 +1772,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-    
-    
+
+
 <a id="back-to-top" title="Back to Top" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/blog/js/back-to-top.js" defer></script>
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
 
 
 <script src="/blog/js/main.js" defer></script>
@@ -1798,10 +1810,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
+                POSTS: 'Posts',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categorias',
-                TAGS: 'Etiquetas',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',

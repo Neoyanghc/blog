@@ -149,66 +149,66 @@
             
         </h1>
         <div class="content">
-            <p>发现了一个特别好看的主题，yilia，但是已经不维护了，坑还挺多的，记录一下。<br><a id="more"></a><br>主题地址：<a href="https://github.com/litten/hexo-theme-yilia" target="_blank" rel="noopener">https://github.com/litten/hexo-theme-yilia</a></p>
+            <p>发现了一个特别好看的主题，yilia，但是已经不维护了，坑还挺多的，记录一下。<br><a id="more"></a><br>主题地址：<a href="https://github.com/litten/hexo-theme-yilia">https://github.com/litten/hexo-theme-yilia</a></p>
 <ol>
 <li><p>首先git clone到themes目录中，记得要改名，目录名九教yilia，把前面的hexo-theme去掉</p>
 </li>
 <li><p>修改完hexo根目录下_config.yml里面的theme为yilia后，运行服务器，发现出现</p>
- <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;%- partial(&apos;_partial/head&apos;) %&gt;</span><br><span class="line">&lt;%- partial(&apos;_partial/header&apos;) %&gt;</span><br><span class="line">&lt;%- body %&gt;</span><br><span class="line">&lt;% if (theme.sidebar &amp;&amp; theme.sidebar !== &apos;bottom&apos;)&#123; %&gt; &lt;%- partial(&apos;_partial/sidebar&apos;) %&gt; &lt;% &#125; %&gt;</span><br><span class="line">&lt;%- partial(&apos;_partial/footer&apos;) %&gt;</span><br><span class="line">&lt;%- partial(&apos;_partial/mobile-nav&apos;) %&gt; &lt;%- partial(&apos;_partial/after-footer&apos;) %&gt;</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;%- partial(&apos;_partial/head&apos;) %&gt;</span><br><span class="line">&lt;%- partial(&apos;_partial/header&apos;) %&gt;</span><br><span class="line">&lt;%- body %&gt;</span><br><span class="line">&lt;% if (theme.sidebar &amp;&amp; theme.sidebar !== &apos;bottom&apos;)&#123; %&gt; &lt;%- partial(&apos;_partial/sidebar&apos;) %&gt; &lt;% &#125; %&gt;</span><br><span class="line">&lt;%- partial(&apos;_partial/footer&apos;) %&gt;</span><br><span class="line">&lt;%- partial(&apos;_partial/mobile-nav&apos;) %&gt; &lt;%- partial(&apos;_partial/after-footer&apos;) %&gt;</span><br></pre></td></tr></table></figure>
 <p> 说明少装了插件，执行以下命令安装插件：</p>
- <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-renderer-ejs --save</span><br><span class="line">npm install hexo-renderer-stylus --save</span><br><span class="line">npm install hexo-renderer-marked --save</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-renderer-ejs --save</span><br><span class="line">npm install hexo-renderer-stylus --save</span><br><span class="line">npm install hexo-renderer-marked --save</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>进入文章后，头像就显示不出来了，这是源码中的bug。<br> 修改themes\yilia\layout_partial\left-col.ejs的第六行，改为</p>
- <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;&lt;%=theme.root%&gt;&lt;%=theme.avatar%&gt;&quot; class=&quot;js-avatar&quot;&gt;</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;&lt;%=theme.root%&gt;&lt;%=theme.avatar%&gt;&quot; class=&quot;js-avatar&quot;&gt;</span><br></pre></td></tr></table></figure>
 <p> 头像就设置为”img/avatar.jpg”即可。<br> 同时，还要修改themes\yilia\layout_partial\mobile-nav.ejs<br> 里面的第10行，修改为</p>
- <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;&lt;%=theme.root%&gt;&lt;%=theme.avatar%&gt;&quot; class=&quot;js-avatar&quot;&gt;</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;&lt;%=theme.root%&gt;&lt;%=theme.avatar%&gt;&quot; class=&quot;js-avatar&quot;&gt;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>打赏的二维码也有这个问题<br> 修改themes\yilia\layout_partial\article.ejs<br> 找到&lt;img class=”reward-img”这个标签，改后面src的值<br> 支付宝的改成这个</p>
- <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;%=theme.root%&gt;&lt;%= theme.alipay%&gt;</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;%=theme.root%&gt;&lt;%= theme.alipay%&gt;</span><br></pre></td></tr></table></figure>
 <p> 微信的改成这个</p>
- <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;%=theme.root%&gt;&lt;%= theme.weixin%&gt;</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;%=theme.root%&gt;&lt;%= theme.weixin%&gt;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>“所有文章”按钮的安装<br> 首先使用命令</p>
- <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br></pre></td></tr></table></figure>
 <p> 检查版本是不是大于6.2<br> 然后在hexo的配置文件_config.yml最下面加上</p>
- <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">jsonContent:</span><br><span class="line">    meta: false</span><br><span class="line">    pages: false</span><br><span class="line">    posts:</span><br><span class="line">    title: true</span><br><span class="line">    date: true</span><br><span class="line">    path: true</span><br><span class="line">    text: false</span><br><span class="line">    raw: false</span><br><span class="line">    content: false</span><br><span class="line">    slug: false</span><br><span class="line">    updated: false</span><br><span class="line">    comments: false</span><br><span class="line">    link: false</span><br><span class="line">    permalink: false</span><br><span class="line">    excerpt: false</span><br><span class="line">    categories: false</span><br><span class="line">    tags: true</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">jsonContent:</span><br><span class="line">    meta: false</span><br><span class="line">    pages: false</span><br><span class="line">    posts:</span><br><span class="line">    title: true</span><br><span class="line">    date: true</span><br><span class="line">    path: true</span><br><span class="line">    text: false</span><br><span class="line">    raw: false</span><br><span class="line">    content: false</span><br><span class="line">    slug: false</span><br><span class="line">    updated: false</span><br><span class="line">    comments: false</span><br><span class="line">    link: false</span><br><span class="line">    permalink: false</span><br><span class="line">    excerpt: false</span><br><span class="line">    categories: false</span><br><span class="line">    tags: true</span><br></pre></td></tr></table></figure>
 <p> 重启服务器即可</p>
 </li>
-<li><p>分享功能有问题，我发现share_jia的微信分享不好使，就使用了Mob分享<br> 先去官网注册账号<a href="http://mob.com/，然后申请shareSDK，会得到一个App" target="_blank" rel="noopener">http://mob.com/，然后申请shareSDK，会得到一个App</a> Key<br> 在yilia主题里面的_config.yml中的最后，加上</p>
- <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sharesdk: true #是否开启分享</span><br><span class="line">shareSDKappkey: 你的App Key</span><br></pre></td></tr></table></figure>
+<li><p>分享功能有问题，我发现share_jia的微信分享不好使，就使用了Mob分享<br> 先去官网注册账号<a href="http://mob.com/，然后申请shareSDK，会得到一个App">http://mob.com/，然后申请shareSDK，会得到一个App</a> Key<br> 在yilia主题里面的_config.yml中的最后，加上</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sharesdk: true #是否开启分享</span><br><span class="line">shareSDKappkey: 你的App Key</span><br></pre></td></tr></table></figure>
 <p> 然后在layout中的_partial中新建目录share，<br> 创建文件：yilia/layout/_partial/share/share.ejs</p>
- <figure class="highlight html hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">&lt;!--MOB SHARE BEGIN--&gt;</span></span><br><span class="line"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"-mob-share-ui-button -mob-share-open"</span>&gt;</span>分享<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="line"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"-mob-share-ui"</span> <span class="hljs-attr">style</span>=<span class="hljs-string">"display: none"</span>&gt;</span></span><br><span class="line">    <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"-mob-share-list"</span>&gt;</span></span><br><span class="line">        <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"-mob-share-weibo"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>新浪微博<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="line">        <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"-mob-share-tencentweibo"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>腾讯微博<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="line">        <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"-mob-share-qzone"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>QQ空间<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="line">        <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"-mob-share-qq"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>QQ好友<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="line">        <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"-mob-share-weixin"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>微信<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>                        <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"-mob-share-twitter"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Twitter<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>     </span><br><span class="line">        <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"-mob-share-youdao"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>有道云笔记<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="line">        <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"-mob-share-mingdao"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>明道<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>            </span><br><span class="line">        <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"-mob-share-linkedin"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>LinkedIn<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="line">    <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="line"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"-mob-share-close"</span>&gt;</span>取消<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="line"><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="line"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"-mob-share-ui-bg"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="line"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"-mob-share"</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"http://f1.webshare.mob.com/code/mob-share.js?appkey=&#123;&#123; theme.shareSDKappkey &#125;&#125;"</span>&gt;</span><span class="hljs-undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br><span class="line"><span class="hljs-comment">&lt;!--MOB SHARE END--&gt;</span></span><br></pre></td></tr></table></figure>
+ <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--MOB SHARE BEGIN--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"-mob-share-ui-button -mob-share-open"</span>&gt;</span>分享<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"-mob-share-ui"</span> <span class="attr">style</span>=<span class="string">"display: none"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ul</span> <span class="attr">class</span>=<span class="string">"-mob-share-list"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"-mob-share-weibo"</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>新浪微博<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"-mob-share-tencentweibo"</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>腾讯微博<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"-mob-share-qzone"</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>QQ空间<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"-mob-share-qq"</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>QQ好友<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"-mob-share-weixin"</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>微信<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span>                        <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"-mob-share-twitter"</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Twitter<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span>     </span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"-mob-share-youdao"</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>有道云笔记<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"-mob-share-mingdao"</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>明道<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span>            </span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"-mob-share-linkedin"</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>LinkedIn<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"-mob-share-close"</span>&gt;</span>取消<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"-mob-share-ui-bg"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">id</span>=<span class="string">"-mob-share"</span> <span class="attr">src</span>=<span class="string">"http://f1.webshare.mob.com/code/mob-share.js?appkey=&#123;&#123; theme.shareSDKappkey &#125;&#125;"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--MOB SHARE END--&gt;</span></span><br></pre></td></tr></table></figure>
 <p> 然后编辑layout/_partial/article.ejs<br> 找个合适的位置加入以下内容</p>
- <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;% if (!index &amp;&amp; theme.sharesdk)&#123; %&gt;</span><br><span class="line">    &lt;%- partial(&apos;_partial/share/share.ejs&apos;) %&gt;</span><br><span class="line">&lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;% if (!index &amp;&amp; theme.sharesdk)&#123; %&gt;</span><br><span class="line">    &lt;%- partial(&apos;_partial/share/share.ejs&apos;) %&gt;</span><br><span class="line">&lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>左边昵称的字体有点丑，在themes\yilia\source\main.0cf68a.css里面修改，找到header-author，修改里面的font-family，我改成了</p>
- <figure class="highlight css hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-selector-tag">font-family</span><span class="hljs-selector-pseudo">:"Times</span> <span class="hljs-selector-tag">New</span> <span class="hljs-selector-tag">Roman</span>",<span class="hljs-selector-tag">Georgia</span>,<span class="hljs-selector-tag">Serif</span></span><br></pre></td></tr></table></figure>
+ <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">font-family</span><span class="selector-pseudo">:"Times</span> <span class="selector-tag">New</span> <span class="selector-tag">Roman</span>",<span class="selector-tag">Georgia</span>,<span class="selector-tag">Serif</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>之前的那个share_jia我修复了，之前微信分享之所以不成功，好像是因为百度网盘取消了生成二维码的功能，导致之前的链接不可用了。解决方法是修改themes\yilia\layout_partial\post\share.ejs<br> 把第49行中的<code>//pan.baidu.com/share/qrcode?url=</code>修改为</p>
- <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">//api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">//api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>如何在左侧显示总文章数？<br> 修改themes\yilia\layout_partial\left-col.ejs<br> 在</p>
- <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;nav class=&quot;header-menu&quot;&gt;</span><br><span class="line">    &lt;ul&gt;</span><br><span class="line">    &lt;% for (var i in theme.menu)&#123; %&gt;</span><br><span class="line">        &lt;li&gt;&lt;a href=&quot;&lt;%- url_for(theme.menu[i]) %&gt;&quot;&gt;&lt;%= i %&gt;&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">    &lt;%&#125;%&gt;</span><br><span class="line">    &lt;/ul&gt;</span><br><span class="line">&lt;/nav&gt;</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;nav class=&quot;header-menu&quot;&gt;</span><br><span class="line">    &lt;ul&gt;</span><br><span class="line">    &lt;% for (var i in theme.menu)&#123; %&gt;</span><br><span class="line">        &lt;li&gt;&lt;a href=&quot;&lt;%- url_for(theme.menu[i]) %&gt;&quot;&gt;&lt;%= i %&gt;&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">    &lt;%&#125;%&gt;</span><br><span class="line">    &lt;/ul&gt;</span><br><span class="line">&lt;/nav&gt;</span><br></pre></td></tr></table></figure>
 <p> 后面加入</p>
- <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;nav&gt;</span><br><span class="line">    总文章数 &lt;%=site.posts.length%&gt;</span><br><span class="line">&lt;/nav&gt;</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;nav&gt;</span><br><span class="line">    总文章数 &lt;%=site.posts.length%&gt;</span><br><span class="line">&lt;/nav&gt;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>添加评论系统<br>yilia默认带了几个系统，但我是从next这个主题转过来的，之前用的是来必力(livere)，不想换了，就得手动在yilia里面加。<br>首先是去注册livere，然后获取到自己的id<br>新建themes\yilia\layout_partial\comment\livere.ejs<br>内容如下：</p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 来必力City版安装代码 --&gt;</span><br><span class="line">&lt;div id=&quot;lv-container&quot; data-id=&quot;city&quot; data-uid=&quot;&lt;%=theme.livere_uid%&gt;&quot;&gt;</span><br><span class="line">&lt;script type=&quot;text/javascript&quot;&gt;</span><br><span class="line">    (function(d, s) &#123;</span><br><span class="line">        var j, e = d.getElementsByTagName(s)[0];</span><br><span class="line"></span><br><span class="line">        if (typeof LivereTower === &apos;function&apos;) &#123; return; &#125;</span><br><span class="line"></span><br><span class="line">        j = d.createElement(s);</span><br><span class="line">        j.src = &apos;https://cdn-city.livere.com/js/embed.dist.js&apos;;</span><br><span class="line">        j.async = true;</span><br><span class="line"></span><br><span class="line">        e.parentNode.insertBefore(j, e);</span><br><span class="line">    &#125;)(document, &apos;script&apos;);</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;noscript&gt;为正常使用来必力评论功能请激活JavaScript&lt;/noscript&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;!-- City版安装代码已完成 --&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 来必力City版安装代码 --&gt;</span><br><span class="line">&lt;div id=&quot;lv-container&quot; data-id=&quot;city&quot; data-uid=&quot;&lt;%=theme.livere_uid%&gt;&quot;&gt;</span><br><span class="line">&lt;script type=&quot;text/javascript&quot;&gt;</span><br><span class="line">    (function(d, s) &#123;</span><br><span class="line">        var j, e = d.getElementsByTagName(s)[0];</span><br><span class="line"></span><br><span class="line">        if (typeof LivereTower === &apos;function&apos;) &#123; return; &#125;</span><br><span class="line"></span><br><span class="line">        j = d.createElement(s);</span><br><span class="line">        j.src = &apos;https://cdn-city.livere.com/js/embed.dist.js&apos;;</span><br><span class="line">        j.async = true;</span><br><span class="line"></span><br><span class="line">        e.parentNode.insertBefore(j, e);</span><br><span class="line">    &#125;)(document, &apos;script&apos;);</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;noscript&gt;为正常使用来必力评论功能请激活JavaScript&lt;/noscript&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;!-- City版安装代码已完成 --&gt;</span><br></pre></td></tr></table></figure>
 <p>然后编辑themes\yilia\layout_partial\article.ejs<br>找到这句话：<code>&lt;% if (!index &amp;&amp; post.comments){ %&gt;</code><br>在下面直接加入：</p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;% if (theme.livere)&#123; %&gt;</span><br><span class="line">&lt;%- partial(&apos;comment/livere&apos;, &#123;</span><br><span class="line">key: post.slug,</span><br><span class="line">title: post.title,</span><br><span class="line">url: config.url+url_for(post.path)</span><br><span class="line">&#125;) %&gt;</span><br><span class="line">&lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;% if (theme.livere)&#123; %&gt;</span><br><span class="line">&lt;%- partial(&apos;comment/livere&apos;, &#123;</span><br><span class="line">key: post.slug,</span><br><span class="line">title: post.title,</span><br><span class="line">url: config.url+url_for(post.path)</span><br><span class="line">&#125;) %&gt;</span><br><span class="line">&lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
 <p>意思就是如果主题配置文件中有livere这个变量，且不为false，那就在下面加入comment/livere.ejs里面的内容<br>所以接下来需要在主题配置文件(themes\yilia_config.yml)中添加以下内容：</p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">livere: true</span><br><span class="line">livere_uid: 你的id</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">livere: true</span><br><span class="line">livere_uid: 你的id</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>添加字数统计<br>首先需要安装<a href="https://github.com/willin/hexo-wordcount" target="_blank" rel="noopener">hexo-wordcount</a><br>使用如下命令安装</p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br></pre></td></tr></table></figure>
-<h1 id="Node-版本7-6-0之前-请安装-2-x-版本-Node-js-v7-6-0-and-previous"><a href="#Node-版本7-6-0之前-请安装-2-x-版本-Node-js-v7-6-0-and-previous" class="headerlink" title="Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)"></a>Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</h1><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></table></figure>
+<li><p>添加字数统计<br>首先需要安装<a href="https://github.com/willin/hexo-wordcount">hexo-wordcount</a><br>使用如下命令安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br></pre></td></tr></table></figure>
+<h1 id="Node-版本7-6-0之前-请安装-2-x-版本-Node-js-v7-6-0-and-previous"><a href="#Node-版本7-6-0之前-请安装-2-x-版本-Node-js-v7-6-0-and-previous" class="headerlink" title="Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)"></a>Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></table></figure>
 <p>然后在themes\yilia\layout_partial\left-col.ejs中添加</p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">总字数 &lt;span class=&quot;post-count&quot;&gt;&lt;%= totalcount(site, &apos;0,0.0a&apos;) %&gt;&lt;/span&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">总字数 &lt;span class=&quot;post-count&quot;&gt;&lt;%= totalcount(site, &apos;0,0.0a&apos;) %&gt;&lt;/span&gt;</span><br></pre></td></tr></table></figure>
 <p>编辑themes\yilia\layout_partial\article.ejs<br>在header下面加入</p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;div align=&quot;center&quot; class=&quot;post-count&quot;&gt;</span><br><span class="line">    字数：&lt;%= wordcount(post.content) %&gt;字 | 预计阅读时长：&lt;%= min2read(post.content) %&gt;分钟</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;div align=&quot;center&quot; class=&quot;post-count&quot;&gt;</span><br><span class="line">    字数：&lt;%= wordcount(post.content) %&gt;字 | 预计阅读时长：&lt;%= min2read(post.content) %&gt;分钟</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
 <p>即可显示单篇字数和预计阅读时长。</p>
 </li>
-<li><p>关于访问litten.me:9005的问题，这个主题的作者之前为了更好地完善这个主题，有时候会收集用户的客户端信息，详情请见<a href="https://github.com/litten/hexo-theme-yilia/issues/528" target="_blank" rel="noopener">https://github.com/litten/hexo-theme-yilia/issues/528</a>，如果不想被统计，就将themes\yilia\source-src\js\report.js里面的内容清空，不过这个请求是异步的，不会影响博客加载速度，而且作者已经不维护了，所以关不关都行。</p>
+<li><p>关于访问litten.me:9005的问题，这个主题的作者之前为了更好地完善这个主题，有时候会收集用户的客户端信息，详情请见<a href="https://github.com/litten/hexo-theme-yilia/issues/528">https://github.com/litten/hexo-theme-yilia/issues/528</a>，如果不想被统计，就将themes\yilia\source-src\js\report.js里面的内容清空，不过这个请求是异步的，不会影响博客加载速度，而且作者已经不维护了，所以关不关都行。</p>
 </li>
 </ol>
 
@@ -324,87 +324,93 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
-                    <p class="title has-text-weight-normal">
-                        75
-                    </p>
+                    <a href="/blog/archives">
+                        <p class="title has-text-weight-normal">
+                            75
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorias
+                        Categories
                     </p>
-                    <p class="title has-text-weight-normal">
-                        8
-                    </p>
+                    <a href="/blog/categories">
+                        <p class="title has-text-weight-normal">
+                            8
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
-                    <p class="title has-text-weight-normal">
-                        32
-                    </p>
+                    <a href="/blog/tags">
+                        <p class="title has-text-weight-normal">
+                            32
+                        </p>
+                    </a>
                 </div>
             </div>
         </nav>
         
         <div class="level">
-            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                SEGUIR</a>
+            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
+                Follow</a>
         </div>
         
         
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Github" href="https://github.com/Davidham3">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Email" href="/blog/chaosong@bjtu.edu.cn">
                 
                 <i class="fa fa-envelope"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Weibo" href="http://weibo.com/Davidham3">
                 
                 <i class="fab fa-weibo"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Facebook" href="https://facebook.com">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Twitter" href="https://twitter.com">
                 
                 <i class="fab fa-twitter"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Dribbble" href="https://dribbble.com">
                 
                 <i class="fab fa-dribbble"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="RSS" href="/blog/">
                 
                 <i class="fas fa-rss"></i>
@@ -421,7 +427,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -432,7 +438,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorias
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -511,7 +517,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -586,7 +592,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -852,7 +858,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1099,7 +1105,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -1174,7 +1180,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -1440,7 +1446,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1690,8 +1696,8 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Davidham&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
                 
                 </p>
             </div>
@@ -1700,7 +1706,7 @@
                 <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
                         
                         <i class="fab fa-creative-commons"></i>
                         
@@ -1708,7 +1714,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
                         
                         <i class="fab fa-creative-commons-by"></i>
                         
@@ -1716,7 +1722,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
                         
                         <i class="fab fa-github"></i>
                         
@@ -1733,8 +1739,13 @@
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
 <script>moment.locale("zh-Hans");</script>
 
+
 <script>
 var IcarusThemeSettings = {
+    site: {
+        url: 'https://davidham3.github.io',
+        external_link: {"enable":true,"exclude":[]}
+    },
     article: {
         highlight: {
             clipboard: true,
@@ -1745,22 +1756,22 @@ var IcarusThemeSettings = {
 </script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
 
 
 
-    
-    
+
+
 <script src="/blog/js/animation.js"></script>
 
-    
-    
+
+
 <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
 <script src="/blog/js/gallery.js" defer></script>
 
-    
-    
+
+
 <div id="outdated">
     <h6>Your browser is out-of-date!</h6>
     <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
@@ -1778,8 +1789,8 @@ var IcarusThemeSettings = {
     });
 </script>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     MathJax.Hub.Config({
@@ -1801,24 +1812,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-    
-    
+
+
 <a id="back-to-top" title="Back to Top" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/blog/js/back-to-top.js" defer></script>
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
 
 
 <script src="/blog/js/main.js" defer></script>
@@ -1839,10 +1850,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
+                POSTS: 'Posts',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categorias',
-                TAGS: 'Etiquetas',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',

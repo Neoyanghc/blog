@@ -11,7 +11,7 @@
 
 
     <meta name="description" content="ACL 2018，基于LSTM+CRF，用word2vec对字符进行表示，然后用大规模自动分词的预料，将词进行表示，扔进LSTM获得细胞状态，与基于字符的LSTM的细胞状态相结合，得到序列的隐藏状态，然后套一个CRF。原文链接：Chinese NER Using Lattice LSTM">
-<meta name="keywords" content="machine learning,deep learning,natural language processing,NER">
+<meta name="keywords" content="deep learning,machine learning,natural language processing,NER">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Lattice LSTM 中文NER">
 <meta property="og:url" content="https://davidham3.github.io/2018/05/23/lattice-lstm-中文ner/index.html">
@@ -149,9 +149,9 @@
             
         </h1>
         <div class="content">
-            <p>ACL 2018，基于LSTM+CRF，用word2vec对字符进行表示，然后用大规模自动分词的预料，将词进行表示，扔进LSTM获得细胞状态，与基于字符的LSTM的细胞状态相结合，得到序列的隐藏状态，然后套一个CRF。原文链接：<a href="https://arxiv.org/abs/1805.02023" target="_blank" rel="noopener">Chinese NER Using Lattice LSTM</a><br><a id="more"></a></p>
+            <p>ACL 2018，基于LSTM+CRF，用word2vec对字符进行表示，然后用大规模自动分词的预料，将词进行表示，扔进LSTM获得细胞状态，与基于字符的LSTM的细胞状态相结合，得到序列的隐藏状态，然后套一个CRF。原文链接：<a href="https://arxiv.org/abs/1805.02023">Chinese NER Using Lattice LSTM</a><br><a id="more"></a></p>
 <h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>我们调查了lattice-structured LSTM模型在中文分词上的表现，这个模型将输入的字符序列和所有可能匹配到词典中的词进行编码。对比基于字符的方法，我们的模型明显的利用了词与词序列的信息。对于基于词的方法，lattice LSTM不会受到错误分词的影响。门控循环细胞可以使模型从序列中选取最相关的字符和单词获得更好的NER结果。实验在各种数据集上都显示出lattice LSTM比基于词和基于字的LSTM要好，获得了最好的效果。</p>
-<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>信息抽取中最基础的任务，NER近些年受到了广泛的关注。NER以往被当作一个序列标注问题来解决，实体的边界和类别标签是同时进行预测的。当前最先进的英文命名实体识别的方法是使用集成进单词表示的字符信息的LSTM-CRF模型（Lample et al., 2016; Ma and Hovy, 2016; Chiu and Nichols, 2016; Liu et al., 2018）。<br>中文NER与分词联系的很紧密。尤其是命名实体的边界也是词的边界。一个直观的想法是先分词，再标注词。然而这个pipeline会受到错误分词的影响，因为命名实体是分词中OOV中的很重要的一部分，而且不正确的实体边界划分会导致错误的NER。这个问题在open domain中很严重，因为跨领域的分词还是为解决的问题（Liu and Zhang, 2012; Jiang et al., 2013; Liu et al., 2014; Qiu and Zhang, 2015; Chen et al., 2017; Huang et al., 2017）。基于字符的方法比基于词的方法在中文NER中表现的好（He and Wang, 2008; Liu et al., 2010; Li et al., 2014）。<br>然而，基于字符的NER的一个缺点是，词与词的序列信息不能被完全利用到，然而这部分信息可能很有用。为了解决这个问题，我们通过使用一个lattice LSTM表示句子中的lexicon words，在基于字符的LSTM-CRF模型中集成了latent word information。如图1所示，我们通过使用一个大型的自动获取的词典来匹配一个句子，构建了一个词-字lattice。结果是，词序列，像“长江大桥”，“长江”，“大桥”可以用来在上下文中区分潜在的相关的命名实体，比如人名“江大桥”。<br><img src="/blog/2018/05/23/lattice-lstm-中文ner/Fig1.PNG" alt="Fig1"><br><img src="/blog/2018/05/23/lattice-lstm-中文ner/Fig2.PNG" alt="Fig2"><br>因为在lattice中有很多潜在的词-字路径，我们利用了一个lattice-LSTM结构来自动地控制句子的开始到结尾的信息流。如图2所示，门控细胞被用于动态规划信息从不同的路径到每个字符上。在NER数据上训练的lattice LSTM可以学习到如何从上下文中找到有用的单词，自动地提高NER的精度。对比基于字符的和基于单词的NER方法，我们的模型的优势在于利用在字符序列标签上的单词信息，且不会受到错误分词的影响。<br>结果显示我们的模型比字符序列标注模型和使用LSTM-CRF的单词序列标注模型都要好很多，在很多中文跨领域的NER数据集上都获得了很好的结果。我们的模型和数据在<a href="https://github.com/jiesutd/LatticeLSTM。" target="_blank" rel="noopener">https://github.com/jiesutd/LatticeLSTM。</a></p>
+<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>信息抽取中最基础的任务，NER近些年受到了广泛的关注。NER以往被当作一个序列标注问题来解决，实体的边界和类别标签是同时进行预测的。当前最先进的英文命名实体识别的方法是使用集成进单词表示的字符信息的LSTM-CRF模型（Lample et al., 2016; Ma and Hovy, 2016; Chiu and Nichols, 2016; Liu et al., 2018）。<br>中文NER与分词联系的很紧密。尤其是命名实体的边界也是词的边界。一个直观的想法是先分词，再标注词。然而这个pipeline会受到错误分词的影响，因为命名实体是分词中OOV中的很重要的一部分，而且不正确的实体边界划分会导致错误的NER。这个问题在open domain中很严重，因为跨领域的分词还是为解决的问题（Liu and Zhang, 2012; Jiang et al., 2013; Liu et al., 2014; Qiu and Zhang, 2015; Chen et al., 2017; Huang et al., 2017）。基于字符的方法比基于词的方法在中文NER中表现的好（He and Wang, 2008; Liu et al., 2010; Li et al., 2014）。<br>然而，基于字符的NER的一个缺点是，词与词的序列信息不能被完全利用到，然而这部分信息可能很有用。为了解决这个问题，我们通过使用一个lattice LSTM表示句子中的lexicon words，在基于字符的LSTM-CRF模型中集成了latent word information。如图1所示，我们通过使用一个大型的自动获取的词典来匹配一个句子，构建了一个词-字lattice。结果是，词序列，像“长江大桥”，“长江”，“大桥”可以用来在上下文中区分潜在的相关的命名实体，比如人名“江大桥”。<br><img src="/blog/2018/05/23/lattice-lstm-中文ner/Fig1.PNG" alt="Fig1"><br><img src="/blog/2018/05/23/lattice-lstm-中文ner/Fig2.PNG" alt="Fig2"><br>因为在lattice中有很多潜在的词-字路径，我们利用了一个lattice-LSTM结构来自动地控制句子的开始到结尾的信息流。如图2所示，门控细胞被用于动态规划信息从不同的路径到每个字符上。在NER数据上训练的lattice LSTM可以学习到如何从上下文中找到有用的单词，自动地提高NER的精度。对比基于字符的和基于单词的NER方法，我们的模型的优势在于利用在字符序列标签上的单词信息，且不会受到错误分词的影响。<br>结果显示我们的模型比字符序列标注模型和使用LSTM-CRF的单词序列标注模型都要好很多，在很多中文跨领域的NER数据集上都获得了很好的结果。我们的模型和数据在<a href="https://github.com/jiesutd/LatticeLSTM。">https://github.com/jiesutd/LatticeLSTM。</a></p>
 <h2 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h2><p>我们的工作与当前处理NER的神经网络一致。Hammerton(2003)尝试解决使用一个单向的LSTM解决这个问题，这个第一个处理NER的神经网络。Collobert et al. (2011)使用了一个CNN-CRF的结构，获得了和最好的统计模型相当的结果。dos Santos et al. (2015)使用了字符CNN来增强CNN-CRF模型。大部分最近的工作利用了LSTM-CRF架构。Huang et al. (2015)使用手工的拼写特征；Ma和Hovy（2016）以及Chiu and Nichols（2016）使用了一个字符CNN来表示拼写的字符；Lample et al.（2016）使用一个字符LSTM，没有使用CNN。我们的baseline基于词的系统使用了与这些相似的架构。<br>字符序列标注是处理中文NER的主要方法（Chen et al., 2006b; Lu et al., 2016; Dong et al., 2016）。已经有讨论基于词的和基于字符的方法的统计的方法对比，表明了后者一般有更好的表现（He and Wang, 2008; Liu et al., 2010; Li et al., 2014）。我们发现有着恰当的表示设定，结论同样适用于神经NER。另一方面，lattice LSTM相比于词LSTM和字符LSTM是更好的一个选择。<br>如何更好的利用词的信息在中文NER任务中受到了持续的关注（Gao et al., 2015），分词信息在NER任务中作为soft features（Zhao and Kit, 2008; Peng and Dredze, 2015; He and Sun, 2017a），使用对偶分解的分词与NER联合学习也被人研究了（Xu et al., 2014），多任务学习（Peng and Dredze, 2016）等等。我们的工作也是，聚焦于神经表示学习。尽管上述的方法可能会被分词训练数据和分词的错误影响，我们的方法不需要一个分词器。这个模型不需要考虑多任务设定，因此从概念上来看就更简单。<br>NER可以利用外部信息。特别地，词典特征已经被广泛地使用了（Collobert et al., 2011; Passos et al., 2014; Huang et al., 2015; Luo et al., 2015）。Rei(2017)使用了一个词级别的语言模型目的是增强NER的训练，在大量原始语料上实现多任务学习。Peters et al.(2017)预训练了一个字符语言模型来增强词的表示。Yang et al.(2017b)通过多任务学习探索了跨领域和跨语言的知识。我们通过在大量自动分词的文本上预训练文本嵌入词典利用了外部信息，尽管半监督技术如语言模型are orthogonal to而且也可以在我们的lattice LSTM模型中使用。<br>Lattice结构的RNN可以被看作是一个树状结构的RNN（Tai et al., 2015）对DAG的自然扩展。他们已经有被用来建模运动力学（Sun et al., 2017），dependency-discourse DAGs(Peng et al., 2017)，还有speech tokenization lattice（Sperber et al., 2017）以及对NMT（neural machine translation）编码器的多粒度分词输出。对比现在的工作，我们的lattice LSTM在动机和结构上都是不同的。比如，对于以字符为中心的lattice-LSTM-CRF序列标注设计的模型，它有循环细胞但是没有针对词的隐藏向量。据我们所知，我们第一个设计了一个新型的lattice LSTM对字母和词进行混合的表示，也是第一个使用一个基于词的lattice处理不分词的中文NER任务的。</p>
 <h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>我们跟从最好的英语NER模型（Huang et al., 2015; Ma and Hovy, 2016; Lample et al., 2016），使用LSTM-CRF作为主要的网络结构。使用$s=c_1, c_2, …, c_m$表示输入的句子，其中$c_j$表示第$j$个字符。$s$可以被看作一个单词序列$s=w_1, w_2, …, w_n$，其中$w_i$表示序列中的第$i$个单词，由一个中文分词器获得。我们使用$t(i, k)$表示句子中第$i$个单词的第$k$个字符表示下标$j$。取图1的句子作为例子。如果分词结果是“南京市 长江大桥”，下标从1开始，那么$t(2, 1)=4$（长），$t(1, 3)=3$（市）。我们使用BIOES标记（Ratinov and Roth, 2009）对基于词和基于字的NER进行标记。<br><img src="/blog/2018/05/23/lattice-lstm-中文ner/Fig3.PNG" alt="Fig3"></p>
 <h3 id="基于字符的模型"><a href="#基于字符的模型" class="headerlink" title="基于字符的模型"></a>基于字符的模型</h3><p>基于字符的模型如图3(a)所示。它在$c_1, c_2, …, c_m$上使用了LSTM-CRF模型。每个字符$c_j$表示为<br>$$x^c_j = e^c(c_j)$$<br>其中$e^c$表示一个字符嵌入到了lookup table中。<br>一个双向LSTM（与式11同结构）被使用在$x_1, x_2, …, x_m$来获取从左到右的$\overrightarrow{h}^c_1, \overrightarrow{h}^c_2, …, \overrightarrow{h}^c_m$和从右到左的$\overleftarrow{h}^c_1, \overleftarrow{h}^c_2, …, \overleftarrow{h}^c_m$隐藏状态，这两个隐藏状态有两组不同的参数。每个字符的隐藏向量表示为<br>$$h^c_j = [\overrightarrow{h}^c_j, \overleftarrow{h}^c_j]$$<br>一个标准的CRF模型被用在$h^c_1, h^c_2, …, h^c_m$上来进行序列标注。</p>
@@ -280,87 +280,93 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
-                    <p class="title has-text-weight-normal">
-                        75
-                    </p>
+                    <a href="/blog/archives">
+                        <p class="title has-text-weight-normal">
+                            75
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorias
+                        Categories
                     </p>
-                    <p class="title has-text-weight-normal">
-                        8
-                    </p>
+                    <a href="/blog/categories">
+                        <p class="title has-text-weight-normal">
+                            8
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
-                    <p class="title has-text-weight-normal">
-                        32
-                    </p>
+                    <a href="/blog/tags">
+                        <p class="title has-text-weight-normal">
+                            32
+                        </p>
+                    </a>
                 </div>
             </div>
         </nav>
         
         <div class="level">
-            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                SEGUIR</a>
+            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
+                Follow</a>
         </div>
         
         
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Github" href="https://github.com/Davidham3">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Email" href="/blog/chaosong@bjtu.edu.cn">
                 
                 <i class="fa fa-envelope"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Weibo" href="http://weibo.com/Davidham3">
                 
                 <i class="fab fa-weibo"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Facebook" href="https://facebook.com">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Twitter" href="https://twitter.com">
                 
                 <i class="fab fa-twitter"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Dribbble" href="https://dribbble.com">
                 
                 <i class="fab fa-dribbble"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="RSS" href="/blog/">
                 
                 <i class="fas fa-rss"></i>
@@ -377,7 +383,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -388,7 +394,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorias
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -467,7 +473,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -542,7 +548,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -808,7 +814,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1055,7 +1061,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -1130,7 +1136,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -1396,7 +1402,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1646,8 +1652,8 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Davidham&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
                 
                 </p>
             </div>
@@ -1656,7 +1662,7 @@
                 <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
                         
                         <i class="fab fa-creative-commons"></i>
                         
@@ -1664,7 +1670,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
                         
                         <i class="fab fa-creative-commons-by"></i>
                         
@@ -1672,7 +1678,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
                         
                         <i class="fab fa-github"></i>
                         
@@ -1689,8 +1695,13 @@
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
 <script>moment.locale("zh-Hans");</script>
 
+
 <script>
 var IcarusThemeSettings = {
+    site: {
+        url: 'https://davidham3.github.io',
+        external_link: {"enable":true,"exclude":[]}
+    },
     article: {
         highlight: {
             clipboard: true,
@@ -1701,22 +1712,22 @@ var IcarusThemeSettings = {
 </script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
 
 
 
-    
-    
+
+
 <script src="/blog/js/animation.js"></script>
 
-    
-    
+
+
 <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
 <script src="/blog/js/gallery.js" defer></script>
 
-    
-    
+
+
 <div id="outdated">
     <h6>Your browser is out-of-date!</h6>
     <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
@@ -1734,8 +1745,8 @@ var IcarusThemeSettings = {
     });
 </script>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     MathJax.Hub.Config({
@@ -1757,24 +1768,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-    
-    
+
+
 <a id="back-to-top" title="Back to Top" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/blog/js/back-to-top.js" defer></script>
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
 
 
 <script src="/blog/js/main.js" defer></script>
@@ -1795,10 +1806,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
+                POSTS: 'Posts',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categorias',
-                TAGS: 'Etiquetas',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',

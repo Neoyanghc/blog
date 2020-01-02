@@ -266,26 +266,26 @@
 <p>// 开机关闭Selinux，编辑Selinux配置文件<br><code># vi /etc/selinux/config</code><br>将SELINUX设置为disabled<br>如下:<br><code>SELINUX=disabled</code><br><strong>千万别把SELINUXTYPE改了！</strong></p>
 <p>// 重启<br><code># reboot</code></p>
 <p>// 重启机器后root用户查看Selinux状态<br><code># getenforce</code></p>
-<h1 id="修改hosts文件"><a href="#修改hosts文件" class="headerlink" title="修改hosts文件"></a>修改hosts文件</h1><p>假设5台机器的IP地址分别为192.168.1.211-192.168.1.215<br>每台机器都要做如下修改：<br>// 修改hosts<br><code># vi /etc/hosts</code><br>// 在最下面添加以下几行内容<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">192.168.1.211 cluster1</span><br><span class="line">192.168.1.212 cluster2</span><br><span class="line">192.168.1.213 cluster3</span><br><span class="line">192.168.1.214 cluster4</span><br><span class="line">192.168.1.215 cluster5</span><br></pre></td></tr></table></figure></p>
+<h1 id="修改hosts文件"><a href="#修改hosts文件" class="headerlink" title="修改hosts文件"></a>修改hosts文件</h1><p>假设5台机器的IP地址分别为192.168.1.211-192.168.1.215<br>每台机器都要做如下修改：<br>// 修改hosts<br><code># vi /etc/hosts</code><br>// 在最下面添加以下几行内容<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">192.168.1.211 cluster1</span><br><span class="line">192.168.1.212 cluster2</span><br><span class="line">192.168.1.213 cluster3</span><br><span class="line">192.168.1.214 cluster4</span><br><span class="line">192.168.1.215 cluster5</span><br></pre></td></tr></table></figure></p>
 <p>修改成这个样子后，对于这台机器来说，cluster1就代表了192.168.1.211，其他的也同理。</p>
 <h1 id="ntp的安装与配置"><a href="#ntp的安装与配置" class="headerlink" title="ntp的安装与配置"></a>ntp的安装与配置</h1><p>一个集群内需要有一个机器运行ntp server，其他机器用ntpdate向它同步时间。Hbase和Spark都要求时间是严格同步的，所以ntp是必需的。<br>我们将ntp server设置在cluster1上，所以只在cluster1上面安装ntpserver，在其他机器上安装ntpdate。</p>
-<p>ubuntu下使用如下命令安装<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># apt-get install ntp</span><br><span class="line"># apt-get install ntpdate</span><br></pre></td></tr></table></figure></p>
-<p>CentOS使用<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># yum install ntp</span><br><span class="line"># yum install ntpdate</span><br></pre></td></tr></table></figure></p>
+<p>ubuntu下使用如下命令安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># apt-get install ntp</span><br><span class="line"># apt-get install ntpdate</span><br></pre></td></tr></table></figure></p>
+<p>CentOS使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># yum install ntp</span><br><span class="line"># yum install ntpdate</span><br></pre></td></tr></table></figure></p>
 <p>配置时间服务器：</p>
 <p>// cluster1上执行以下操作<br><code># vi /etc/ntp.conf</code></p>
-<p>注释掉以下4行，也就是在这4行前面加#<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">server 0.centos.pool.ntp.org iburst</span><br><span class="line">server 1.centos.pool.ntp.org iburst</span><br><span class="line">server 2.centos.pool.ntp.org iburst</span><br><span class="line">server 3.centos.pool.ntp.org iburst</span><br></pre></td></tr></table></figure></p>
-<p>最下面加入以下内容，192.168.1.1和255.255.255.0分别为网关和掩码，127.127.1.0表示以本机时间为标准。<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">restrict default ignore</span><br><span class="line">restrict 192.168.1.1 mask 255.255.255.0 nomodify notrap</span><br><span class="line">server 127.127.1.0</span><br></pre></td></tr></table></figure></p>
-<p>保存后ubuntu使用<code># /etc/init.d/ntp restart</code>重启ntp服务，CentOS使用<code># service ntpd restart</code><br>除了搭载ntp server的主机，其他所有机器，设定每天00:00向ntp server同步时间，并写入日志<br><code># crontab –e</code><br>添加以下内容<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 0 * * * /usr/sbin/ntpdate cluster1&gt;&gt; /home/hadoop/ntpd.log</span><br></pre></td></tr></table></figure></p>
+<p>注释掉以下4行，也就是在这4行前面加#<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">server 0.centos.pool.ntp.org iburst</span><br><span class="line">server 1.centos.pool.ntp.org iburst</span><br><span class="line">server 2.centos.pool.ntp.org iburst</span><br><span class="line">server 3.centos.pool.ntp.org iburst</span><br></pre></td></tr></table></figure></p>
+<p>最下面加入以下内容，192.168.1.1和255.255.255.0分别为网关和掩码，127.127.1.0表示以本机时间为标准。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">restrict default ignore</span><br><span class="line">restrict 192.168.1.1 mask 255.255.255.0 nomodify notrap</span><br><span class="line">server 127.127.1.0</span><br></pre></td></tr></table></figure></p>
+<p>保存后ubuntu使用<code># /etc/init.d/ntp restart</code>重启ntp服务，CentOS使用<code># service ntpd restart</code><br>除了搭载ntp server的主机，其他所有机器，设定每天00:00向ntp server同步时间，并写入日志<br><code># crontab –e</code><br>添加以下内容<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 0 * * * /usr/sbin/ntpdate cluster1&gt;&gt; /home/hadoop/ntpd.log</span><br></pre></td></tr></table></figure></p>
 <p>这样就完成了ntp的配置</p>
 <p>// 手动同步时间，需要在每台机器上（除ntp server），使用<code>ntpdate cluster1</code>同步时间<br><code># ntpdate cluster1</code></p>
 <h1 id="新建hadoop用户"><a href="#新建hadoop用户" class="headerlink" title="新建hadoop用户"></a>新建hadoop用户</h1><p>每台机器上都要新建hadoop用户，这个用户专门用来维护集群，因为实际中使用root用户的机会很少，而且不安全。<br>// 新建hadoop组<br><code># groupadd hadoop</code></p>
 <p>// 新建hadoop用户<br><code># useradd -s /bin/bash -g hadoop -d /home/hadoop -m hadoop</code></p>
 <p>// 修改hadoop这个用户的密码<br><code># passwd hadoop</code></p>
 <h1 id="ssh密钥的生成与分发"><a href="#ssh密钥的生成与分发" class="headerlink" title="ssh密钥的生成与分发"></a>ssh密钥的生成与分发</h1><p>ssh是Linux自带的服务，不需要安装。这里的目的是让节点间实现无密码登陆。其实就是当前机器生成密钥，然后用<code>ssh-copy-id</code>复制到其他机器上，这样这台机器就可以无密码直接登陆那台机器了。Hadoop主节点需要能无密码连接到其他的机器上。</p>
-<p>在cluster1上，使用hadoop用户<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">// 使用hadoop用户</span><br><span class="line"># su hadoop</span><br><span class="line"></span><br><span class="line">// 切到home目录</span><br><span class="line">$ cd ~/</span><br><span class="line"></span><br><span class="line">// 生成密钥</span><br><span class="line">ssh-keygen -t rsa</span><br><span class="line">// 一路回车</span><br><span class="line"></span><br><span class="line">//复制密钥</span><br><span class="line">$ ssh-copy-id cluster1</span><br><span class="line">yes</span><br><span class="line">输入cluster的密码</span><br><span class="line"></span><br><span class="line">$ ssh-copy-id cluster2</span><br><span class="line">同上</span><br><span class="line"></span><br><span class="line">$ ssh-copy-id cluster3</span><br><span class="line">同上</span><br><span class="line"></span><br><span class="line">$ ssh-copy-id cluster4</span><br><span class="line">同上</span><br><span class="line"></span><br><span class="line">$ ssh-copy-id cluster5</span><br><span class="line">同上</span><br><span class="line"></span><br><span class="line">// 然后测试能否无密码登陆</span><br><span class="line">$ ssh cluster1</span><br><span class="line">$ ssh cluster2</span><br><span class="line">$ ssh cluster3</span><br><span class="line">$ ssh cluster4</span><br><span class="line">$ ssh cluster5</span><br></pre></td></tr></table></figure></p>
+<p>在cluster1上，使用hadoop用户<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">// 使用hadoop用户</span><br><span class="line"># su hadoop</span><br><span class="line"></span><br><span class="line">// 切到home目录</span><br><span class="line">$ cd ~/</span><br><span class="line"></span><br><span class="line">// 生成密钥</span><br><span class="line">ssh-keygen -t rsa</span><br><span class="line">// 一路回车</span><br><span class="line"></span><br><span class="line">//复制密钥</span><br><span class="line">$ ssh-copy-id cluster1</span><br><span class="line">yes</span><br><span class="line">输入cluster的密码</span><br><span class="line"></span><br><span class="line">$ ssh-copy-id cluster2</span><br><span class="line">同上</span><br><span class="line"></span><br><span class="line">$ ssh-copy-id cluster3</span><br><span class="line">同上</span><br><span class="line"></span><br><span class="line">$ ssh-copy-id cluster4</span><br><span class="line">同上</span><br><span class="line"></span><br><span class="line">$ ssh-copy-id cluster5</span><br><span class="line">同上</span><br><span class="line"></span><br><span class="line">// 然后测试能否无密码登陆</span><br><span class="line">$ ssh cluster1</span><br><span class="line">$ ssh cluster2</span><br><span class="line">$ ssh cluster3</span><br><span class="line">$ ssh cluster4</span><br><span class="line">$ ssh cluster5</span><br></pre></td></tr></table></figure></p>
 <p>查看登陆时是否有密码，若无密码，则配置成功。<br>以上步骤需要在cluster2上也执行一遍，为了让cluster2也可以无密码登陆到其他机器上，因为cluster2也是主节点。</p>
 <h1 id="jdk的安装与配置"><a href="#jdk的安装与配置" class="headerlink" title="jdk的安装与配置"></a>jdk的安装与配置</h1><p>安装hadoop集群，jdk是必须要装的，1.7和1.8都可以，不过从Hadoop3开始，好像只支持1.8+了，但是换成1.9和1.10会出问题，所以推荐用1.8，我这里用的是1.7。</p>
-<p>将下载好后的jdk解压到/usr/local/下<br><code># vi /etc/profile</code><br>将下面4行添加到环境变量中<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=/usr/local/jdk1.7.0_80  </span><br><span class="line">export JRE_HOME=/usr/local/jdk1.7.0_80/jre </span><br><span class="line">export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH  </span><br><span class="line">export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$JAVA_HOME:$PATH</span><br></pre></td></tr></table></figure></p>
+<p>将下载好后的jdk解压到/usr/local/下<br><code># vi /etc/profile</code><br>将下面4行添加到环境变量中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=/usr/local/jdk1.7.0_80  </span><br><span class="line">export JRE_HOME=/usr/local/jdk1.7.0_80/jre </span><br><span class="line">export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH  </span><br><span class="line">export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$JAVA_HOME:$PATH</span><br></pre></td></tr></table></figure></p>
 <p>使用<code># source /etc/profile</code>刷新环境变量<br>使用<code># java -version</code>查看java版本验证是否安装成功，如果能看到Java的版本，说明安装成功，没有问题。</p>
 
         </div>
@@ -393,87 +393,93 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
-                    <p class="title has-text-weight-normal">
-                        75
-                    </p>
+                    <a href="/blog/archives">
+                        <p class="title has-text-weight-normal">
+                            75
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorias
+                        Categories
                     </p>
-                    <p class="title has-text-weight-normal">
-                        8
-                    </p>
+                    <a href="/blog/categories">
+                        <p class="title has-text-weight-normal">
+                            8
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
-                    <p class="title has-text-weight-normal">
-                        32
-                    </p>
+                    <a href="/blog/tags">
+                        <p class="title has-text-weight-normal">
+                            32
+                        </p>
+                    </a>
                 </div>
             </div>
         </nav>
         
         <div class="level">
-            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                SEGUIR</a>
+            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
+                Follow</a>
         </div>
         
         
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Github" href="https://github.com/Davidham3">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Email" href="/blog/chaosong@bjtu.edu.cn">
                 
                 <i class="fa fa-envelope"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Weibo" href="http://weibo.com/Davidham3">
                 
                 <i class="fab fa-weibo"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Facebook" href="https://facebook.com">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Twitter" href="https://twitter.com">
                 
                 <i class="fab fa-twitter"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Dribbble" href="https://dribbble.com">
                 
                 <i class="fab fa-dribbble"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="RSS" href="/blog/">
                 
                 <i class="fas fa-rss"></i>
@@ -490,7 +496,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -501,7 +507,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorias
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -580,7 +586,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -655,7 +661,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -921,7 +927,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1168,7 +1174,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -1243,7 +1249,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -1509,7 +1515,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1759,8 +1765,8 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Davidham&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
                 
                 </p>
             </div>
@@ -1769,7 +1775,7 @@
                 <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
                         
                         <i class="fab fa-creative-commons"></i>
                         
@@ -1777,7 +1783,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
                         
                         <i class="fab fa-creative-commons-by"></i>
                         
@@ -1785,7 +1791,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
                         
                         <i class="fab fa-github"></i>
                         
@@ -1802,8 +1808,13 @@
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
 <script>moment.locale("zh-Hans");</script>
 
+
 <script>
 var IcarusThemeSettings = {
+    site: {
+        url: 'https://davidham3.github.io',
+        external_link: {"enable":true,"exclude":[]}
+    },
     article: {
         highlight: {
             clipboard: true,
@@ -1814,22 +1825,22 @@ var IcarusThemeSettings = {
 </script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
 
 
 
-    
-    
+
+
 <script src="/blog/js/animation.js"></script>
 
-    
-    
+
+
 <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
 <script src="/blog/js/gallery.js" defer></script>
 
-    
-    
+
+
 <div id="outdated">
     <h6>Your browser is out-of-date!</h6>
     <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
@@ -1847,8 +1858,8 @@ var IcarusThemeSettings = {
     });
 </script>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     MathJax.Hub.Config({
@@ -1870,24 +1881,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-    
-    
+
+
 <a id="back-to-top" title="Back to Top" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/blog/js/back-to-top.js" defer></script>
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
 
 
 <script src="/blog/js/main.js" defer></script>
@@ -1908,10 +1919,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
+                POSTS: 'Posts',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categorias',
-                TAGS: 'Etiquetas',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',

@@ -391,13 +391,19 @@ img.thumbnail {
 }
 .content code,
 .content pre {
-  font-size: 0.85em;
   font-family: "Source Code Pro", monospace, "Microsoft YaHei";
 }
+.content pre {
+  font-size: 0.85em;
+}
 .content code {
-  color: #ff3860;
-  background: transparent;
   padding: 0;
+  background: transparent;
+}
+.content > code,
+.content :not(pre) > code {
+  font-size: 0.85em;
+  color: #ff3860;
 }
 .content blockquote footer strong + cite {
   margin-left: 0.5em;
@@ -422,11 +428,21 @@ figure.highlight table tr:hover {
 figure.highlight table {
   width: auto;
 }
+figure.highlight table tr td {
+  border: none;
+}
+figure.highlight table tr:not(:first-child) td {
+  padding-top: 0;
+}
+figure.highlight table tr:not(:last-child) td {
+  padding-bottom: 0;
+}
 figure.highlight pre {
   padding: 0;
   overflow: visible;
 }
-figure.highlight pre .line {
+figure.highlight pre .line,
+figure.highlight pre code .hljs {
   line-height: 1.5rem;
 }
 figure.highlight figcaption,

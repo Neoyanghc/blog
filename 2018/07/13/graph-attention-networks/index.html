@@ -149,7 +149,7 @@
             
         </h1>
         <div class="content">
-            <p>ICLR 2018。图注意力网络，使用 self-attention 来构建 graph attentional layer，attention 会考虑当前顶点所有的邻居对它的重要性，基于谱图理论的模型不能应用到其他不同结构的图上，而这个基于attention的方法能有效的解决这个问题。原文链接：<a href="https://arxiv.org/abs/1710.10903" target="_blank" rel="noopener">Graph Attention Networks</a><br><a id="more"></a></p>
+            <p>ICLR 2018。图注意力网络，使用 self-attention 来构建 graph attentional layer，attention 会考虑当前顶点所有的邻居对它的重要性，基于谱图理论的模型不能应用到其他不同结构的图上，而这个基于attention的方法能有效的解决这个问题。原文链接：<a href="https://arxiv.org/abs/1710.10903">Graph Attention Networks</a><br><a id="more"></a></p>
 <h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>我们提出了图注意力网络(GAT)，新型图神经网络，利用自注意力层解决基于图卷积及其相似方法的缺点。通过堆叠这种层（层中的顶点会注意邻居的特征），我们可以给邻居中的顶点指定不同的权重，不需要任何一种耗时的矩阵操作（比如求逆）或依赖图结构的先验知识。我们同时解决了基于谱的图神经网络的几个关键挑战，并且使我们的模型很轻松的应用在 inductive 或 transductive 问题上。我们的 GAT 模型在4个 transductive 和 inductive 图数据集上达到且匹敌当前最先进的算法：<em>Cora</em>, <em>Citeseer</em>, <em>Pubmed citation networks</em>，<em>protein-protin interaction</em>。</p>
 <h1 id="1-INTRODUCTION"><a href="#1-INTRODUCTION" class="headerlink" title="1 INTRODUCTION"></a>1 INTRODUCTION</h1><p>CNN 结构可以有效的重复使用卷积核，在网格型的数据上应用。然而很多问题都是基于图结构的。</p>
 <p>早期的工作使用RNN来处理图结构中数据的表示。2005 年和 2009 年提出了 GNN（Graph Neural Networks）的概念，作为 RNN 的泛化，可以直接处理更一般的图结构，比如带环图、有向、无向图。GCN 包含了迭代的过程，迭代时顶点状态向前传播，后面使用一个神经网络来产生输出。Li et al., 2016使用了Cho et al., 2014提出的门控循环单元进行改进。</p>
@@ -193,7 +193,7 @@
 <p>此外，对于两种任务，我们提供了每个顶点共享的MLP分类器（完全没有整合图结构信息）的performance。</p>
 <h2 id="3-3-Experimental-Setup"><a href="#3-3-Experimental-Setup" class="headerlink" title="3.3 Experimental Setup"></a>3.3 Experimental Setup</h2><p><strong>Transductive learning</strong> 我们使用一个两层的GAT模型。超参数在Cora上优化过后在Citeseer上复用。第一层包含$K = 8$个attention head，计算得到$F’ = 8$个特征（总共64个特征），之后接一个指数线性单元（ELU）（Clevert et al., 2016）作为非线性单元。第二层用作分类：一个单个的attention head计算$C$个特征（其中$C$是类别的数量），之后用softmax激活。处理小训练集时，在模型上加正则化。在训练时，我们使用$L_2$正则化，$\lambda = 0.0005$。除此以外，两个层的输入都使用了$p = 0.6$的dropout(Srivastava et al., 2014)，在<em>normalized attention coefficients</em>上也使用了（也就是在每轮训练时，每个顶点都被随机采样邻居）。如Monti et al., 2016观察到的一样，我们发现Pubmed的训练集大小(60个样本)需要微调：我们使用$K = 8$个attention head，加强了$L_2$正则，$\lambda = 0.001$。除此以外，我们的结构都和Cora和Citeseer的一样。</p>
 <p><strong>Inductive learning</strong><br>我们使用一个三层的GAT模型。前两层$K = 4$，计算$F’ = 256$个特征（总共1024个特征），然后使用ELU。最后一层用于多类别分类：$K = 6$，每个计算121个特征，取平均后使用logistic sigmoid激活。训练集充分大所以不需要使用$L_2$正则或dropout——但是我们使用了skip connections(He et al., 2016)在attentional layer间。训练时batch size设置为2个图。为了严格的衡量出使用注意力机制的效果（与GCN相比），我们也提供了<em>constant attention mechanism</em>，$a(x, y) = 1$，使用同样的架构——也就是每个邻居上都有相同的权重。</p>
-<p>两个模型都使用了Glorot初始化(Glorot &amp; Bengio, 2010)，使用Adam SGD(Kingma &amp; Ba, 2014)优化cross-entropy，Pubmed上初始学习率是0.01，其他数据集是0.005。我们在cross-entropy loss和accuracy(transductive)或micro-F1(inductive)上都使用了early stopping策略，迭代次数为100轮。<br>代码：<a href="https://github.com/PetarV-/GAT" target="_blank" rel="noopener">https://github.com/PetarV-/GAT</a></p>
+<p>两个模型都使用了Glorot初始化(Glorot &amp; Bengio, 2010)，使用Adam SGD(Kingma &amp; Ba, 2014)优化cross-entropy，Pubmed上初始学习率是0.01，其他数据集是0.005。我们在cross-entropy loss和accuracy(transductive)或micro-F1(inductive)上都使用了early stopping策略，迭代次数为100轮。<br>代码：<a href="https://github.com/PetarV-/GAT">https://github.com/PetarV-/GAT</a></p>
 <h2 id="3-4-Results"><a href="#3-4-Results" class="headerlink" title="3.4 Results"></a>3.4 Results</h2><p><img src="/blog/2018/07/13/graph-attention-networks/Table2.JPG" alt="Table2"><br>对于transductive任务，我们提交了我们的方法100次的平均分类精度（还有标准差），也用了Kipf &amp; Welling., 2017和Monti et al., 2016的metrics。特别地，对于基于切比雪夫方法(Defferrard et al., 2016)，我们提供了二阶和三阶最好的结果。为了公平的评估注意力机制的性能，我们还评估了一个计算出64个隐含特征的GCN模型，并且尝试了ReLU和ELU激活，记录了100轮后更好的那个结果（GCN-64<em>）（结果显示ReLU更好）。<br><img src="/blog/2018/07/13/graph-attention-networks/Table3.JPG" alt="Table3"><br>对于inductive任务，我们计算了micro-averaged F1 score在两个从未见过的测试图上，平均了10次结果，也使用了Hamilton et al., 2017的metrics。特别地，因为我们的方法是监督的，我们对比了GraphSAGE。为了评估聚合所有的邻居的优点，我们还提供了我们通过修改架构（三层GraphSAGE-LSTM分别计算[512, 512, 726]个特征，128个特征用来聚合邻居）所能达到的GraphSAGE最好的结果（GraphSAGE</em>）。最后，为了公平的评估注意力机制对比GCN这样的聚合方法，我们记录了我们的constant attention GAT模型的10轮结果（Const-GAT）。<br>结果展示出我们的方法在四个数据集上都很好，和预期一致，如2.2节讨论的那样。具体来说，在Cora和Citeseer上我们的模型上升了1.5%和1.6%，推测应该是给邻居分配不同的权重起到了效果。值得注意的是在PPI数据集上：我们的GAT模型对于最好的GraphSAGE结果提升了20.5%，这意味着我们的模型可以应用到inductive上，通过观测所有的邻居，模型会有更强的预测能力。此外，针对Const-GAT也提升3.9%，再一次展现出给不同的邻居分配不同的权重的巨大提升。</p>
 <p>学习到的特征表示的有效性可以定性分析——我们提供了t-SNE(Maaten &amp; Hinton, 2008)的可视化——我们对在Cora上面预训练的GAT模型中第一层的输出做了变换（图2）。representation在二维空间中展示出了可辩别的簇。注意，这些簇对应了数据集的七个类别，验证了模型在Cora上对七类的判别能力。此外，我们可视化了归一化的attention系数（对所有的8个attention head取平均）的相对强度。像Bahdanau et al., 2015那样适当的解释这些系数需要更多的领域知识，我们会在未来的工作中研究。<br><img src="/blog/2018/07/13/graph-attention-networks/Fig2.JPG" alt="Figure2"></p>
 <h1 id="4-Conclusions"><a href="#4-Conclusions" class="headerlink" title="4 Conclusions"></a>4 Conclusions</h1><p>我们展示了图注意力网络(GAT)，新的卷积风格神经网络，利用masked self-attentional层。图注意力网络计算高效（不需要耗时的矩阵操作，在图中的顶点上并行计算），处理不同数量的邻居时对邻居中的不同顶点赋予不同的重要度，不需要依赖整个图的结构信息——因此解决了之前提出的基于谱的方法的问题。我们的这个利用attention的模型在4个数据集针对transductive和inductive（特别是对完全未见过的图），对顶点分类成功地达到了state-of-the-art的performance。</p>
@@ -311,87 +311,93 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
-                    <p class="title has-text-weight-normal">
-                        75
-                    </p>
+                    <a href="/blog/archives">
+                        <p class="title has-text-weight-normal">
+                            75
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorias
+                        Categories
                     </p>
-                    <p class="title has-text-weight-normal">
-                        8
-                    </p>
+                    <a href="/blog/categories">
+                        <p class="title has-text-weight-normal">
+                            8
+                        </p>
+                    </a>
                 </div>
             </div>
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
-                    <p class="title has-text-weight-normal">
-                        32
-                    </p>
+                    <a href="/blog/tags">
+                        <p class="title has-text-weight-normal">
+                            32
+                        </p>
+                    </a>
                 </div>
             </div>
         </nav>
         
         <div class="level">
-            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank">
-                SEGUIR</a>
+            <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
+                Follow</a>
         </div>
         
         
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Github" href="https://github.com/Davidham3">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Email" href="/blog/chaosong@bjtu.edu.cn">
                 
                 <i class="fa fa-envelope"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Weibo" href="http://weibo.com/Davidham3">
                 
                 <i class="fab fa-weibo"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Facebook" href="https://facebook.com">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Twitter" href="https://twitter.com">
                 
                 <i class="fab fa-twitter"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Dribbble" href="https://dribbble.com">
                 
                 <i class="fab fa-dribbble"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="RSS" href="/blog/">
                 
                 <i class="fas fa-rss"></i>
@@ -408,7 +414,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -419,7 +425,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorias
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -498,7 +504,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -573,7 +579,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -839,7 +845,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1086,7 +1092,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -1161,7 +1167,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -1427,7 +1433,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1677,8 +1683,8 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Davidham&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
                 
                 </p>
             </div>
@@ -1687,7 +1693,7 @@
                 <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
                         
                         <i class="fab fa-creative-commons"></i>
                         
@@ -1695,7 +1701,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
                         
                         <i class="fab fa-creative-commons-by"></i>
                         
@@ -1703,7 +1709,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
                         
                         <i class="fab fa-github"></i>
                         
@@ -1720,8 +1726,13 @@
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
 <script>moment.locale("zh-Hans");</script>
 
+
 <script>
 var IcarusThemeSettings = {
+    site: {
+        url: 'https://davidham3.github.io',
+        external_link: {"enable":true,"exclude":[]}
+    },
     article: {
         highlight: {
             clipboard: true,
@@ -1732,22 +1743,22 @@ var IcarusThemeSettings = {
 </script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
 
 
 
-    
-    
+
+
 <script src="/blog/js/animation.js"></script>
 
-    
-    
+
+
 <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
 <script src="/blog/js/gallery.js" defer></script>
 
-    
-    
+
+
 <div id="outdated">
     <h6>Your browser is out-of-date!</h6>
     <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
@@ -1765,8 +1776,8 @@ var IcarusThemeSettings = {
     });
 </script>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     MathJax.Hub.Config({
@@ -1788,24 +1799,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-    
-    
+
+
 <a id="back-to-top" title="Back to Top" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/blog/js/back-to-top.js" defer></script>
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
 
 
 <script src="/blog/js/main.js" defer></script>
@@ -1826,10 +1837,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
+                POSTS: 'Posts',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categorias',
-                TAGS: 'Etiquetas',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',
