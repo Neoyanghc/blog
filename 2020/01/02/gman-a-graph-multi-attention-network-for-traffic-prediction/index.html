@@ -10,19 +10,19 @@
 <title>GMAN: A Graph Multi-Attention Network for Traffic Prediction - Davidham&#39;s blog</title>
 
 
-    <meta name="description" content="因为这篇论文的作者这两天要来我们学校汇报，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。">
+    <meta name="description" content="因为这篇论文的作者这两天要来我们学校做报告，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。">
 <meta name="keywords" content="deep learning,Spatial-temporal,Graph,Time Series,Attention">
 <meta property="og:type" content="article">
 <meta property="og:title" content="GMAN: A Graph Multi-Attention Network for Traffic Prediction">
 <meta property="og:url" content="https://davidham3.github.io/2020/01/02/gman-a-graph-multi-attention-network-for-traffic-prediction/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="因为这篇论文的作者这两天要来我们学校汇报，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。">
+<meta property="og:description" content="因为这篇论文的作者这两天要来我们学校做报告，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2020-01-02T11:50:03.705Z">
+<meta property="og:updated_time" content="2020-01-02T12:42:34.954Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GMAN: A Graph Multi-Attention Network for Traffic Prediction">
-<meta name="twitter:description" content="因为这篇论文的作者这两天要来我们学校汇报，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。">
+<meta name="twitter:description" content="因为这篇论文的作者这两天要来我们学校做报告，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。">
 <meta name="twitter:image" content="https://davidham3.github.io/blog/images/og_image.png">
 
 
@@ -136,7 +136,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    9 minutes read (About 1323 words)
+                    12 minutes read (About 1768 words)
                 </span>
                 
                 
@@ -149,7 +149,7 @@
             
         </h1>
         <div class="content">
-            <p>因为这篇论文的作者这两天要来我们学校汇报，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。</p>
+            <p>因为这篇论文的作者这两天要来我们学校做报告，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。</p>
 <a id="more"></a>
 <h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>长时间范围的交通流预测是个挑战，两方面原因：交通系统的复杂性，很多影响因素的持续变化性。我们在这篇论文中，专注于时空因素，提出了一个图多注意力机智网络（GMAN），预测路网上不同区域的交通状况。GMAN 使用一个编码解码结构，编码解码器都由多个时空注意力块组成，时空注意力块对交通状况上的时空因素的影响建模。编码器将输入的交通特征编码，解码器输出预测序列。编码解码器之间，有一个变换注意力层，用来把编码器编码后的交通特征生成成未来时间步的序列表示，然后把这个表示输入到解码器里面。变换注意力机制对历史和未来时间步的关系建模，可以减轻多步预测中的错误积累。两个真实数据集上的交通预测任务（一个是流量预测，一个是速度预测）显示 GMAN 的效果优越。在1小时的预测上，GMAN 在 MAE 比 state-of-the-art 好4%。源码在：<a href="https://github.com/zhengchuanpan/GMAN" target="_blank" rel="noopener">https://github.com/zhengchuanpan/GMAN</a></p>
 <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>交通预测的目标是基于历史观测预测未来的交通状况。在很多应用中扮演着重要的角色。举个例子，精确的交通预测可以帮助交管部门更好的控制交通，减少拥堵。</p>
@@ -167,8 +167,14 @@
 <p>我们的贡献</p>
 <ul>
 <li>提出空间注意力和时间注意力对动态空间和非线性时间关联分别建模。此外，我们设计了一个门控融合机制，自适应地融合空间注意力和时间注意力机制的的信息。</li>
+<li>提出一个变换注意力机制将历史交通特征转换为未来的表示。这个注意力机制对历史和未来的关系直接建模，减轻错误传播的问题。</li>
+<li>我们在两个数据集上评估了我们的图多注意力网络，在 1 小时预测问题上比 state-of-the-art 提高了 4%。</li>
 </ul>
-
+<h1 id="Preliminaries"><a href="#Preliminaries" class="headerlink" title="Preliminaries"></a>Preliminaries</h1><p>路网表示为一个带全有向图 $\mathcal{G} = (\mathcal{V}, \mathcal{E}, \mathcal{A})$。$\mathcal{V}$ 是 $N$ 个结点的集合；$\mathcal{E}$ 是边集；$\mathcal{A} \in \mathbb{R}^{N \times N}$ 是邻接矩阵，表示结点间的相似性，这个相似性是结点在路网上的距离。</p>
+<p>时间步 $t$ 的路网状况表示为图信号 $X_t \in \mathbb{R}^{N \times C}$，$C$ 是特征数。</p>
+<p>研究的问题：给定 $N$ 个结点历史 $P$ 个时间步的观测值 $\mathcal{X} = (X_{t_1}, X_{t_2}, \dots. X_{t_P}) \in \mathbb{R}^{P \times N \times C}$，我们的目标是预测未来 $Q$ 个时间步所有结点的交通状况，表示为 $\hat{Y} = (\hat{X}_{t_{P+1}}, \hat{X}_{t_{P+2}}, \dots, \hat{X}_{t_{P+Q}}) \in \mathbb{R}^{Q \times N \times C}$。</p>
+<h1 id="Graph-Multi-Attention-Network"><a href="#Graph-Multi-Attention-Network" class="headerlink" title="Graph Multi-Attention Network"></a>Graph Multi-Attention Network</h1><p>图 2 描述了我们模型的架构。编码和解码器都有 STAtt Block 和残差连接。每个 ST-Attention block 由空间注意力机制、时间注意力机制和一个门控融合组成。编码器和解码器之间有个变换注意力层。我们还通过一个时空嵌入 spatial-temporal embedding (STE) 继承了图结构和时间信息到多注意力机制中。此外，为了辅助残差连接，所有层的输出都是 D 维。</p>
+<h2 id="Spatio-Temporal-Embedding"><a href="#Spatio-Temporal-Embedding" class="headerlink" title="Spatio-Temporal Embedding"></a>Spatio-Temporal Embedding</h2>
         </div>
         
         <div class="level is-size-7 is-uppercase">
@@ -189,7 +195,7 @@
 
 <div class="card">
     <div class="card-content">
-        <h3 class="menu-label has-text-centered">Like this article? Support the author with</h3>
+        <h3 class="menu-label has-text-centered">Suka dengan artikel ini? Bantu penulis dengan donasi melalui</h3>
         <div class="buttons is-centered">
             
                 
@@ -297,7 +303,7 @@
                         Etiquetas
                     </p>
                     <p class="title has-text-weight-normal">
-                        33
+                        32
                     </p>
                 </div>
             </div>
@@ -373,7 +379,7 @@
         <h3 class="menu-label">
             Nube de etiquetas
         </h3>
-        <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph/" style="font-size: 10.83px;">graph</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
+        <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
 </div>
     
@@ -816,7 +822,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/graph/">
                         <span class="tag">Graph</span>
-                        <span class="tag is-grey">23</span>
+                        <span class="tag is-grey">25</span>
                     </a>
                 </div>
                 
@@ -901,13 +907,6 @@
                     <a class="tags has-addons" href="/blog/tags/deep-learning/">
                         <span class="tag">deep learning</span>
                         <span class="tag is-grey">40</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/blog/tags/graph/">
-                        <span class="tag">graph</span>
-                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
@@ -1411,7 +1410,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/blog/tags/graph/">
                         <span class="tag">Graph</span>
-                        <span class="tag is-grey">23</span>
+                        <span class="tag is-grey">25</span>
                     </a>
                 </div>
                 
@@ -1496,13 +1495,6 @@
                     <a class="tags has-addons" href="/blog/tags/deep-learning/">
                         <span class="tag">deep learning</span>
                         <span class="tag is-grey">40</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/blog/tags/graph/">
-                        <span class="tag">graph</span>
-                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
@@ -1767,7 +1759,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
     
     
-<a id="back-to-top" title="Back to Top" href="javascript:;">
+<a id="back-to-top" title="Kembali ke atas" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/blog/js/back-to-top.js" defer></script>
