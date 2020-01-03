@@ -19,7 +19,7 @@
 <meta property="og:description" content="AAAI 2020，原文链接：https://arxiv.org/abs/1911.12093。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2020-01-03T12:54:29.532Z">
+<meta property="og:updated_time" content="2020-01-03T13:02:44.231Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multi-Range Attentive Bicomponent Graph Convolutional Network for Traffic Forecasting">
 <meta name="twitter:description" content="AAAI 2020，原文链接：https://arxiv.org/abs/1911.12093。">
@@ -136,7 +136,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    8 minutes read (About 1142 words)
+                    9 minutes read (About 1326 words)
                 </span>
                 
                 
@@ -171,7 +171,11 @@
 <h1 id="Methodology"><a href="#Methodology" class="headerlink" title="Methodology"></a>Methodology</h1><h2 id="Model-Overview"><a href="#Model-Overview" class="headerlink" title="Model Overview"></a>Model Overview</h2><center><img src="/blog/2020/01/03/multi-range-attentive-bicomponent-graph-convolutional-network-for-traffic-forecasting/Fig2.png" alt="Figure2"></center>
 
 <p>图 2 展示了 MRA-BGCN 的架构，包含两个部分：（1）双组件图卷积模块；（2）多范围注意力层。双组件图卷积模块包含多个结点图卷积层和边图卷积层，直接对结点和边的交互建模。多范围注意力层聚合不同范围的邻居信息，学习不同范围的重要性。此外，我们融合 MRA-BGCN 和 RNN 对时间依赖建模完成交通预测。</p>
-<h2 id="Bicomponent-Graph-Convolution"><a href="#Bicomponent-Graph-Convolution" class="headerlink" title="Bicomponent Graph Convolution"></a>Bicomponent Graph Convolution</h2>
+<h2 id="Bicomponent-Graph-Convolution"><a href="#Bicomponent-Graph-Convolution" class="headerlink" title="Bicomponent Graph Convolution"></a>Bicomponent Graph Convolution</h2><center><img src="/blog/2020/01/03/multi-range-attentive-bicomponent-graph-convolutional-network-for-traffic-forecasting/Fig3.png" alt="Figure3"></center>
+
+<p>图卷积可以有效聚合结点之间的交互关系，然而，交通预测中边更复杂（这句话说三遍了）。因此我们提出双组件图卷积，直接对结点和边的交互建模。</p>
+<p>Chen 等人提出边的邻近的 line graph 来建模边的关系。$G = (V, E, \bm{A})$ 表示结点有向图，$G_L = (V_L, E_L, \bm{A}_L)$ 是对应的 line graph，$G_L$ 的结点 $V_L$ 是 $E$ 中有序的边。$\bm{A}_L$ 是无权的邻接矩阵，编码了结点图中的边邻接关系，有关系就等于1。这地方符号挺乱的，我已经看懵了……</p>
+
         </div>
         
         <div class="level is-size-7 is-uppercase">
