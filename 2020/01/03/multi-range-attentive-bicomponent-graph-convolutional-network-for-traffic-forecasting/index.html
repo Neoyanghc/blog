@@ -19,7 +19,7 @@
 <meta property="og:description" content="AAAI 2020，原文链接：https://arxiv.org/abs/1911.12093。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2020-01-03T12:50:16.253Z">
+<meta property="og:updated_time" content="2020-01-03T12:54:29.532Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multi-Range Attentive Bicomponent Graph Convolutional Network for Traffic Forecasting">
 <meta name="twitter:description" content="AAAI 2020，原文链接：https://arxiv.org/abs/1911.12093。">
@@ -136,7 +136,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    7 minutes read (About 992 words)
+                    8 minutes read (About 1142 words)
                 </span>
                 
                 
@@ -152,7 +152,9 @@
             <p>AAAI 2020，原文链接：<a href="https://arxiv.org/abs/1911.12093">https://arxiv.org/abs/1911.12093</a>。</p>
 <a id="more"></a>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>交通预测在运输和公共安全中扮演重要角色，由于复杂的时空依赖和路网和交通状况带来的不确定性使这个问题很有挑战。最新的研究专注于使用图卷积网络 GCNs 对一个固定权重的图进行建模，即对空间依赖建模。然而，边，即两个结点之间的关系更加复杂且两者相互影响。我们提出了 Multi-Range Attentive Bicomponent GCN (MRA-BGCN)，一种新的用于交通预测的深度学习框架。我们先根据路网上结点的距离构建结点图，在根据不同的边的交互模式构造边图。然后，我们使用 bicomponent 图卷积实现结点和边的交互。这个多范围注意力机制用来聚合不同邻居范围的信息，自动地学习不同范围的重要性。大量的实验在两个真实数据集，METR-LA 和 PEMS-BAY 上开展，显示出我们的模型效果很好。</p>
-<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>讲了好多历史。。。然后是论点部分：</p>
+<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><center><img src="/blog/2020/01/03/multi-range-attentive-bicomponent-graph-convolutional-network-for-traffic-forecasting/Fig1.png" alt="Figure1"></center>
+
+<p>讲了好多历史。。。然后是论点部分：</p>
 <p>我们认为 DCRNN 和 STGCN 虽说集成了 GCN，但是有两个点忽略了：</p>
 <p>首先，这些方法主要关注通过在一个固定权重的图上部署 GCN 对空间依赖建模。然而，边更复杂。图 1a 中，传感器 1 和 3，还有 2 和 3，通过路网连接。显然，这些关联随当前的交通状况改变，他们之间也互相交互。图 1b 所示，现存的方法根据路网距离构建一个固定的带权图，使用 GCN 实现这些结点的交互，但是结点间的关联性在邻接矩阵中通过固定的值表示，这就忽略了边的复杂性和交互性。</p>
 <p>其次，这些方法经常使用一个给定范围内聚合的信息，比如 $k$ 阶邻居，忽略多个范围的信息。然而，不同范围的信息表现出不同的交通属性。小的范围表现出局部依赖，大范围倾向于表现全局的交通模式。此外，不同范围的信息也不是永远都具有相同的分量。举个例子，一次交通事故，一个结点主要受它最近的邻居的影响，这样模型就应该更关注它，而不是给其他的 $k$ 阶邻居相同的关注。</p>
@@ -165,7 +167,11 @@
 <h1 id="Preliminaries"><a href="#Preliminaries" class="headerlink" title="Preliminaries"></a>Preliminaries</h1><h2 id="Problem-Definition"><a href="#Problem-Definition" class="headerlink" title="Problem Definition"></a>Problem Definition</h2><p>给定历史的数据，预测未来的数据。$N$ 个结点组成的图 $G = (V, E, \bm{A})$。时间 $t$ 路网上的交通数据表示为图信号 $\bm{X}^{(t)} \in \mathbb{R}^{N \times P}$，$P$ 是特征数。交通预测是过去的数据预测未来：</p>
 <p>$$<br>[\bm{X}^{(t-T’+1):t},G] \xrightarrow{f} [\bm{X}^{(t+1)}:(t+T)],<br>$$</p>
 <p>$\bm{X}^{(t-T’+1):t} \in \mathbb{R}^{N \times P \times T’}$，$\bm{X}^{(t+1):(t+T)} \in \mathbb{R}^{N \times P \times T}$。</p>
+<h2 id="Graph-Convolution"><a href="#Graph-Convolution" class="headerlink" title="Graph Convolution"></a>Graph Convolution</h2><p>不介绍了。</p>
+<h1 id="Methodology"><a href="#Methodology" class="headerlink" title="Methodology"></a>Methodology</h1><h2 id="Model-Overview"><a href="#Model-Overview" class="headerlink" title="Model Overview"></a>Model Overview</h2><center><img src="/blog/2020/01/03/multi-range-attentive-bicomponent-graph-convolutional-network-for-traffic-forecasting/Fig2.png" alt="Figure2"></center>
 
+<p>图 2 展示了 MRA-BGCN 的架构，包含两个部分：（1）双组件图卷积模块；（2）多范围注意力层。双组件图卷积模块包含多个结点图卷积层和边图卷积层，直接对结点和边的交互建模。多范围注意力层聚合不同范围的邻居信息，学习不同范围的重要性。此外，我们融合 MRA-BGCN 和 RNN 对时间依赖建模完成交通预测。</p>
+<h2 id="Bicomponent-Graph-Convolution"><a href="#Bicomponent-Graph-Convolution" class="headerlink" title="Bicomponent Graph Convolution"></a>Bicomponent Graph Convolution</h2>
         </div>
         
         <div class="level is-size-7 is-uppercase">
