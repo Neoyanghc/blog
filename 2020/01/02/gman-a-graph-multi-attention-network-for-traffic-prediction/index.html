@@ -19,7 +19,7 @@
 <meta property="og:description" content="因为这篇论文的作者这两天要来我们学校做报告，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2020-01-02T13:13:28.027Z">
+<meta property="og:updated_time" content="2020-01-03T03:15:00.310Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GMAN: A Graph Multi-Attention Network for Traffic Prediction">
 <meta name="twitter:description" content="因为这篇论文的作者这两天要来我们学校做报告，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。">
@@ -107,7 +107,7 @@
                 
                 
                 
-                <a class="navbar-item search" title="Buscar" href="javascript:;">
+                <a class="navbar-item search" title="Search" href="javascript:;">
                     <i class="fas fa-search"></i>
                 </a>
                 
@@ -136,7 +136,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    17 minutes leer (Acerca de 2517 palabras)
+                    19 minutes read (About 2826 words)
                 </span>
                 
                 
@@ -183,7 +183,13 @@
 <p>我们将非线性变换表示为：</p>
 <p>$$\tag{1}<br>f(x) = \text{ReLU}(x\mathbf{W} + \mathbf{b}).<br>$$</p>
 <p><strong>Spatial Attention</strong> 一条路的交通状况受其他路的影响，且影响不同。这样的影响是高度动态的，随时间变化。为了建模这些属性，我们设计了一个空间注意力机制动态地捕获路网中传感器间的关联性。核心点是在不同的时间步动态地给不同的结点分配权重，如图 3 所示。对于时间步 $t_j$ 的结点 $v_i$，我们计算所有结点的带权和：</p>
-<p>$$\tag{2}<br>hs^{(l)}_{v_i,t_j} = \sum_{v \in \mathcal{V}} \alpha_{v_i, v} \cdot h^{(l-1)}_{v,t_j}<br>$$</p>
+<p>$$\tag{2}<br>hs^{(l)}_{v_i,t_j} = \sum_{v \in \mathcal{V}} \alpha_{v_i, v} \cdot h^{(l-1)}_{v,t_j},<br>$$</p>
+<p>$\alpha_{v_i, v}$ 是结点 $v$ 对  $v_i$ 的注意力分数，注意力分数之和为1：$\sum_{v \in \mathcal{V}} \alpha_{v_i, v} = 1$。</p>
+<p>在一个确定的时间步，当前交通状况和路网结构能够影响传感器之间的关联性。举个例子，路上的拥挤可能极大地影响它临近路段的交通状况。受这个直觉的启发，我们考虑使用交通特征和图结构两方面来学习注意力分数。我们把隐藏状态和时空嵌入拼接起来，使用 scaled dot-product approach (Vaswani et al. 2017) 来计算结点 $v_i$ 和 $v$ 之间的相关性：</p>
+<p>$$\tag{3}<br>s_{v_i, v} = \frac{\lang h^{(l-1)}_{v_i,t_j} \Vert\ e_{v_i,t_j}, h^{(l-1)}+{v,t_j}, \Vert e_{v,t_j} \rang}{\sqrt{2D}}<br>$$</p>
+<p>其中，$\Vert$ 表示拼接操作，$\lang \bullet, \bullet \rang$ 表示内积，$2D$ 表示 $h^{(l-1)}_{v_i,t_j} \Vert e_{v_i,t_j}$ 的维度。$s_{v_i,v}$ 通过 softmax 归一化：</p>
+<p>$$\tag{4}<br>\alpha_{v_i,v} = \frac{\text{exp}(s_{v_i,v})}{\sum_{v_r \in \mathcal{V}} \text{exp}(s_{v_i,v_r})}.<br>$$</p>
+<p>得到注意力分数 $\alpha_{v_i,v}$ 之后，隐藏状态通过公式 2 更新。</p>
 
         </div>
         
@@ -290,7 +296,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
                     <a href="/blog/archives">
                         <p class="title has-text-weight-normal">
@@ -302,7 +308,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorías
+                        Categories
                     </p>
                     <a href="/blog/categories">
                         <p class="title has-text-weight-normal">
@@ -314,7 +320,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
                     <a href="/blog/tags">
                         <p class="title has-text-weight-normal">
@@ -327,7 +333,7 @@
         
         <div class="level">
             <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
-                SEGUIR</a>
+                Follow</a>
         </div>
         
         
@@ -393,7 +399,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -404,7 +410,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorías
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -483,7 +489,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -558,7 +564,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -824,7 +830,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1071,7 +1077,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -1146,7 +1152,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -1412,7 +1418,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1804,7 +1810,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="Teclea algo..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
@@ -1816,11 +1822,11 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
-                PAGES: 'Páginas',
-                CATEGORIES: 'Categorías',
-                TAGS: 'Etiquetas',
-                UNTITLED: '(Sin título)',
+                POSTS: 'Posts',
+                PAGES: 'Pages',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+                UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',
         };
