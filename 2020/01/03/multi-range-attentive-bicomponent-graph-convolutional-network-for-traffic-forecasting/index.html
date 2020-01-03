@@ -19,7 +19,7 @@
 <meta property="og:description" content="AAAI 2020，原文链接：https://arxiv.org/abs/1911.12093。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2020-01-03T12:37:40.027Z">
+<meta property="og:updated_time" content="2020-01-03T12:50:16.253Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multi-Range Attentive Bicomponent Graph Convolutional Network for Traffic Forecasting">
 <meta name="twitter:description" content="AAAI 2020，原文链接：https://arxiv.org/abs/1911.12093。">
@@ -136,7 +136,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    6 minutes read (About 870 words)
+                    7 minutes read (About 992 words)
                 </span>
                 
                 
@@ -162,6 +162,9 @@
 <li>我们针对 bicomponent 图卷积提出多范围注意力机制，可以聚合不同范围邻居的信息，学习不同范围的重要性。</li>
 <li>我们开展了大量的实验，实验效果很好。</li>
 </ul>
+<h1 id="Preliminaries"><a href="#Preliminaries" class="headerlink" title="Preliminaries"></a>Preliminaries</h1><h2 id="Problem-Definition"><a href="#Problem-Definition" class="headerlink" title="Problem Definition"></a>Problem Definition</h2><p>给定历史的数据，预测未来的数据。$N$ 个结点组成的图 $G = (V, E, \bm{A})$。时间 $t$ 路网上的交通数据表示为图信号 $\bm{X}^{(t)} \in \mathbb{R}^{N \times P}$，$P$ 是特征数。交通预测是过去的数据预测未来：</p>
+<p>$$<br>[\bm{X}^{(t-T’+1):t},G] \xrightarrow{f} [\bm{X}^{(t+1)}:(t+T)],<br>$$</p>
+<p>$\bm{X}^{(t-T’+1):t} \in \mathbb{R}^{N \times P \times T’}$，$\bm{X}^{(t+1):(t+T)} \in \mathbb{R}^{N \times P \times T}$。</p>
 
         </div>
         
