@@ -19,7 +19,7 @@
 <meta property="og:description" content="因为这篇论文的作者这两天要来我们学校做报告，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2020-01-03T07:13:34.694Z">
+<meta property="og:updated_time" content="2020-01-03T07:49:01.913Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GMAN: A Graph Multi-Attention Network for Traffic Prediction">
 <meta name="twitter:description" content="因为这篇论文的作者这两天要来我们学校做报告，抓紧阅读一下。AAAI 2020。看了introduction 后，总结一下就是使用机器翻译里面编码解码+att的架构，只不过编码和解码都使用 attention 组成。主要的论点是空间和时间的关联性是动态的，所以设计这么一个纯注意力的框架。">
@@ -107,7 +107,7 @@
                 
                 
                 
-                <a class="navbar-item search" title="Search" href="javascript:;">
+                <a class="navbar-item search" title="Buscar" href="javascript:;">
                     <i class="fas fa-search"></i>
                 </a>
                 
@@ -136,7 +136,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    27 minutes read (About 4036 words)
+                    30 minutes leer (Acerca de 4533 palabras)
                 </span>
                 
                 
@@ -214,6 +214,17 @@
 <p>$$\tag{11}<br>H^{(l)} = z \odot H^{(l)}_S + (1 - z) \odot H^{(l)}_T,<br>$$</p>
 <p>$$\tag{12}<br>z = \sigma(H^{(l)}_S \mathbf{W}_{z,1} + H^{(l)}_T \mathbf{W}_{z,2} + \mathbf{b}_z),<br>$$</p>
 <p>门控融合机制自适应地控制每个时间步和结点上空间和时间依赖的流动。</p>
+<h2 id="Transform-Attention"><a href="#Transform-Attention" class="headerlink" title="Transform Attention"></a>Transform Attention</h2><center><img src="/blog/2020/01/02/gman-a-graph-multi-attention-network-for-traffic-prediction/Fig6.PNG" alt="Figure6"></center>
+
+<p>为了减轻错误传播的问题，我们在编码器和解码器之间加入了一个变换注意力层。它能直接地对历史时间步和未来时间步的关系建模，将交通特征编码为未来的表示，作为解码器的输入。如图 6 所示，对于结点 $v_i$ 来说，预测的时间步 $t_j \ (t_j = t_{P+1}, \dots, t_{P+Q})$ 和历史的时间步 $t \ (t_1, \dots, t_P)$ 通过时空嵌入来衡量：</p>
+<p>$$\tag{13}<br>\lambda^{(k)}_{t_j,t} = \frac{\lang f^{(k)}_{tr,1}(e_{v_i,t_j}), f^{(k)}_{tr,2}(e_{v_i,t}) \rang}{\sqrt{d}},<br>$$</p>
+<p>$$\tag{14}<br>\gamma^{(k)}_{t_j,t} = \frac{\text{exp}(\lambda^{(k)}_{t_j,t})}{\sum^{t_P}_{t_r=t_1} \text{exp}(\lambda^{(k)}_{t_j,t_r})}.<br>$$</p>
+<p>编码的交通特征通过注意力分数 $\gamma^{(k)}_{t_j,t}$ 自适应地在历史 $P$ 个时间步选择相关的特征，变换到解码器的输入：</p>
+<p>$$\tag{15}<br>h^{(l)}_{v_i,t_j} = \Vert^K_{k=1} \lbrace \sum^{t_P}_{t=t_1} \gamma^{(k)}_{t_j,t} \cdot f^{(k)}_{tr,3}(h^{(l-1)}_{v_i,t}) \rbrace.<br>$$</p>
+<h2 id="Encoder-Decoder"><a href="#Encoder-Decoder" class="headerlink" title="Encoder-Decoder"></a>Encoder-Decoder</h2><p>如图 2a 所示，GMAN 是编码解码架构。在进入编码器前，历史记录 $\mathcal{X} \in \mathbb{R}^{P \times N \times C}$ 通过全连接变换到 $H^{(0)} \in \mathbb{R}^{P \times N \times D}$。然后 $H^{(0)}$ 输入到 $L$ 个时空注意力块组成的编码器中，产生输出 $H^{(L)} \in \mathbb{R}^{P \times N \times D}$。然后变换注意力层把编码特征从 $H^{(L)}$ 转换为 $H^{(L+1)} \in \mathbb{R}^{Q \times N \times D}$。然后 $L$ 个时空注意力块的解码器产生输出 $H^{(2L + 1)} \in \mathbb{R}^{Q \times N \times D}$。最后，全连接层输出 $Q 个时间步的预测 $\hat{Y} \in \mathbb{R}^{Q \times N \times C}$。</p>
+<p>GMAN 可以通过最小化 MAE 来优化：</p>
+<p>$$\tag{16}<br>\mathcal{L}(\Theta) = \frac{1}{Q} \sum^{t_{P + Q}}_{t = t_P + 1} \vert Y_t - \hat{Y}_t \vert,<br>$$</p>
+<p>$\Theta$ 表示可学习的参数。</p>
 
         </div>
         
@@ -320,7 +331,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Posts
+                        Entradas
                     </p>
                     <a href="/blog/archives">
                         <p class="title has-text-weight-normal">
@@ -332,7 +343,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categories
+                        Categorías
                     </p>
                     <a href="/blog/categories">
                         <p class="title has-text-weight-normal">
@@ -344,7 +355,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Tags
+                        Etiquetas
                     </p>
                     <a href="/blog/tags">
                         <p class="title has-text-weight-normal">
@@ -357,7 +368,7 @@
         
         <div class="level">
             <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
-                Follow</a>
+                SEGUIR</a>
         </div>
         
         
@@ -423,7 +434,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Tag Cloud
+            Nube de etiquetas
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 12.5px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 10.83px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -434,7 +445,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categories
+                Categorías
             </h3>
             <ul class="menu-list">
             <li>
@@ -513,7 +524,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recent
+            Recientes
         </h3>
         
         <article class="media">
@@ -588,7 +599,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archives
+            Archivos
         </h3>
         <ul class="menu-list">
         
@@ -854,7 +865,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Tags
+                Etiquetas
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1101,7 +1112,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recent
+            Recientes
         </h3>
         
         <article class="media">
@@ -1176,7 +1187,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archives
+            Archivos
         </h3>
         <ul class="menu-list">
         
@@ -1442,7 +1453,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Tags
+                Etiquetas
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1834,7 +1845,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Teclea algo..." />
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
@@ -1846,11 +1857,11 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Posts',
-                PAGES: 'Pages',
-                CATEGORIES: 'Categories',
-                TAGS: 'Tags',
-                UNTITLED: '(Untitled)',
+                POSTS: 'Entradas',
+                PAGES: 'Páginas',
+                CATEGORIES: 'Categorías',
+                TAGS: 'Etiquetas',
+                UNTITLED: '(Sin título)',
             },
             CONTENT_URL: '/blog/content.json',
         };
