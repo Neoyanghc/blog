@@ -19,7 +19,7 @@
 <meta property="og:description" content="AAAI 2020，原文链接：https://arxiv.org/abs/1911.12093。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2020-01-03T13:02:44.231Z">
+<meta property="og:updated_time" content="2020-01-06T09:34:44.587Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Multi-Range Attentive Bicomponent Graph Convolutional Network for Traffic Forecasting">
 <meta name="twitter:description" content="AAAI 2020，原文链接：https://arxiv.org/abs/1911.12093。">
@@ -136,7 +136,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    9 minutes read (About 1326 words)
+                    11 minutes read (About 1633 words)
                 </span>
                 
                 
@@ -174,7 +174,11 @@
 <h2 id="Bicomponent-Graph-Convolution"><a href="#Bicomponent-Graph-Convolution" class="headerlink" title="Bicomponent Graph Convolution"></a>Bicomponent Graph Convolution</h2><center><img src="/blog/2020/01/03/multi-range-attentive-bicomponent-graph-convolutional-network-for-traffic-forecasting/Fig3.png" alt="Figure3"></center>
 
 <p>图卷积可以有效聚合结点之间的交互关系，然而，交通预测中边更复杂（这句话说三遍了）。因此我们提出双组件图卷积，直接对结点和边的交互建模。</p>
-<p>Chen 等人提出边的邻近的 line graph 来建模边的关系。$G = (V, E, \bm{A})$ 表示结点有向图，$G_L = (V_L, E_L, \bm{A}_L)$ 是对应的 line graph，$G_L$ 的结点 $V_L$ 是 $E$ 中有序的边。$\bm{A}_L$ 是无权的邻接矩阵，编码了结点图中的边邻接关系，有关系就等于1。这地方符号挺乱的，我已经看懵了……</p>
+<p>Chen 等人提出边的邻近的 line graph 来建模边的关系。$G = (V, E, \bm{A})$ 表示结点有向图，$G_L = (V_L, E_L, \bm{A}_L)$ 是对应的 line graph，$G_L$ 的结点 $V_L$ 是 $E$ 中有序的边。$\bm{A}_L$ 是无权的邻接矩阵，编码了结点图中的边邻接关系，有关系就等于1。</p>
+<p>尽管 line graph 可以考虑边的邻接，它仍然是一个无权图且只认为两条边中的一条边的汇点和另一条边的源点相同时，这两条才相关。然而，对于刻画交通预测中各种各样边的交互关系来说这不够高效。如图 3 所示，我们定义两类边的交互模式来构建边图 $G_e = (V_e, E_e, \bm{A}_e)$。$V_e$ 中的每个节点表示 $E$ 中的边。</p>
+<p><strong>Stream connectivity</strong> 在交通网络中，路网可能受它上下游的路段影响。如图 3a 所示，$(i \rightarrow j)$ 是 $(j \rightarrow k)$ 的上游的边，因此他们是相互关联的。直观上来看，如果结点 $j$ 有很多数量的邻居，那么 $(i \rightarrow j)$ 和 $(j \rightarrow k)$ 之间的关系是弱的，因为它还要受其他邻居的影响。我们使用高斯核计算边的权重用来表示 $\bm{A}_e$ 中的 stream connectivity：</p>
+<p>$$\tag{2}<br>\bm{A}_{e, (i \rightarrow j), (j \rightarrow k)} = \bm{A}_{e, (j \rightarrow k), (i \rightarrow j)} = \text{exp}(- \frac{(\text{deg}^-(j) + \text{deg}^+(j) - 2)^2}{\sigma^2})<br>$$</p>
+<p>$\text{deg}^-(j)$ 和 $\text{deg}^+(j)$ 分别表示结点 $j$ 的入度和出度，$\sigma$ 是结点度的标准差。</p>
 
         </div>
         
