@@ -19,7 +19,7 @@
 <meta property="og:description" content="之前项目中有个任务是读取一堆二进制文件，对二进制文件进行解析，然后存到HBase。由于有 .mat 文件，整个 spark 都用 pyspark 写来着，也没用 scala。最近天天都在写文档啥的，还得写毕业论文，觉得太没劲了就研究了一下优化的问题，顺便更新下博客，好久没更新了。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2020-02-12T17:12:59.865Z">
+<meta property="og:updated_time" content="2020-02-13T03:41:59.241Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="记一次pyspark性能提升，np.frombuffer的使用">
 <meta name="twitter:description" content="之前项目中有个任务是读取一堆二进制文件，对二进制文件进行解析，然后存到HBase。由于有 .mat 文件，整个 spark 都用 pyspark 写来着，也没用 scala。最近天天都在写文档啥的，还得写毕业论文，觉得太没劲了就研究了一下优化的问题，顺便更新下博客，好久没更新了。">
@@ -107,7 +107,7 @@
                 
                 
                 
-                <a class="navbar-item search" title="Buscar" href="javascript:;">
+                <a class="navbar-item search" title="Search" href="javascript:;">
                     <i class="fas fa-search"></i>
                 </a>
                 
@@ -136,7 +136,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    9 minutes leer (Acerca de 1286 palabras)
+                    9 minutes read (About 1286 words)
                 </span>
                 
                 
@@ -150,7 +150,7 @@
         </h1>
         <div class="content">
             <p>之前项目中有个任务是读取一堆二进制文件，对二进制文件进行解析，然后存到HBase。由于有 .mat 文件，整个 spark 都用 pyspark 写来着，也没用 scala。最近天天都在写文档啥的，还得写毕业论文，觉得太没劲了就研究了一下优化的问题，顺便更新下博客，好久没更新了。<br><a id="more"></a></p>
-<p>原来的数据格式很简单，就是一堆 float 类型的数字，转成了二进制的形式，每 4 个字节一个数，连续地写到了文件里面。因为文件很多，而且要存到 HBase，就选择用 Spark 来处理。每个文件差不多 300M，里面的数字很多，最后的目标是提取成文件内数据为矩阵的形式。每个文件里面有 $K \times M \times N$ 个浮点型数字。要提取成 $K$ 个 $M \times N$ 的数字。</p>
+<p>原来的数据格式很简单，就是一堆 float 类型的数字，转成了二进制的形式，每 4 个字节一个数，连续地写到了文件里面。因为文件很多，而且要存到 HBase，就选择用 Spark 来处理。每个文件差不多 300M，里面的数字很多，最后的目标是提取成文件内数据为矩阵的形式。每个文件里面有 $K \times M \times N$ 个浮点型数字。要提取成 $K$ 个 $M \times N$ 的矩阵。</p>
 <p>假设 $K = 500$，$M = 5000$, $N = 30$，首先写一个数据生成器出来：</p>
 <p>data_generator.py<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">K = <span class="number">500</span></span><br><span class="line">M = <span class="number">5000</span></span><br><span class="line">N = <span class="number">30</span></span><br><span class="line">c = K * M * N</span><br><span class="line">np.random.uniform(size=(c,)).astype(np.float32).tofile(<span class="string">'test.data'</span>)</span><br></pre></td></tr></table></figure></p>
 <p>原来不知道有这个 np.tofile，今天才知道的。。。速度很快，准确的说是太快了。。。</p>
@@ -286,7 +286,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
                     <a href="/blog/archives">
                         <p class="title has-text-weight-normal">
@@ -298,7 +298,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorías
+                        Categories
                     </p>
                     <a href="/blog/categories">
                         <p class="title has-text-weight-normal">
@@ -310,7 +310,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
                     <a href="/blog/tags">
                         <p class="title has-text-weight-normal">
@@ -323,7 +323,7 @@
         
         <div class="level">
             <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
-                SEGUIR</a>
+                Follow</a>
         </div>
         
         
@@ -361,7 +361,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 13.33px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 11.67px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -372,7 +372,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorías
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -451,7 +451,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -526,7 +526,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -803,7 +803,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1050,7 +1050,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recientes
+            Recent
         </h3>
         
         <article class="media">
@@ -1125,7 +1125,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archivos
+            Archives
         </h3>
         <ul class="menu-list">
         
@@ -1402,7 +1402,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Etiquetas
+                Tags
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1794,7 +1794,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="Teclea algo..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
@@ -1806,11 +1806,11 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
-                PAGES: 'Páginas',
-                CATEGORIES: 'Categorías',
-                TAGS: 'Etiquetas',
-                UNTITLED: '(Sin título)',
+                POSTS: 'Posts',
+                PAGES: 'Pages',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+                UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/blog/content.json',
         };
