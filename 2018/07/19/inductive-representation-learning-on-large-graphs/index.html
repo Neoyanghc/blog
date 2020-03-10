@@ -19,7 +19,7 @@
 <meta property="og:description" content="NIPS 2017。提出的方法叫 GraphSAGE，针对的问题是之前的 NRL 是 transductive，不能泛化到新结点上，而作者提出的 GraphSAGE 是 inductive。主要考虑了如何聚合顶点的邻居信息，对顶点或图进行分类。原文链接：Inductive Representation Learning on Large Graphs">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2020-03-10T03:25:47.803Z">
+<meta property="og:updated_time" content="2020-03-10T03:37:55.831Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Inductive Representation Learning on Large Graphs">
 <meta name="twitter:description" content="NIPS 2017。提出的方法叫 GraphSAGE，针对的问题是之前的 NRL 是 transductive，不能泛化到新结点上，而作者提出的 GraphSAGE 是 inductive。主要考虑了如何聚合顶点的邻居信息，对顶点或图进行分类。原文链接：Inductive Representation Learning on Large Graphs">
@@ -136,7 +136,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    33 minutes read (About 4966 words)
+                    33 minutes read (About 4961 words)
                 </span>
                 
                 
@@ -151,7 +151,7 @@
         <div class="content">
             <p>NIPS 2017。提出的方法叫 GraphSAGE，针对的问题是之前的 NRL 是 transductive，不能泛化到新结点上，而作者提出的 GraphSAGE 是 inductive。主要考虑了如何聚合顶点的邻居信息，对顶点或图进行分类。原文链接：<a href="https://arxiv.org/abs/1706.02216">Inductive Representation Learning on Large Graphs</a><br><a id="more"></a></p>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>现存的方法需要图中所有的顶点在训练 embedding 的时候都出现；这些前人的方法本质是 <em>transductive</em>，不能自然地泛化到未见过的顶点上。我们提出了 GraphSAGE，一个 <em>inductive</em> 框架，利用顶点特征信息（比如文本属性）来高效地为没有见过的顶点生成 embedding。与其为每个顶点训练单独的 embedding，我们的方法是学习一个函数，这个函数通过从一个顶点的局部邻居采样并聚合顶点特征。我们的算法在三个 inductive 顶点分类数据集上超越了那些很强的 baseline：在 citation 和 Reddit post 数据的演化的信息图中对未见过的顶点分类，在 PPI 多图数据集上可以泛化到完全未见过的图上。</p>
-<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>顶点嵌入的基本思想是使用降维技术从高维信息中提炼一个顶点的邻居信息，存到低维向量中。这些顶点嵌入之后会作为后续的机器学习系统的输入，解决像顶点分类、聚类、链接预测这样的问题。</p>
+<h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h1><p>顶点嵌入的基本思想是使用降维技术从高维信息中提炼一个顶点的邻居信息，存到低维向量中。这些顶点嵌入之后会作为后续的机器学习系统的输入，解决像顶点分类、聚类、链接预测这样的问题。</p>
 <p>然而，前人的工作专注于对一个固定的图中的顶点进行表示，很多真实的应用需要很快的对未见过的顶点或是全新的图（子图）生成 embedding。这个推断的能力对于高吞吐的机器学习系统来说很重要，这些系统都运作在不断演化的图上，而且时刻都会遇到未见过的顶点（比如 Reddit 上的文章，Youtube 上的用户或视频）。一个生成顶点 embedding 的推断方法也会帮助在拥有同样形式特征的图上进行泛化：举个例子，我们可以从一个有机物得到的 PPI 图上训练一个 embedding 生成器，然后很简单的使用这个模型利用新的有机物上收集的数据生成他们的顶点嵌入。</p>
 <p>对比 transductive 问题，推断顶点嵌入问题很困难，因为泛化未见过的顶点需要将新观测到的子图“对齐”到算法已经优化好的顶点嵌入上。一个推断模型必须学习到可以识别一个顶点邻居的结构性质，这个性质既反映了顶点在图中的局部角色，也反映了它的全局位置。</p>
 <p>很多现存的生成顶点嵌入的方法是继承于 transductive。这些方法的主流是直接使用矩阵分解目标函数对每个顶点的 embedding 进行优化，因为他们在一个固定的单个图上的顶点做预测，所以不能自然地泛化到未见过的数据。这些方法可以被修改然后在 inductive 问题上运行，但是这些修改往往计算复杂度高，在新的预测之前需要额外的梯度下降优化。当然也有一些在图结构上使用卷积神经网络的方法，在 embedding 上表现的很好。迄今为止，GCN 只在固定的图上的 transductive 问题上应用过。我们工作是扩展了 GCN 到无监督推断任务上，同时还提出了一个方法，可以让 GCN 使用可训练的聚合函数（并不是只有简单的卷积）。</p>
@@ -159,15 +159,15 @@
 <p><img src="/blog/2018/07/19/inductive-representation-learning-on-large-graphs/Fig1.JPG" alt="Figure1"></p>
 <p>我们没有对每个顶点都训练一个单独的 embeddding，我们训练了一组 <em>aggregator functions</em>，这些函数学习如何从一个顶点的局部邻居聚合特征信息（图1）。每个聚合函数从一个顶点的不同搜索深度聚合信息。测试的时候，或是说推断的时候，我们使用我们训练的系统来对完全未见过的顶点，通过使用学习到的聚合函数来生成 embedding。跟随着前人在生成顶点上的工作，我们设计了无监督的损失函数，使得 GraphSAGE 可以在没有任务监督的情况下训练。我们也展示了如何使用监督的方法训练 GraphSAGE。</p>
 <p>我们在三个顶点分类数据集上评估了我们的算法，测试了 GraphSAGE 在未见过的数据上生成有效 embedding 的能力。使用了两个基于 citation 数据和 Reddit post 数据的演化网络（分别预测 paper 和 post 类别），还有一个基于 PPI 的多图泛化实验（预测蛋白质功能）。我们的方法效果很好，跨领域，监督的方法在 F1 值上对比只使用顶点特征的方法平均提高了 51%，而且 GraphSAGE 一直都比 transductive baseline 强很多，尽管 baseline 在未见过的顶点上的运行时间要长 100 倍以上。我们提出的新的聚合结构比受图卷积启发的聚合函数更好（平均提升了 7.4%）。最后我们通过实验证明了我们方法的表达能力，尽管 GraphSAGE 是基于特征的，它却能学习到一个顶点在一个图中的结构信息，（第 5 部分）。</p>
-<h1 id="Related-work"><a href="#Related-work" class="headerlink" title="Related work"></a>Related work</h1><p><strong>Factorization-based embedding approaches.</strong> 最近的node embedding方法使用随机游走的统计和矩阵分解的目标函数。这些方法和传统的方法如谱聚类，multi-dimensional scaling，PageRank关系很近。因为这些嵌入方法对每个顶点直接训练embedding，本质上是transductive，而且需要大量的额外训练（如随机梯度下降）使他们能预测新的顶点。此外，对于这些方法中的大部分，目标函数对于embedding的正交变换是不变的，意味着嵌入空间不能自然地在图之间泛化，而且在再次训练的时候会drift。一个值得注意的例外是Yang et al.的Planetoid-I算法，是一个inductive，基于嵌入的半监督学习。然而，Planetoid-I在推断的时候不使用任何图结构信息，而在训练的时候将图结构作为一种正则化的形式。不像前面的这些方法，我们利用特征信息来训练可以对未见过的顶点生成embedding的模型。</p>
-<p><strong>Supervised learning over graphs.</strong> 除了顶点嵌入方法，还有很多在图结构数据上的监督学习方法。包括很多核方法，图的特征向量从多个图的核得到。最近又很多用于图结构的监督学习的神经网络方法。我们的方法从概念上是受到了这些方法的启发。然而，尽管这些方法试图对整个图（或子图）进行分类，我们的工作关注的是如何对单个顶点生成有效的表示。</p>
-<p><strong>Graph convolutional networks.</strong> 近些年，一些用于图的卷积神经网络被相继提出。这些方法的大部分都不能扩展到大的图上，或是为了整个图的分类而设计（或是两点都有）。然而，我们的方法与Kipf et al.提出的图卷积很相关，在训练的时候需要整个图的拉普拉斯矩阵。我们算法的一个简单的变体可以看作是GCN框架在inductive setting上的扩展，我们会在3.3说明。</p>
-<h1 id="3-GraphSAGE"><a href="#3-GraphSAGE" class="headerlink" title="3 GraphSAGE"></a>3 GraphSAGE</h1><p>我们的关键思想在于我们的方法是学习如何从一个顶点的局部邻居聚合特征信息（比如度或近邻顶点的文本特征）。3.1描述embedding的生成算法。3.2描述随机梯度下降学习参数。</p>
-<h2 id="3-1-Embedding-generation-i-e-forward-propagation-algorithm"><a href="#3-1-Embedding-generation-i-e-forward-propagation-algorithm" class="headerlink" title="3.1 Embedding generation (i.e., forward propagation) algorithm"></a>3.1 Embedding generation (i.e., forward propagation) algorithm</h2><p>假设已经学习到了$K$个聚合函数（表示为$AGGERGATE_k, \forall k \in \lbrace 1,…,K\rbrace$）的参数，对顶点的信息聚合，还有一组权重矩阵$\mathbf{W}^k, \forall k \in \lbrace 1,…,K\rbrace$，用来在模型的不同层或搜索深度间传播信息。下一节描述参数是怎么训练的。</p>
+<h1 id="2-Related-work"><a href="#2-Related-work" class="headerlink" title="2 Related work"></a>2 Related work</h1><p><strong>Factorization-based embedding approaches.</strong> 最近的 node embedding 方法使用随机游走的统计和矩阵分解的目标函数。这些方法和传统的方法如谱聚类，multi-dimensional scaling，PageRank 关系很近。因为这些嵌入方法对每个顶点直接训练 embedding，本质上是 transductive，而且需要大量的额外训练（如随机梯度下降）使他们能预测新的顶点。此外，这些方法中的大部分方法，目标函数对于 embedding 的正交变换是不变的，意味着嵌入空间不能自然地在图之间泛化，而且在再次训练的时候会 drift。一个值得注意的例外是 Yang et al. 的 Planetoid-I 算法，是一个 inductive 的方法，基于嵌入的半监督学习。然而，Planetoid-I 在推断的时候不使用任何图结构信息，而在训练的时候将图结构作为一种正则化的形式。不同于前面提到的这些方法，我们是利用特征信息训练可以对未见过的顶点生成 embedding 的模型。</p>
+<p><strong>Supervised learning over graphs.</strong> 除了顶点嵌入方法，还有很多在图结构数据上的监督学习方法。包括很多核方法，图的特征向量从多个图的核得到。最近有很多用于图结构的监督学习的神经网络方法。我们的方法从概念上是受到了这些方法的启发。然而，这些方法试图对整个图（或子图）进行分类，我们的工作关注的是如何对单个顶点生成有效的表示。</p>
+<p><strong>Graph convolutional networks.</strong> 近些年，一些用于图的卷积神经网络被相继提出。这些方法中的大部分不能扩展到大的图上，或者是为了整个图的分类而设计（或是两点都有）。我们的方法与 Kipf et al. 提出的图卷积很相关，GCN 在训练的时候需要整个图的拉普拉斯矩阵。我们算法的一个简单的变体可以看作是 GCN 框架在 inductive setting 上的扩展，我们会在 3.3 说明。</p>
+<h1 id="3-GraphSAGE"><a href="#3-GraphSAGE" class="headerlink" title="3 GraphSAGE"></a>3 GraphSAGE</h1><p>我们的核心思想在于如何从一个顶点的局部邻居聚合特征信息（比如度或近邻顶点的文本特征）。3.1 描述 embedding 的生成算法。3.2 描述随机梯度下降学习参数。</p>
+<h2 id="3-1-Embedding-generation-i-e-forward-propagation-algorithm"><a href="#3-1-Embedding-generation-i-e-forward-propagation-algorithm" class="headerlink" title="3.1 Embedding generation (i.e., forward propagation) algorithm"></a>3.1 Embedding generation (i.e., forward propagation) algorithm</h2><p>假设已经学习到了 $K$ 个聚合函数（表示为 $AGGERGATE_k, \forall k \in \lbrace 1,…,K\rbrace$ ）的参数，对顶点的信息聚合，还有一组权重矩阵 $\mathbf{W}^k, \forall k \in \lbrace 1,…,K\rbrace$，用来在模型的不同层或搜索深度间传播信息。下一节描述参数是怎么训练的。</p>
 <center><img src="/blog/2018/07/19/inductive-representation-learning-on-large-graphs/Alg1.JPG" alt="Algo1"></center>
 
-<p>算法1背后的直觉是在每次迭代，或搜索深度，顶点从他们的局部邻居聚合信息，并且随着这个过程的迭代，顶点会从越来越远的地方获得信息。</p>
-<p>算法1描述了在各整个图上生成embedding的过程，$\mathcal{G} = \left( \mathcal{V}, \Large{\varepsilon} \right)$，以及所有顶点的特征$X_v, \forall v \in \mathcal{V}$作为输入。在算法1最外层循环的每一步如下，$k$表示外循环（或搜索深度）的当前一步，$\mathbf{h}^k$表示当前这步的一个顶点的表示：首先，每个顶点$v \in \mathcal{V}$聚合了在它在中间邻居的表示，$\lbrace  \mathbf{h}^{k-1}_u, \forall u \in \mathcal{N}(u) \rbrace$，聚合到向量$\mathbf{h}^{k-1}_{\mathcal{N}(v)}$中。注意，这个聚合步骤依赖于外循环前一次迭代生成的表示（比如$k - 1$），$k = 0$表示输入的顶点特征。聚合邻居特征向量后，GraphSAGE之后拼接了顶点当前的表示，$\mathbf{h}^{k-1}_v$，核聚合的邻居向量一起，$\mathbf{h}^{k-1}_{\mathcal{N}(v)}$，拼接后的向量输入到了激活函数为$\sigma$的全连接层中，将表示变换为下一步使用的形式（$\mathbf{h}^k_v, \forall v \in \mathcal{V}$）。为了记号的简单，我们将深度为$K$的输出表示记为$\mathbf{z} \equiv \mathbf{h}^K_v, \forall v \in \mathcal{V}$。邻居表示的聚合可以通过多个聚合架构得到（在算法1中表示为$\mathrm{AGGERGATE}$），我们会在3.3讨论不同的架构。</p>
+<p>算法 1 背后的直觉是在每次迭代，或搜索深度，顶点从他们的局部邻居聚合信息，并且随着这个过程的迭代，顶点会从越来越远的地方获得信息。</p>
+<p>算法 1 描述了在各整个图上生成 embedding 的过程，$\mathcal{G} = \left( \mathcal{V}, \Large{\varepsilon} \right)$，以及所有顶点的特征$X_v, \forall v \in \mathcal{V}$作为输入。在算法1最外层循环的每一步如下，$k$表示外循环（或搜索深度）的当前一步，$\mathbf{h}^k$表示当前这步的一个顶点的表示：首先，每个顶点$v \in \mathcal{V}$聚合了在它在中间邻居的表示，$\lbrace  \mathbf{h}^{k-1}_u, \forall u \in \mathcal{N}(u) \rbrace$，聚合到向量$\mathbf{h}^{k-1}_{\mathcal{N}(v)}$中。注意，这个聚合步骤依赖于外循环前一次迭代生成的表示（比如$k - 1$），$k = 0$表示输入的顶点特征。聚合邻居特征向量后，GraphSAGE之后拼接了顶点当前的表示，$\mathbf{h}^{k-1}_v$，核聚合的邻居向量一起，$\mathbf{h}^{k-1}_{\mathcal{N}(v)}$，拼接后的向量输入到了激活函数为$\sigma$的全连接层中，将表示变换为下一步使用的形式（$\mathbf{h}^k_v, \forall v \in \mathcal{V}$）。为了记号的简单，我们将深度为$K$的输出表示记为$\mathbf{z} \equiv \mathbf{h}^K_v, \forall v \in \mathcal{V}$。邻居表示的聚合可以通过多个聚合架构得到（在算法1中表示为$\mathrm{AGGERGATE}$），我们会在3.3讨论不同的架构。</p>
 <p>为了将算法1扩展到minibatch设定上，给定一组输入顶点，我们先采样采出需要的邻居集合（到深度$K$），然后运行内部循环（算法1的第三行），但不是迭代所有的顶点，我们在每个深度只计算必须满足的表示（后记A包括了完整的minibatch伪代码）。</p>
 <h2 id="3-2-Learning-the-parameters-of-GraphSAGE"><a href="#3-2-Learning-the-parameters-of-GraphSAGE" class="headerlink" title="3.2 Learning the parameters of GraphSAGE"></a>3.2 Learning the parameters of GraphSAGE</h2><p>为了在半监督设定下学习一个有效的表示，我们使用基于图的损失函数来输出表示$\mathbf{z}_u, \forall u \in \mathcal{V}$，调整权重矩阵$\mathbf{W}^k, \forall k \in \lbrace 1,…,K\rbrace$，聚合函数的参数通过随机梯度下降训练。基于图的损失函数倾向于使得相邻的顶点有相似的表示，尽管这会使相互远离的顶点的表示很不一样：<br>$$\tag{1}<br>J\mathcal{G}(\mathbf{z}_u) = -\log(\sigma(\mathbf{z}^T_u \mathbf{z}_v)) - Q \cdot \mathbb{E}_{v_n \sim P_n(v)} \log(\sigma(-\mathbf{z}^T_u \mathbf{z}_{v_n})),<br>$$<br>其中$v$是通过定长随机游走得到的$u$旁边的共现顶点，$\sigma$是sigmoid函数，$P_n$是负采样分布，$Q$定义了负样本的数目。重要的是，不像之前的那些方法，我输入到损失函数的表示$\mathbf{z}_u$是从包含一个顶点局部邻居的特征生成出来的，而不是对每个顶点训练一个独一无二的embedding（通过一个embedding查询表）。</p>
 <p>这个无监督设定模拟了顶点特征提供给后续机器学习应用的情况。在那些表示只在后续的任务中使用的情况下，无监督损失（式1）可以被替换或改良，通过一个以任务为导向的目标函数（比如cross-entropy）。</p>
@@ -291,7 +291,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Articles
+                        Posts
                     </p>
                     <a href="/blog/archives">
                         <p class="title has-text-weight-normal">
@@ -303,7 +303,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Catégories
+                        Categories
                     </p>
                     <a href="/blog/categories">
                         <p class="title has-text-weight-normal">
@@ -328,7 +328,7 @@
         
         <div class="level">
             <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
-                SUIVRE</a>
+                Follow</a>
         </div>
         
         
@@ -366,7 +366,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nuage de tags
+            Tag Cloud
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 13.33px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 11.67px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -377,7 +377,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Catégories
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -456,7 +456,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Récents
+            Recent
         </h3>
         
         <article class="media">
@@ -1055,7 +1055,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Récents
+            Recent
         </h3>
         
         <article class="media">
@@ -1811,9 +1811,9 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Articles',
+                POSTS: 'Posts',
                 PAGES: 'Pages',
-                CATEGORIES: 'Catégories',
+                CATEGORIES: 'Categories',
                 TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
