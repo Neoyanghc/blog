@@ -10,19 +10,19 @@
 <title>Inductive Representation Learning on Large Graphs - Davidham&#39;s blog</title>
 
 
-    <meta name="description" content="NIPS 2017。提出的方法叫GraphSAGE，针对的问题是之前的NRL是transductive，作者提出的GraphSAGE是inductive。主要考虑了如何聚合顶点的邻居信息，对顶点或图进行分类。原文链接：Inductive Representation Learning on Large Graphs">
+    <meta name="description" content="NIPS 2017。提出的方法叫 GraphSAGE，针对的问题是之前的 NRL 是 transductive，不能泛化到新结点上，而作者提出的 GraphSAGE 是 inductive。主要考虑了如何聚合顶点的邻居信息，对顶点或图进行分类。原文链接：Inductive Representation Learning on Large Graphs">
 <meta name="keywords" content="deep learning,Graph,graph convolutional network">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Inductive Representation Learning on Large Graphs">
 <meta property="og:url" content="https://davidham3.github.io/2018/07/19/inductive-representation-learning-on-large-graphs/index.html">
 <meta property="og:site_name" content="Davidham&#39;s blog">
-<meta property="og:description" content="NIPS 2017。提出的方法叫GraphSAGE，针对的问题是之前的NRL是transductive，作者提出的GraphSAGE是inductive。主要考虑了如何聚合顶点的邻居信息，对顶点或图进行分类。原文链接：Inductive Representation Learning on Large Graphs">
+<meta property="og:description" content="NIPS 2017。提出的方法叫 GraphSAGE，针对的问题是之前的 NRL 是 transductive，不能泛化到新结点上，而作者提出的 GraphSAGE 是 inductive。主要考虑了如何聚合顶点的邻居信息，对顶点或图进行分类。原文链接：Inductive Representation Learning on Large Graphs">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://davidham3.github.io/blog/images/og_image.png">
-<meta property="og:updated_time" content="2019-04-25T11:09:25.000Z">
+<meta property="og:updated_time" content="2020-03-10T03:25:47.803Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Inductive Representation Learning on Large Graphs">
-<meta name="twitter:description" content="NIPS 2017。提出的方法叫GraphSAGE，针对的问题是之前的NRL是transductive，作者提出的GraphSAGE是inductive。主要考虑了如何聚合顶点的邻居信息，对顶点或图进行分类。原文链接：Inductive Representation Learning on Large Graphs">
+<meta name="twitter:description" content="NIPS 2017。提出的方法叫 GraphSAGE，针对的问题是之前的 NRL 是 transductive，不能泛化到新结点上，而作者提出的 GraphSAGE 是 inductive。主要考虑了如何聚合顶点的邻居信息，对顶点或图进行分类。原文链接：Inductive Representation Learning on Large Graphs">
 <meta name="twitter:image" content="https://davidham3.github.io/blog/images/og_image.png">
 
 
@@ -136,7 +136,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    33 minutes read (About 4959 words)
+                    33 minutes read (About 4966 words)
                 </span>
                 
                 
@@ -149,17 +149,17 @@
             
         </h1>
         <div class="content">
-            <p>NIPS 2017。提出的方法叫GraphSAGE，针对的问题是之前的NRL是transductive，作者提出的GraphSAGE是inductive。主要考虑了如何聚合顶点的邻居信息，对顶点或图进行分类。原文链接：<a href="https://arxiv.org/abs/1706.02216">Inductive Representation Learning on Large Graphs</a><br><a id="more"></a></p>
-<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>现存的方法需要图中所有的顶点在训练embedding的时候都出现；这些前人的方法本质是<em>transductive</em>，不能自然地泛化到未见过的顶点。我们提出了GraphSAGE，一个<em>inductive</em>框架利用顶点特征信息（比如文本属性）来高效地为没有见过的顶点生成embedding。与其为每个顶点训练单独的embedding，我们学习到一个函数，这个函数通过从一个顶点的局部邻居采样并聚合顶点特征。我们的算法在三个inductive顶点分类benchmark上超越了那些很强的baseline：我们在基于citation和Reddit post数据的演化的信息图中对未见过的顶点分类，实验表明我们使用一个PPI多图数据集，算法可以泛化到完全未见过的图上。</p>
-<h1 id="1-引言"><a href="#1-引言" class="headerlink" title="1 引言"></a>1 引言</h1><p>顶点嵌入的基本思想是使用降维技术从高维信息中提炼一个顶点的邻居信息，存到低维向量中。这些顶点嵌入之后会作为后续的机器学习系统的输入，解决像顶点分类、聚类、链接预测这样的问题。</p>
-<p>然而，前人的工作专注于从一个固定的图中对顶点进行表示，很多真实的应用需要很快的对未见过的顶点或是全新的图（子图）生成embedding。这个推断的能力对于高吞吐的机器学习系统来说很重要，这些系统都运作在不断演化的图上，而且时刻都会遇到未见过的顶点（比如Reddit上的文章，Youtube上的用户或视频）。一个生成顶点embedding的推断方法也会帮助在拥有同样形式特征的图上进行泛化：举个例子，我们可以从一个有机物得到的PPI图上训练一个embedding生成器，然后很简单的使用这个模型对新的有机物上收集的数据生成他们的顶点嵌入。</p>
-<p>推断顶点嵌入问题很困难，对比transductive问题，因为泛化未见过的顶点需要将新观测到的子图对其到算法已经优化好的顶点嵌入上。一个推断模型必须学习识别一个顶点邻居的结构性质，这个性质既反映了顶点在图中的局部角色，也反映了它的全局位置。</p>
-<p>很多现存的生成顶点嵌入的方法是继承于transductive。这些方法的主流直接使用矩阵分解目标函数对每个顶点的embedding进行优化，不能自然的泛化到未见过的数据，因为他们在一个固定的单个图上的顶点做预测。这些方法可以被修改然后再inductive问题上运行，但是这些修改往往计算复杂度高，再新的预测之前需要额外的梯度下降。当然也有一些使用在图结构上使用卷积神经网络的方法，在embedding上表现的很好。迄今为止，GCN只在固定的图上的transductive问题上应用过。我们工作是扩展了GCN到无监督推断任务上，同时还提出了一个可以将GCN方法泛化出使用可以训练的聚合函数（并不是只有简单的卷积）。</p>
-<p><strong>Present work.</strong>我们提出了一个general框架，叫GraphSAGE(SAmple and aggreGatE)，用于inductive node embedding。不像基于矩阵分解的嵌入方法，我们利用了顶点特征（比如文本属性，顶点信息，顶点的度）来学习可以生成未见过的顶点的函数。通过在学习算法中结合顶点信息，我们同时学习了每个顶点邻居的拓扑结构和顶点特征在邻居中的分布。尽管我们专注于富特征的图（如有文本信息的引文网络，有功能/分子组成的生物数据），我们的方法扔能充分利用所有图展现的结构特征（比如顶点的度）。因此我们的算法可以应用在没有顶点特征的图上。</p>
+            <p>NIPS 2017。提出的方法叫 GraphSAGE，针对的问题是之前的 NRL 是 transductive，不能泛化到新结点上，而作者提出的 GraphSAGE 是 inductive。主要考虑了如何聚合顶点的邻居信息，对顶点或图进行分类。原文链接：<a href="https://arxiv.org/abs/1706.02216">Inductive Representation Learning on Large Graphs</a><br><a id="more"></a></p>
+<h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>现存的方法需要图中所有的顶点在训练 embedding 的时候都出现；这些前人的方法本质是 <em>transductive</em>，不能自然地泛化到未见过的顶点上。我们提出了 GraphSAGE，一个 <em>inductive</em> 框架，利用顶点特征信息（比如文本属性）来高效地为没有见过的顶点生成 embedding。与其为每个顶点训练单独的 embedding，我们的方法是学习一个函数，这个函数通过从一个顶点的局部邻居采样并聚合顶点特征。我们的算法在三个 inductive 顶点分类数据集上超越了那些很强的 baseline：在 citation 和 Reddit post 数据的演化的信息图中对未见过的顶点分类，在 PPI 多图数据集上可以泛化到完全未见过的图上。</p>
+<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>顶点嵌入的基本思想是使用降维技术从高维信息中提炼一个顶点的邻居信息，存到低维向量中。这些顶点嵌入之后会作为后续的机器学习系统的输入，解决像顶点分类、聚类、链接预测这样的问题。</p>
+<p>然而，前人的工作专注于对一个固定的图中的顶点进行表示，很多真实的应用需要很快的对未见过的顶点或是全新的图（子图）生成 embedding。这个推断的能力对于高吞吐的机器学习系统来说很重要，这些系统都运作在不断演化的图上，而且时刻都会遇到未见过的顶点（比如 Reddit 上的文章，Youtube 上的用户或视频）。一个生成顶点 embedding 的推断方法也会帮助在拥有同样形式特征的图上进行泛化：举个例子，我们可以从一个有机物得到的 PPI 图上训练一个 embedding 生成器，然后很简单的使用这个模型利用新的有机物上收集的数据生成他们的顶点嵌入。</p>
+<p>对比 transductive 问题，推断顶点嵌入问题很困难，因为泛化未见过的顶点需要将新观测到的子图“对齐”到算法已经优化好的顶点嵌入上。一个推断模型必须学习到可以识别一个顶点邻居的结构性质，这个性质既反映了顶点在图中的局部角色，也反映了它的全局位置。</p>
+<p>很多现存的生成顶点嵌入的方法是继承于 transductive。这些方法的主流是直接使用矩阵分解目标函数对每个顶点的 embedding 进行优化，因为他们在一个固定的单个图上的顶点做预测，所以不能自然地泛化到未见过的数据。这些方法可以被修改然后在 inductive 问题上运行，但是这些修改往往计算复杂度高，在新的预测之前需要额外的梯度下降优化。当然也有一些在图结构上使用卷积神经网络的方法，在 embedding 上表现的很好。迄今为止，GCN 只在固定的图上的 transductive 问题上应用过。我们工作是扩展了 GCN 到无监督推断任务上，同时还提出了一个方法，可以让 GCN 使用可训练的聚合函数（并不是只有简单的卷积）。</p>
+<p><strong>Present work.</strong> 我们提出了一个通用的框架，叫 GraphSAGE(SAmple and aggreGatE)，用于学习 inductive node embedding。不像基于矩阵分解的嵌入方法，我们利用了顶点特征（比如文本属性，顶点信息，顶点的度）来学习可以生成未见过的顶点的嵌入的函数。通过在算法中结合顶点信息，我们同时学习了每个顶点邻居的拓扑结构和顶点特征在邻居中的分布。尽管我们的研究更专注于富特征的图（如有文本信息的引文网络，有功能/分子组成的生物数据），我们的方法仍能充分利用所有图展现的结构特征（比如顶点的度）。因此我们的算法可以应用在没有顶点特征的图上。</p>
 <p><img src="/blog/2018/07/19/inductive-representation-learning-on-large-graphs/Fig1.JPG" alt="Figure1"></p>
-<p>我们没有对每个顶点都训练一个单独的embeddding，我们训练了一组<em>aggregator functions</em>，这些函数学习如何从一个顶点的局部邻居聚合特征信息（图1）。每个聚合函数从一个顶点的不同搜索深度聚合信息。测试的时候，或是说推断的时候，我们使用我们训练的系统来对完全未见过的顶点，通过使用学习到的聚合函数来生成embedding。跟随着前人在生成顶点上的工作，我们设计了无监督的损失函数，使得GraphSAGE可以在没有任务监督的情况下训练。我们也展示了使用完全监督的方法如何训练GraphSAGE。</p>
-<p>我们在三个顶点分类benchmark上评估了我们的算法，测试了GraphSAGE在未见过的数据上生成有效的embedding的能力。使用了两个基于citation数据和Reddit post数据的演化网络（分别预测paper和post类别），还有一个基于PPI的多图泛化实验（预测蛋白质功能）。我们的方法效果很好，跨领域，监督的方法在F1值上对比只使用顶点特征的方法平均提高了51%，而且GraphSAGE一直都比transductive baseline强很多，尽管baseline在未见过的顶点上的运行时间要长100倍以上。我们也发现我们提出的新的聚合结构比受图卷积启发的聚合函数更好（平均提升了$7.4\%$）。最后我们通过实验证明了我们方法的表现能力，GraphSAGE能学习一个顶点在一个图中的结构信息，尽管事实上是它是基于特征的（第5部分）。</p>
-<h1 id="2-相关工作"><a href="#2-相关工作" class="headerlink" title="2 相关工作"></a>2 相关工作</h1><p><strong>Factorization-based embedding approaches.</strong> 最近的node embedding方法使用随机游走的统计和矩阵分解的目标函数。这些方法和传统的方法如谱聚类，multi-dimensional scaling，PageRank关系很近。因为这些嵌入方法对每个顶点直接训练embedding，本质上是transductive，而且需要大量的额外训练（如随机梯度下降）使他们能预测新的顶点。此外，对于这些方法中的大部分，目标函数对于embedding的正交变换是不变的，意味着嵌入空间不能自然地在图之间泛化，而且在再次训练的时候会drift。一个值得注意的例外是Yang et al.的Planetoid-I算法，是一个inductive，基于嵌入的半监督学习。然而，Planetoid-I在推断的时候不使用任何图结构信息，而在训练的时候将图结构作为一种正则化的形式。不像前面的这些方法，我们利用特征信息来训练可以对未见过的顶点生成embedding的模型。</p>
+<p>我们没有对每个顶点都训练一个单独的 embeddding，我们训练了一组 <em>aggregator functions</em>，这些函数学习如何从一个顶点的局部邻居聚合特征信息（图1）。每个聚合函数从一个顶点的不同搜索深度聚合信息。测试的时候，或是说推断的时候，我们使用我们训练的系统来对完全未见过的顶点，通过使用学习到的聚合函数来生成 embedding。跟随着前人在生成顶点上的工作，我们设计了无监督的损失函数，使得 GraphSAGE 可以在没有任务监督的情况下训练。我们也展示了如何使用监督的方法训练 GraphSAGE。</p>
+<p>我们在三个顶点分类数据集上评估了我们的算法，测试了 GraphSAGE 在未见过的数据上生成有效 embedding 的能力。使用了两个基于 citation 数据和 Reddit post 数据的演化网络（分别预测 paper 和 post 类别），还有一个基于 PPI 的多图泛化实验（预测蛋白质功能）。我们的方法效果很好，跨领域，监督的方法在 F1 值上对比只使用顶点特征的方法平均提高了 51%，而且 GraphSAGE 一直都比 transductive baseline 强很多，尽管 baseline 在未见过的顶点上的运行时间要长 100 倍以上。我们提出的新的聚合结构比受图卷积启发的聚合函数更好（平均提升了 7.4%）。最后我们通过实验证明了我们方法的表达能力，尽管 GraphSAGE 是基于特征的，它却能学习到一个顶点在一个图中的结构信息，（第 5 部分）。</p>
+<h1 id="Related-work"><a href="#Related-work" class="headerlink" title="Related work"></a>Related work</h1><p><strong>Factorization-based embedding approaches.</strong> 最近的node embedding方法使用随机游走的统计和矩阵分解的目标函数。这些方法和传统的方法如谱聚类，multi-dimensional scaling，PageRank关系很近。因为这些嵌入方法对每个顶点直接训练embedding，本质上是transductive，而且需要大量的额外训练（如随机梯度下降）使他们能预测新的顶点。此外，对于这些方法中的大部分，目标函数对于embedding的正交变换是不变的，意味着嵌入空间不能自然地在图之间泛化，而且在再次训练的时候会drift。一个值得注意的例外是Yang et al.的Planetoid-I算法，是一个inductive，基于嵌入的半监督学习。然而，Planetoid-I在推断的时候不使用任何图结构信息，而在训练的时候将图结构作为一种正则化的形式。不像前面的这些方法，我们利用特征信息来训练可以对未见过的顶点生成embedding的模型。</p>
 <p><strong>Supervised learning over graphs.</strong> 除了顶点嵌入方法，还有很多在图结构数据上的监督学习方法。包括很多核方法，图的特征向量从多个图的核得到。最近又很多用于图结构的监督学习的神经网络方法。我们的方法从概念上是受到了这些方法的启发。然而，尽管这些方法试图对整个图（或子图）进行分类，我们的工作关注的是如何对单个顶点生成有效的表示。</p>
 <p><strong>Graph convolutional networks.</strong> 近些年，一些用于图的卷积神经网络被相继提出。这些方法的大部分都不能扩展到大的图上，或是为了整个图的分类而设计（或是两点都有）。然而，我们的方法与Kipf et al.提出的图卷积很相关，在训练的时候需要整个图的拉普拉斯矩阵。我们算法的一个简单的变体可以看作是GCN框架在inductive setting上的扩展，我们会在3.3说明。</p>
 <h1 id="3-GraphSAGE"><a href="#3-GraphSAGE" class="headerlink" title="3 GraphSAGE"></a>3 GraphSAGE</h1><p>我们的关键思想在于我们的方法是学习如何从一个顶点的局部邻居聚合特征信息（比如度或近邻顶点的文本特征）。3.1描述embedding的生成算法。3.2描述随机梯度下降学习参数。</p>
@@ -291,7 +291,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Posts
+                        Articles
                     </p>
                     <a href="/blog/archives">
                         <p class="title has-text-weight-normal">
@@ -303,7 +303,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categories
+                        Catégories
                     </p>
                     <a href="/blog/categories">
                         <p class="title has-text-weight-normal">
@@ -328,7 +328,7 @@
         
         <div class="level">
             <a class="level-item button is-link is-rounded" href="https://github.com/Davidham3" target="_blank" rel="noopener">
-                Follow</a>
+                SUIVRE</a>
         </div>
         
         
@@ -366,7 +366,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Tag Cloud
+            Nuage de tags
         </h3>
         <a href="/blog/tags/attention/" style="font-size: 13.33px;">Attention</a> <a href="/blog/tags/graph/" style="font-size: 19.17px;">Graph</a> <a href="/blog/tags/hadoop/" style="font-size: 11.67px;">Hadoop</a> <a href="/blog/tags/kafka/" style="font-size: 10px;">Kafka</a> <a href="/blog/tags/ner/" style="font-size: 10px;">NER</a> <a href="/blog/tags/resnet/" style="font-size: 12.5px;">ResNet</a> <a href="/blog/tags/sequence/" style="font-size: 10px;">Sequence</a> <a href="/blog/tags/spark/" style="font-size: 11.67px;">Spark</a> <a href="/blog/tags/spatial-temporal/" style="font-size: 15.83px;">Spatial-temporal</a> <a href="/blog/tags/time-series/" style="font-size: 15px;">Time Series</a> <a href="/blog/tags/algorithms/" style="font-size: 13.33px;">algorithms</a> <a href="/blog/tags/computer-vision/" style="font-size: 11.67px;">computer vision</a> <a href="/blog/tags/dataset/" style="font-size: 10.83px;">dataset</a> <a href="/blog/tags/deep-learning/" style="font-size: 20px;">deep learning</a> <a href="/blog/tags/graph-convolutional-network/" style="font-size: 18.33px;">graph convolutional network</a> <a href="/blog/tags/image-style-transfer/" style="font-size: 10.83px;">image style transfer</a> <a href="/blog/tags/implicit-feedback/" style="font-size: 10px;">implicit feedback</a> <a href="/blog/tags/language-modeling/" style="font-size: 10px;">language modeling</a> <a href="/blog/tags/large-scale-learning/" style="font-size: 10.83px;">large-scale learning</a> <a href="/blog/tags/machine-learning/" style="font-size: 17.5px;">machine learning</a> <a href="/blog/tags/machine-translation/" style="font-size: 10px;">machine translation</a> <a href="/blog/tags/natural-language-processing/" style="font-size: 11.67px;">natural language processing</a> <a href="/blog/tags/normalization/" style="font-size: 10px;">normalization</a> <a href="/blog/tags/recommender-system/" style="font-size: 11.67px;">recommender system</a> <a href="/blog/tags/reinforcement-learning/" style="font-size: 10px;">reinforcement learning</a> <a href="/blog/tags/seq2seq/" style="font-size: 10px;">seq2seq</a> <a href="/blog/tags/software/" style="font-size: 16.67px;">software</a> <a href="/blog/tags/super-resolution/" style="font-size: 10.83px;">super resolution</a> <a href="/blog/tags/virtual-machine/" style="font-size: 10px;">virtual machine</a> <a href="/blog/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/blog/tags/已复现/" style="font-size: 14.17px;">已复现</a> <a href="/blog/tags/随笔/" style="font-size: 10px;">随笔</a>
     </div>
@@ -377,7 +377,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categories
+                Catégories
             </h3>
             <ul class="menu-list">
             <li>
@@ -456,7 +456,7 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recent
+            Récents
         </h3>
         
         <article class="media">
@@ -1055,7 +1055,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recent
+            Récents
         </h3>
         
         <article class="media">
@@ -1811,9 +1811,9 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Posts',
+                POSTS: 'Articles',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categories',
+                CATEGORIES: 'Catégories',
                 TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
